@@ -56,211 +56,6 @@ export const LEVELS = [
     "difficulty": 1
   },
   {
-    "extent": 56,
-    "ship": {
-      "x": -16,
-      "z": 40
-    },
-    "goal": {
-      "x": -3,
-      "z": -41,
-      "r": 6.7
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Cinder",
-        "mass": 886,
-        "radius": 4.5,
-        "color": 0x95d5b2,
-        "x": 20,
-        "z": 20
-      }
-    ],
-    "name": "Two Stones",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": -18,
-      "z": 40
-    },
-    "goal": {
-      "x": -1,
-      "z": -41,
-      "r": 6.4
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Nova",
-        "mass": 1069,
-        "radius": 4.3,
-        "color": 0xbde0fe,
-        "x": -27,
-        "z": 14
-      }
-    ],
-    "name": "Long Coast",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": -7,
-      "z": 40
-    },
-    "goal": {
-      "x": -1,
-      "z": -41,
-      "r": 6.1
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Lyra",
-        "mass": 366,
-        "radius": 4.8,
-        "color": 0x95d5b2,
-        "x": 12,
-        "z": -15
-      },
-      {
-        "name": "Pebble",
-        "mass": 842,
-        "radius": 3.9,
-        "color": 0x7ae582,
-        "x": 14,
-        "z": 9
-      }
-    ],
-    "name": "Soft Curve",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": 11,
-      "z": 40
-    },
-    "goal": {
-      "x": -11,
-      "z": -41,
-      "r": 6.5
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Nova",
-        "mass": 998,
-        "radius": 4.2,
-        "color": 0x7ae582,
-        "x": -6,
-        "z": -10
-      },
-      {
-        "name": "Frost",
-        "mass": 1222,
-        "radius": 4,
-        "color": 0xff8fa3,
-        "x": 21,
-        "z": -26
-      }
-    ],
-    "name": "Downhill Run",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": 15,
-      "z": 40
-    },
-    "goal": {
-      "x": 2,
-      "z": -41,
-      "r": 6
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Zephyr",
-        "mass": 744,
-        "radius": 3.2,
-        "color": 0xc8b6ff,
-        "x": -8,
-        "z": 30
-      }
-    ],
-    "name": "Easy Does It",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": -11,
-      "z": 40
-    },
-    "goal": {
-      "x": -16,
-      "z": -41,
-      "r": 5.8
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Willow",
-        "mass": 653,
-        "radius": 4.3,
-        "color": 0xf4a261,
-        "x": -22,
-        "z": -10
-      }
-    ],
-    "name": "Twin Dimples",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
-    "extent": 56,
-    "ship": {
-      "x": -3,
-      "z": 40
-    },
-    "goal": {
-      "x": 7,
-      "z": -41,
-      "r": 5.8
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Nimbus",
-        "mass": 820,
-        "radius": 5,
-        "color": 0xffc8dd,
-        "x": -38,
-        "z": 13
-      }
-    ],
-    "name": "Drift Lane",
-    "hint": "Small wells, gentle bends. Learn to read the terrain.",
-    "difficulty": 1
-  },
-  {
     "name": "The Dip",
     "hint": "That well will bend your shot. Watch the prediction line and aim off-center.",
     "extent": 60,
@@ -288,187 +83,366 @@ export const LEVELS = [
     "difficulty": 1
   },
   {
-    "extent": 56,
+    "extent": 58,
     "ship": {
-      "x": 17,
-      "z": 40
+      "x": -8,
+      "z": 42
     },
     "goal": {
-      "x": -18,
-      "z": -41,
-      "r": 6.1
+      "x": 7,
+      "z": -42,
+      "r": 6
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Iris",
+        "mass": 803,
+        "radius": 4.5,
+        "color": 0x95d5b2,
+        "x": -22,
+        "z": -1
+      }
+    ],
+    "name": "Long Coast",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": 12,
+      "z": 42
+    },
+    "goal": {
+      "x": -13,
+      "z": -42,
+      "r": 5.9
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Fern",
+        "mass": 669,
+        "radius": 4.4,
+        "color": 0xffc8dd,
+        "x": 35,
+        "z": -27
+      },
+      {
+        "name": "Cinder",
+        "mass": 1151,
+        "radius": 3.9,
+        "color": 0x7ae582,
+        "x": 1,
+        "z": -10
+      }
+    ],
+    "pickups": [
+      {
+        "x": -18,
+        "z": -11,
+        "fuel": 1.5
+      },
+      {
+        "x": 14,
+        "z": 5,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Fuel Run",
+    "hint": "Orange fuel cells top up your tank — swing by and grab them!",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": 15,
+      "z": 42
+    },
+    "goal": {
+      "x": 28,
+      "z": -42,
+      "r": 5.8
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Lyra",
+        "mass": 1250,
+        "radius": 4.4,
+        "color": 0xffd166,
+        "x": -6,
+        "z": 23
+      },
+      {
+        "name": "Pebble",
+        "mass": 1193,
+        "radius": 3.9,
+        "color": 0xffd166,
+        "x": -12,
+        "z": 0
+      }
+    ],
+    "pickups": [
+      {
+        "x": 32,
+        "z": 0,
+        "fuel": 1.5
+      },
+      {
+        "x": 16,
+        "z": -14,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Downhill Run",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": -17,
+      "z": 42
+    },
+    "goal": {
+      "x": 28,
+      "z": -42,
+      "r": 5.6
     },
     "maxLaunch": 50,
     "fuel": 3,
     "bodies": [
       {
         "name": "Opal",
-        "mass": 968,
-        "radius": 4.7,
-        "color": 0xbde0fe,
+        "mass": 1111,
+        "radius": 3.1,
+        "color": 0xffc8dd,
+        "x": -1,
+        "z": 15
+      },
+      {
+        "name": "Pip",
+        "mass": 1272,
+        "radius": 3.6,
+        "color": 0x95d5b2,
+        "x": -4,
+        "z": -4
+      }
+    ],
+    "pickups": [
+      {
+        "x": -6,
+        "z": 9,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Easy Does It",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": 0,
+      "z": 42
+    },
+    "goal": {
+      "x": -12,
+      "z": -42,
+      "r": 5.5
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Iris",
+        "mass": 584,
+        "radius": 3.7,
+        "color": 0xc8b6ff,
+        "x": 24,
+        "z": -12
+      },
+      {
+        "name": "Jasper",
+        "mass": 733,
+        "radius": 4.1,
+        "color": 0x7ae582,
+        "x": -12,
+        "z": -18
+      }
+    ],
+    "pickups": [
+      {
+        "x": -7,
+        "z": -1,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Twin Dimples",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": 15,
+      "z": 42
+    },
+    "goal": {
+      "x": -7,
+      "z": -42,
+      "r": 5.4
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Nova",
+        "mass": 556,
+        "radius": 3.8,
+        "color": 0x90e0ef,
+        "x": -32,
+        "z": -19
+      },
+      {
+        "name": "Pip",
+        "mass": 970,
+        "radius": 3.2,
+        "color": 0xffd166,
+        "x": 18,
+        "z": -9
+      },
+      {
+        "name": "Quartz",
+        "mass": 1278,
+        "radius": 3.7,
+        "color": 0xff8fa3,
+        "x": -8,
+        "z": 11
+      }
+    ],
+    "pickups": [
+      {
         "x": 6,
-        "z": -3
+        "z": -24,
+        "fuel": 1.5
+      },
+      {
+        "x": 2,
+        "z": 17,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Drift Lane",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": -8,
+      "z": 42
+    },
+    "goal": {
+      "x": 23,
+      "z": -42,
+      "r": 5.3
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Quartz",
+        "mass": 999,
+        "radius": 3.1,
+        "color": 0x7ae582,
+        "x": 18,
+        "z": 26
+      },
+      {
+        "name": "Vesta",
+        "mass": 739,
+        "radius": 4.9,
+        "color": 0x95d5b2,
+        "x": -10,
+        "z": -1
+      },
+      {
+        "name": "Willow",
+        "mass": 573,
+        "radius": 3.9,
+        "color": 0x90e0ef,
+        "x": 28,
+        "z": -12
+      }
+    ],
+    "pickups": [
+      {
+        "x": 2,
+        "z": -5,
+        "fuel": 1.5
+      },
+      {
+        "x": 21,
+        "z": 6,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Warm Up",
+    "hint": "Small wells, gentle bends. Learn to read the terrain.",
+    "difficulty": 1
+  },
+  {
+    "extent": 58,
+    "ship": {
+      "x": -11,
+      "z": 42
+    },
+    "goal": {
+      "x": 21,
+      "z": -42,
+      "r": 5.1
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Fern",
+        "mass": 1067,
+        "radius": 3.1,
+        "color": 0xf4a261,
+        "x": 24,
+        "z": 32
       },
       {
         "name": "Rhea",
-        "mass": 607,
-        "radius": 3.4,
-        "color": 0xf4a261,
-        "x": 28,
-        "z": 16
+        "mass": 908,
+        "radius": 3.7,
+        "color": 0x90e0ef,
+        "x": 18,
+        "z": 8
+      }
+    ],
+    "pickups": [
+      {
+        "x": 11,
+        "z": -16,
+        "fuel": 1.5
+      },
+      {
+        "x": -4,
+        "z": -4,
+        "fuel": 1.5
       }
     ],
     "name": "Graduation",
     "hint": "Small wells, gentle bends. Learn to read the terrain.",
     "difficulty": 1
-  },
-  {
-    "extent": 60,
-    "ship": {
-      "x": -19,
-      "z": 43
-    },
-    "goal": {
-      "x": -26,
-      "z": -44,
-      "r": 5.5
-    },
-    "maxLaunch": 48,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Mica",
-        "mass": 2076,
-        "radius": 6.8,
-        "color": 0x95d5b2,
-        "x": -18,
-        "z": -2
-      },
-      {
-        "name": "Juno",
-        "mass": 1361,
-        "radius": 4.1,
-        "color": 0x7ae582,
-        "x": 31,
-        "z": -23
-      },
-      {
-        "name": "Echo",
-        "mass": 1177,
-        "radius": 5.4,
-        "color": 0xffc8dd,
-        "x": 12,
-        "z": 18
-      }
-    ],
-    "name": "Around the Bend",
-    "hint": "Big wells block the way. Dive in and let gravity throw you.",
-    "difficulty": 2
-  },
-  {
-    "extent": 60,
-    "ship": {
-      "x": 20,
-      "z": 43
-    },
-    "goal": {
-      "x": -6,
-      "z": -44,
-      "r": 5.4
-    },
-    "maxLaunch": 48,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Pebble",
-        "mass": 1961,
-        "radius": 7,
-        "color": 0xf4a261,
-        "x": 1,
-        "z": 11
-      },
-      {
-        "name": "Willow",
-        "mass": 1167,
-        "radius": 4,
-        "color": 0xbde0fe,
-        "x": -38,
-        "z": 23
-      }
-    ],
-    "name": "Deep Dive",
-    "hint": "Big wells block the way. Dive in and let gravity throw you.",
-    "difficulty": 2
-  },
-  {
-    "extent": 60,
-    "ship": {
-      "x": 15,
-      "z": 43
-    },
-    "goal": {
-      "x": 11,
-      "z": -44,
-      "r": 5.4
-    },
-    "maxLaunch": 48,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Pip",
-        "mass": 1769,
-        "radius": 7,
-        "color": 0xc8b6ff,
-        "x": 20,
-        "z": -3
-      },
-      {
-        "name": "Iris",
-        "mass": 819,
-        "radius": 4.2,
-        "color": 0x90e0ef,
-        "x": -19,
-        "z": -12
-      }
-    ],
-    "name": "Hairpin",
-    "hint": "Big wells block the way. Dive in and let gravity throw you.",
-    "difficulty": 2
-  },
-  {
-    "extent": 60,
-    "ship": {
-      "x": 10,
-      "z": 43
-    },
-    "goal": {
-      "x": -13,
-      "z": -44,
-      "r": 5.5
-    },
-    "maxLaunch": 48,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Mica",
-        "mass": 1869,
-        "radius": 6.1,
-        "color": 0x95d5b2,
-        "x": -9,
-        "z": 7
-      },
-      {
-        "name": "Koa",
-        "mass": 1475,
-        "radius": 4.8,
-        "color": 0x90e0ef,
-        "x": 32,
-        "z": -28
-      }
-    ],
-    "name": "Double Trouble",
-    "hint": "Big wells block the way. Dive in and let gravity throw you.",
-    "difficulty": 2
   },
   {
     "name": "Slingshot",
@@ -535,11 +509,53 @@ export const LEVELS = [
   {
     "extent": 60,
     "ship": {
-      "x": -9,
+      "x": 22,
       "z": 43
     },
     "goal": {
+      "x": -3,
+      "z": -44,
+      "r": 5.3
+    },
+    "maxLaunch": 48,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Onyx",
+        "mass": 2362,
+        "radius": 6.4,
+        "color": 0xbde0fe,
+        "x": 8,
+        "z": -3
+      },
+      {
+        "name": "Nimbus",
+        "mass": 948,
+        "radius": 4.2,
+        "color": 0x95d5b2,
+        "x": -30,
+        "z": -24
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 33,
+        "z": -11
+      }
+    ],
+    "name": "Wreckage Field",
+    "hint": "Derelict ships drift in the lanes now — one touch and it's over.",
+    "difficulty": 2
+  },
+  {
+    "extent": 60,
+    "ship": {
       "x": -20,
+      "z": 43
+    },
+    "goal": {
+      "x": 25,
       "z": -44,
       "r": 5.4
     },
@@ -547,34 +563,41 @@ export const LEVELS = [
     "fuel": 3,
     "bodies": [
       {
-        "name": "Mint",
-        "mass": 1703,
-        "radius": 6.9,
-        "color": 0xc8b6ff,
-        "x": -20,
-        "z": 5
+        "name": "Sage",
+        "mass": 1965,
+        "radius": 6.4,
+        "color": 0xff8fa3,
+        "x": -2,
+        "z": 0
       },
       {
-        "name": "Quartz",
-        "mass": 1269,
-        "radius": 5.3,
-        "color": 0x95d5b2,
-        "x": -41,
-        "z": 13
+        "name": "Fern",
+        "mass": 710,
+        "radius": 5,
+        "color": 0x90e0ef,
+        "x": 5,
+        "z": -17
       }
     ],
-    "name": "Corner Pocket",
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -28,
+        "z": 0
+      }
+    ],
+    "name": "Double Trouble",
     "hint": "Big wells block the way. Dive in and let gravity throw you.",
     "difficulty": 2
   },
   {
     "extent": 60,
     "ship": {
-      "x": 9,
+      "x": 21,
       "z": 43
     },
     "goal": {
-      "x": 14,
+      "x": -17,
       "z": -44,
       "r": 5.4
     },
@@ -582,20 +605,232 @@ export const LEVELS = [
     "fuel": 3,
     "bodies": [
       {
-        "name": "Mica",
-        "mass": 1733,
-        "radius": 6.7,
-        "color": 0xbde0fe,
-        "x": 17,
-        "z": -4
+        "name": "Lumen",
+        "mass": 2256,
+        "radius": 7.2,
+        "color": 0x95d5b2,
+        "x": 11,
+        "z": -1
       },
       {
+        "name": "Jasper",
+        "mass": 872,
+        "radius": 5.1,
+        "color": 0x7ae582,
+        "x": -15,
+        "z": 34
+      },
+      {
+        "name": "Atlas",
+        "mass": 862,
+        "radius": 4.5,
+        "color": 0xbde0fe,
+        "x": 39,
+        "z": -23
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 24,
+        "z": -24
+      },
+      {
+        "radius": 2,
+        "x": -31,
+        "z": -7
+      }
+    ],
+    "pickups": [
+      {
+        "x": -15,
+        "z": -12,
+        "fuel": 1.5
+      }
+    ],
+    "name": "The Long Way",
+    "hint": "Big wells block the way. Dive in and let gravity throw you.",
+    "difficulty": 2
+  },
+  {
+    "extent": 60,
+    "ship": {
+      "x": 24,
+      "z": 43
+    },
+    "goal": {
+      "x": 24,
+      "z": -44,
+      "r": 5.3
+    },
+    "maxLaunch": 48,
+    "fuel": 3,
+    "bodies": [
+      {
         "name": "Iris",
-        "mass": 1383,
+        "mass": 2088,
+        "radius": 6.4,
+        "color": 0xf4a261,
+        "x": 28,
+        "z": -5
+      },
+      {
+        "name": "Pip",
+        "mass": 903,
+        "radius": 4.8,
+        "color": 0x8ecae6,
+        "x": 12,
+        "z": -30
+      },
+      {
+        "name": "Opal",
+        "mass": 1140,
         "radius": 4.1,
         "color": 0xbde0fe,
-        "x": 10,
-        "z": -23
+        "x": -19,
+        "z": -32
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -30,
+        "z": 27
+      },
+      {
+        "radius": 2,
+        "x": 5,
+        "z": -5
+      }
+    ],
+    "pickups": [
+      {
+        "x": 11,
+        "z": 12,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Whiplash",
+    "hint": "Big wells block the way. Dive in and let gravity throw you.",
+    "difficulty": 2
+  },
+  {
+    "extent": 60,
+    "ship": {
+      "x": 0,
+      "z": 43
+    },
+    "goal": {
+      "x": 28,
+      "z": -44,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Atlas",
+        "mass": 1779,
+        "radius": 6.9,
+        "color": 0x7ae582,
+        "x": 17,
+        "z": 9
+      },
+      {
+        "name": "Coral",
+        "mass": 1268,
+        "radius": 4.2,
+        "color": 0x95d5b2,
+        "x": -20,
+        "z": -28
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 26,
+        "z": 1
+      },
+      {
+        "radius": 2,
+        "x": -19,
+        "z": 25
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -17,
+          "z1": -11,
+          "x2": -37,
+          "z2": 9,
+          "period": 5.6,
+          "phase": 0.12
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 34,
+        "z": -26,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Picket Line",
+    "hint": "That ship is on patrol. Watch its route before you launch.",
+    "difficulty": 2
+  },
+  {
+    "extent": 60,
+    "ship": {
+      "x": -5,
+      "z": 43
+    },
+    "goal": {
+      "x": 3,
+      "z": -44,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Lyra",
+        "mass": 2106,
+        "radius": 6.3,
+        "color": 0xffd166,
+        "x": 6,
+        "z": 9
+      },
+      {
+        "name": "Echo",
+        "mass": 1451,
+        "radius": 4.6,
+        "color": 0x8ecae6,
+        "x": 26,
+        "z": -12
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 3,
+        "z": 20
+      },
+      {
+        "radius": 2,
+        "x": 12,
+        "z": -2
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 32,
+          "z1": 23,
+          "x2": 18,
+          "z2": 5,
+          "period": 5.4,
+          "phase": 0.69
+        }
       }
     ],
     "name": "Gravity Assist",
@@ -605,40 +840,55 @@ export const LEVELS = [
   {
     "extent": 60,
     "ship": {
-      "x": 17,
+      "x": -25,
       "z": 43
     },
     "goal": {
-      "x": 20,
+      "x": 5,
       "z": -44,
-      "r": 5
+      "r": 5.4
     },
     "maxLaunch": 48,
     "fuel": 3,
     "bodies": [
       {
-        "name": "Lyra",
-        "mass": 2015,
-        "radius": 6.8,
-        "color": 0x7ae582,
-        "x": 14,
-        "z": 8
+        "name": "Onyx",
+        "mass": 2275,
+        "radius": 6.3,
+        "color": 0xffd166,
+        "x": -16,
+        "z": 9
       },
       {
-        "name": "Echo",
-        "mass": 1115,
-        "radius": 5,
-        "color": 0x7ae582,
-        "x": 34,
-        "z": 13
+        "name": "Sage",
+        "mass": 866,
+        "radius": 5.4,
+        "color": 0xc8b6ff,
+        "x": 36,
+        "z": 27
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 31,
+        "z": -16
       },
       {
-        "name": "Vesta",
-        "mass": 859,
-        "radius": 4.9,
-        "color": 0xf4a261,
-        "x": -18,
-        "z": 35
+        "radius": 2,
+        "x": 28,
+        "z": -20
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 25,
+          "z1": -13,
+          "x2": 30,
+          "z2": -27,
+          "period": 5.3,
+          "phase": 0.05
+        }
       }
     ],
     "name": "Full Send",
@@ -648,287 +898,59 @@ export const LEVELS = [
   {
     "extent": 60,
     "ship": {
-      "x": 20,
+      "x": 27,
       "z": 43
     },
     "goal": {
-      "x": 29,
+      "x": 2,
       "z": -44,
-      "r": 5.4
+      "r": 5
     },
     "maxLaunch": 48,
     "fuel": 3,
     "bodies": [
       {
-        "name": "Opal",
-        "mass": 2037,
+        "name": "Cinder",
+        "mass": 1829,
         "radius": 6.2,
-        "color": 0x90e0ef,
-        "x": 31,
-        "z": 9
+        "color": 0xbde0fe,
+        "x": 14,
+        "z": -9
       },
       {
-        "name": "Sage",
-        "mass": 1071,
-        "radius": 5.2,
-        "color": 0xbde0fe,
-        "x": 21,
-        "z": -10
+        "name": "Koa",
+        "mass": 1211,
+        "radius": 4.1,
+        "color": 0x90e0ef,
+        "x": -34,
+        "z": -7
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -23,
+        "z": -28
+      },
+      {
+        "radius": 2,
+        "x": 33,
+        "z": 23
+      },
+      {
+        "radius": 2,
+        "orbit": {
+          "cx": -13,
+          "cz": -14,
+          "radius": 12.5,
+          "omega": -0.38,
+          "phase": 0.29
+        }
       }
     ],
     "name": "Masterclass",
     "hint": "Big wells block the way. Dive in and let gravity throw you.",
     "difficulty": 2
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": -23,
-      "z": 45
-    },
-    "goal": {
-      "x": -6,
-      "z": -45,
-      "r": 5.2
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Nope",
-        "mass": -1445,
-        "radius": 4.6,
-        "color": 0xff6b35,
-        "x": 6,
-        "z": -21
-      },
-      {
-        "name": "Mica",
-        "mass": 942,
-        "radius": 4.6,
-        "color": 0x90e0ef,
-        "x": 46,
-        "z": -23
-      },
-      {
-        "name": "Vesta",
-        "mass": 1224,
-        "radius": 4.6,
-        "color": 0x90e0ef,
-        "x": -28,
-        "z": -11
-      }
-    ],
-    "name": "Uphill Battle",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": -22,
-      "z": 45
-    },
-    "goal": {
-      "x": -6,
-      "z": -45,
-      "r": 4.9
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Grudge",
-        "mass": -1438,
-        "radius": 4.5,
-        "color": 0xff6b35,
-        "x": 8,
-        "z": 5
-      },
-      {
-        "name": "Echo",
-        "mass": 1141,
-        "radius": 4.4,
-        "color": 0x7ae582,
-        "x": -24,
-        "z": -10
-      }
-    ],
-    "name": "The Pass",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": 21,
-      "z": 45
-    },
-    "goal": {
-      "x": -15,
-      "z": -45,
-      "r": 5.1
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Grudge",
-        "mass": -1282,
-        "radius": 4.3,
-        "color": 0xff6b35,
-        "x": 15,
-        "z": -14
-      },
-      {
-        "name": "Fern",
-        "mass": 1060,
-        "radius": 4.4,
-        "color": 0xffd166,
-        "x": -27,
-        "z": -30
-      },
-      {
-        "name": "Nimbus",
-        "mass": 1357,
-        "radius": 5.2,
-        "color": 0xf4a261,
-        "x": 46,
-        "z": 6
-      }
-    ],
-    "name": "Push and Pull",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": 5,
-      "z": 45
-    },
-    "goal": {
-      "x": 14,
-      "z": -45,
-      "r": 4.7
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Pusher",
-        "mass": -1766,
-        "radius": 4.6,
-        "color": 0xff6b35,
-        "x": 26,
-        "z": 3
-      },
-      {
-        "name": "Shove",
-        "mass": -926,
-        "radius": 4.1,
-        "color": 0xff6b35,
-        "x": -9,
-        "z": 19
-      },
-      {
-        "name": "Onyx",
-        "mass": 1569,
-        "radius": 5.2,
-        "color": 0xf4a261,
-        "x": -10,
-        "z": -27
-      },
-      {
-        "name": "Sage",
-        "mass": 1485,
-        "radius": 4.7,
-        "color": 0x7ae582,
-        "x": -26,
-        "z": 15
-      }
-    ],
-    "name": "Ridge Runner",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": 18,
-      "z": 45
-    },
-    "goal": {
-      "x": -29,
-      "z": -45,
-      "r": 5.3
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Nope",
-        "mass": -1047,
-        "radius": 4.8,
-        "color": 0xff6b35,
-        "x": -23,
-        "z": -2
-      },
-      {
-        "name": "Rhea",
-        "mass": 1097,
-        "radius": 5.4,
-        "color": 0x90e0ef,
-        "x": 20,
-        "z": -28
-      }
-    ],
-    "name": "Between Hills",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": -24,
-      "z": 45
-    },
-    "goal": {
-      "x": 0,
-      "z": -45,
-      "r": 4.8
-    },
-    "maxLaunch": 48,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Grudge",
-        "mass": -1704,
-        "radius": 4.1,
-        "color": 0xff6b35,
-        "x": -31,
-        "z": 8
-      },
-      {
-        "name": "Bristle",
-        "mass": -1681,
-        "radius": 4.2,
-        "color": 0xff6b35,
-        "x": -34,
-        "z": -12
-      },
-      {
-        "name": "Onyx",
-        "mass": 1174,
-        "radius": 4.4,
-        "color": 0xffd166,
-        "x": 29,
-        "z": 6
-      }
-    ],
-    "name": "Backpressure",
-    "hint": "Orange hills push you away. Ride the passes between push and pull.",
-    "difficulty": 3
   },
   {
     "name": "Repulsor Ridge",
@@ -968,11 +990,203 @@ export const LEVELS = [
   {
     "extent": 62,
     "ship": {
-      "x": -4,
+      "x": -19,
       "z": 45
     },
     "goal": {
-      "x": -1,
+      "x": -18,
+      "z": -45,
+      "r": 4.9
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Shove",
+        "mass": -1276,
+        "radius": 4.5,
+        "color": 0xff6b35,
+        "x": -1,
+        "z": -16
+      },
+      {
+        "name": "Frost",
+        "mass": 1192,
+        "radius": 5.3,
+        "color": 0xc8b6ff,
+        "x": -43,
+        "z": 2
+      }
+    ],
+    "pickups": [
+      {
+        "x": -37,
+        "z": 15,
+        "fuel": 1.5
+      }
+    ],
+    "name": "The Pass",
+    "hint": "Orange hills push you away. Ride the passes between push and pull.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": 10,
+      "z": 45
+    },
+    "goal": {
+      "x": -30,
+      "z": -45,
+      "r": 4.8
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Pusher",
+        "mass": -1562,
+        "radius": 4.6,
+        "color": 0xff6b35,
+        "x": -19,
+        "z": 16
+      },
+      {
+        "name": "Willow",
+        "mass": 1182,
+        "radius": 5.2,
+        "color": 0x8ecae6,
+        "x": 44,
+        "z": -1
+      },
+      {
+        "name": "Mint",
+        "mass": 1197,
+        "radius": 4.7,
+        "color": 0x95d5b2,
+        "x": -17,
+        "z": -8
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -8,
+        "z": 24
+      }
+    ],
+    "pickups": [
+      {
+        "x": 15,
+        "z": 23,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Push and Pull",
+    "hint": "Orange hills push you away. Ride the passes between push and pull.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": -7,
+      "z": 45
+    },
+    "goal": {
+      "x": 25,
+      "z": -45,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Pusher",
+        "mass": -1208,
+        "radius": 4.7,
+        "color": 0xff6b35,
+        "x": -11,
+        "z": 12
+      },
+      {
+        "name": "Rhea",
+        "mass": 1078,
+        "radius": 4.4,
+        "color": 0xff8fa3,
+        "x": 24,
+        "z": 5
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 15,
+        "z": -26
+      }
+    ],
+    "name": "Ridge Runner",
+    "hint": "Orange hills push you away. Ride the passes between push and pull.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": 10,
+      "z": 45
+    },
+    "goal": {
+      "x": -11,
+      "z": -45,
+      "r": 4.6
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Bristle",
+        "mass": -1555,
+        "radius": 4.2,
+        "color": 0xff6b35,
+        "x": 18,
+        "z": 13
+      },
+      {
+        "name": "Pusher",
+        "mass": -967,
+        "radius": 4.9,
+        "color": 0xff6b35,
+        "x": 2,
+        "z": -21
+      },
+      {
+        "name": "Mica",
+        "mass": 818,
+        "radius": 4.5,
+        "color": 0x8ecae6,
+        "x": 26,
+        "z": -35
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 0,
+        "z": 1,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "name": "Waystation",
+    "hint": "Dock at the station 🛰 first — it refuels you for the next leg.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": -25,
+      "z": 45
+    },
+    "goal": {
+      "x": -6,
       "z": -45,
       "r": 5.3
     },
@@ -980,28 +1194,172 @@ export const LEVELS = [
     "fuel": 3.5,
     "bodies": [
       {
-        "name": "Shove",
-        "mass": -1166,
-        "radius": 4.6,
+        "name": "Bristle",
+        "mass": -1238,
+        "radius": 4.3,
         "color": 0xff6b35,
-        "x": -13,
+        "x": -4,
+        "z": 21
+      },
+      {
+        "name": "Vesta",
+        "mass": 897,
+        "radius": 5.4,
+        "color": 0x90e0ef,
+        "x": 27,
+        "z": -20
+      },
+      {
+        "name": "Juno",
+        "mass": 1570,
+        "radius": 4.2,
+        "color": 0x7ae582,
+        "x": -32,
+        "z": 10
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 0,
+        "z": -6,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -12,
+        "z": -12
+      }
+    ],
+    "name": "Backpressure",
+    "hint": "Orange hills push you away. Ride the passes between push and pull.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": 23,
+      "z": 45
+    },
+    "goal": {
+      "x": 4,
+      "z": -45,
+      "r": 4.7
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Nope",
+        "mass": -1354,
+        "radius": 4.8,
+        "color": 0xff6b35,
+        "x": 9,
+        "z": 4
+      },
+      {
+        "name": "Willow",
+        "mass": 1556,
+        "radius": 5,
+        "color": 0xffc8dd,
+        "x": -14,
+        "z": 15
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 14,
+        "z": -11,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -31,
         "z": -10
       },
       {
-        "name": "Basil",
-        "mass": 1145,
-        "radius": 5.3,
-        "color": 0x95d5b2,
-        "x": -17,
-        "z": 10
+        "radius": 2,
+        "patrol": {
+          "x1": 31,
+          "z1": 4,
+          "x2": 43,
+          "z2": -11,
+          "period": 5.2,
+          "phase": 0.34
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -5,
+        "z": -5,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Crosswind",
+    "hint": "Orange hills push you away. Ride the passes between push and pull.",
+    "difficulty": 3
+  },
+  {
+    "extent": 62,
+    "ship": {
+      "x": 10,
+      "z": 45
+    },
+    "goal": {
+      "x": 13,
+      "z": -45,
+      "r": 4.8
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Pusher",
+        "mass": -1341,
+        "radius": 4.6,
+        "color": 0xff6b35,
+        "x": -3,
+        "z": -1
       },
       {
-        "name": "Halo",
-        "mass": 919,
-        "radius": 5.1,
-        "color": 0x95d5b2,
-        "x": 27,
-        "z": -13
+        "name": "Quartz",
+        "mass": 1391,
+        "radius": 4.4,
+        "color": 0x90e0ef,
+        "x": -25,
+        "z": 23
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 22,
+        "z": -5,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 12,
+        "z": 24
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -19,
+          "z1": 9,
+          "x2": -32,
+          "z2": -2,
+          "period": 4.6,
+          "phase": 0.31
+        }
       }
     ],
     "name": "The Squeeze",
@@ -1011,32 +1369,73 @@ export const LEVELS = [
   {
     "extent": 62,
     "ship": {
-      "x": 7,
+      "x": 18,
       "z": 45
     },
     "goal": {
-      "x": 20,
+      "x": -5,
       "z": -45,
-      "r": 4.9
+      "r": 4.6
     },
     "maxLaunch": 48,
     "fuel": 3.5,
     "bodies": [
       {
-        "name": "Bristle",
-        "mass": -1483,
-        "radius": 4.8,
+        "name": "Grudge",
+        "mass": -1398,
+        "radius": 4.7,
         "color": 0xff6b35,
-        "x": 2,
-        "z": -3
+        "x": 14,
+        "z": 4
       },
       {
-        "name": "Cinder",
-        "mass": 1159,
-        "radius": 4.8,
+        "name": "Bristle",
+        "mass": -1358,
+        "radius": 4.1,
+        "color": 0xff6b35,
+        "x": -11,
+        "z": 4
+      },
+      {
+        "name": "Atlas",
+        "mass": 1508,
+        "radius": 4.4,
         "color": 0xff8fa3,
-        "x": -34,
-        "z": 11
+        "x": 29,
+        "z": 10
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -4,
+        "z": -9,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 8,
+        "z": 21
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -13,
+          "z1": -17,
+          "x2": -27,
+          "z2": -26,
+          "period": 7.4,
+          "phase": 0.68
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -3,
+        "z": 20,
+        "fuel": 1.5
       }
     ],
     "name": "Turbulence",
@@ -1046,237 +1445,78 @@ export const LEVELS = [
   {
     "extent": 62,
     "ship": {
-      "x": 22,
+      "x": 20,
       "z": 45
     },
     "goal": {
-      "x": -17,
+      "x": 2,
       "z": -45,
-      "r": 5.2
+      "r": 4.8
     },
     "maxLaunch": 48,
     "fuel": 3.5,
     "bodies": [
       {
-        "name": "Static",
-        "mass": -1217,
+        "name": "Grudge",
+        "mass": -1789,
         "radius": 4.8,
         "color": 0xff6b35,
-        "x": -15,
-        "z": -10
+        "x": -4,
+        "z": 17
       },
       {
-        "name": "Pusher",
-        "mass": -1568,
+        "name": "Pip",
+        "mass": 1030,
         "radius": 4.8,
-        "color": 0xff6b35,
-        "x": 18,
-        "z": 16
+        "color": 0x8ecae6,
+        "x": -26,
+        "z": -3
       },
       {
         "name": "Mica",
-        "mass": 1511,
-        "radius": 5.2,
-        "color": 0xff8fa3,
-        "x": 4,
-        "z": -33
+        "mass": 1231,
+        "radius": 4.8,
+        "color": 0xffd166,
+        "x": 26,
+        "z": 22
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -3,
+        "z": -4,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 13,
+        "z": -28
       },
       {
-        "name": "Quartz",
-        "mass": 1517,
-        "radius": 5,
-        "color": 0x8ecae6,
+        "radius": 2,
+        "patrol": {
+          "x1": 9,
+          "z1": -15,
+          "x2": 26,
+          "z2": -26,
+          "period": 7.9,
+          "phase": 0.54
+        }
+      }
+    ],
+    "pickups": [
+      {
         "x": 29,
-        "z": -17
+        "z": -8,
+        "fuel": 1.5
       }
     ],
     "name": "Summit",
     "hint": "Orange hills push you away. Ride the passes between push and pull.",
     "difficulty": 3
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": -29,
-      "z": 46
-    },
-    "goal": {
-      "x": 7,
-      "z": -47,
-      "r": 5.2
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Lyra",
-        "mass": 2365,
-        "radius": 6.6,
-        "color": 0x95d5b2,
-        "x": -7,
-        "z": -1
-      },
-      {
-        "name": "Jasper",
-        "mass": 532,
-        "radius": 3.4,
-        "color": 0xe2e2e2,
-        "orbit": {
-          "parent": 0,
-          "radius": 20,
-          "omega": 0.47,
-          "phase": 0.17
-        }
-      },
-      {
-        "name": "Atlas",
-        "mass": 679,
-        "radius": 4,
-        "color": 0xbde0fe,
-        "x": 34,
-        "z": 26
-      }
-    ],
-    "name": "Tick Tock",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": -21,
-      "z": 46
-    },
-    "goal": {
-      "x": -30,
-      "z": -47,
-      "r": 5
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Echo",
-        "mass": 1373,
-        "radius": 4.8,
-        "color": 0x95d5b2,
-        "orbit": {
-          "cx": -10,
-          "cz": -13,
-          "radius": 14,
-          "omega": -0.46,
-          "phase": 1.11
-        }
-      },
-      {
-        "name": "Juno",
-        "mass": 1173,
-        "radius": 5.2,
-        "color": 0x8ecae6,
-        "orbit": {
-          "cx": -10,
-          "cz": -13,
-          "radius": 14,
-          "omega": -0.46,
-          "phase": 4.25
-        }
-      }
-    ],
-    "name": "Orbit Window",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": -9,
-      "z": 46
-    },
-    "goal": {
-      "x": 30,
-      "z": -47,
-      "r": 5.2
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Dune",
-        "mass": 1142,
-        "radius": 5.1,
-        "color": 0xbde0fe,
-        "orbit": {
-          "cx": -6,
-          "cz": -5,
-          "radius": 12.8,
-          "omega": 0.39,
-          "phase": 2.26
-        }
-      },
-      {
-        "name": "Basil",
-        "mass": 1285,
-        "radius": 4.9,
-        "color": 0xc8b6ff,
-        "orbit": {
-          "cx": -6,
-          "cz": -5,
-          "radius": 12.8,
-          "omega": 0.39,
-          "phase": 5.4
-        }
-      }
-    ],
-    "name": "Waltz",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": -19,
-      "z": 46
-    },
-    "goal": {
-      "x": 20,
-      "z": -47,
-      "r": 5.1
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Lumen",
-        "mass": 2152,
-        "radius": 6.8,
-        "color": 0x7ae582,
-        "x": 6,
-        "z": -6
-      },
-      {
-        "name": "Cinder",
-        "mass": 577,
-        "radius": 3,
-        "color": 0xe2e2e2,
-        "orbit": {
-          "parent": 0,
-          "radius": 19.3,
-          "omega": 0.73,
-          "phase": 5.43
-        }
-      },
-      {
-        "name": "Quartz",
-        "mass": 876,
-        "radius": 4.9,
-        "color": 0xff8fa3,
-        "x": 11,
-        "z": 33
-      }
-    ],
-    "name": "Phase Shift",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
   },
   {
     "name": "Moonshot",
@@ -1320,176 +1560,54 @@ export const LEVELS = [
   {
     "extent": 64,
     "ship": {
-      "x": -22,
+      "x": 19,
       "z": 46
     },
     "goal": {
-      "x": 0,
+      "x": -15,
       "z": -47,
-      "r": 4.9
+      "r": 5.1
     },
     "maxLaunch": 48,
     "fuel": 4,
     "bodies": [
       {
-        "name": "Halo",
-        "mass": 2050,
+        "name": "Fern",
+        "mass": 2527,
         "radius": 6.8,
-        "color": 0x7ae582,
-        "x": -10,
-        "z": -1
-      },
-      {
-        "name": "Lumen",
-        "mass": 609,
-        "radius": 3.4,
-        "color": 0xe2e2e2,
-        "orbit": {
-          "parent": 0,
-          "radius": 21.7,
-          "omega": -0.55,
-          "phase": 2.34
-        }
-      }
-    ],
-    "name": "Metronome",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": 12,
-      "z": 46
-    },
-    "goal": {
-      "x": -31,
-      "z": -47,
-      "r": 4.8
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Halo",
-        "mass": 1315,
-        "radius": 5.4,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": -11,
-          "cz": 5,
-          "radius": 14.2,
-          "omega": 0.37,
-          "phase": 4.09
-        }
-      },
-      {
-        "name": "Nimbus",
-        "mass": 1299,
-        "radius": 4.8,
         "color": 0xc8b6ff,
-        "orbit": {
-          "cx": -11,
-          "cz": 5,
-          "radius": 14.2,
-          "omega": 0.37,
-          "phase": 7.23
-        }
-      }
-    ],
-    "name": "Eclipse",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": 5,
-      "z": 46
-    },
-    "goal": {
-      "x": -9,
-      "z": -47,
-      "r": 5
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Pebble",
-        "mass": 1884,
-        "radius": 7,
-        "color": 0xffd166,
-        "x": -11,
-        "z": -8
+        "x": -1,
+        "z": -19
       },
       {
-        "name": "Nimbus",
-        "mass": 411,
-        "radius": 3.2,
+        "name": "Mica",
+        "mass": 435,
+        "radius": 2.5,
         "color": 0xe2e2e2,
         "orbit": {
           "parent": 0,
-          "radius": 19.6,
-          "omega": 0.71,
-          "phase": 5.63
+          "radius": 19.5,
+          "omega": 0.89,
+          "phase": 1.33
         }
       }
     ],
-    "name": "Revolution",
-    "hint": "Everything is moving — even while you aim. Timing is everything.",
-    "difficulty": 4
-  },
-  {
-    "extent": 64,
-    "ship": {
-      "x": 21,
-      "z": 46
-    },
-    "goal": {
-      "x": -16,
-      "z": -47,
-      "r": 4.9
-    },
-    "maxLaunch": 48,
-    "fuel": 4,
-    "bodies": [
+    "waypoints": [
       {
-        "name": "Opal",
-        "mass": 1308,
-        "radius": 5.4,
-        "color": 0x8ecae6,
-        "orbit": {
-          "cx": 9,
-          "cz": -10,
-          "radius": 14.1,
-          "omega": -0.33,
-          "phase": 4.62
-        }
-      },
-      {
-        "name": "Juno",
-        "mass": 1339,
-        "radius": 4.6,
-        "color": 0xffd166,
-        "orbit": {
-          "cx": 9,
-          "cz": -10,
-          "radius": 14.1,
-          "omega": -0.33,
-          "phase": 7.76
-        }
-      },
-      {
-        "name": "Lyra",
-        "mass": 801,
-        "radius": 4.7,
-        "color": 0x8ecae6,
-        "x": -39,
-        "z": 33
+        "x": 20,
+        "z": 14,
+        "r": 4.5,
+        "type": "station"
       }
     ],
-    "name": "Perfect Timing",
+    "pickups": [
+      {
+        "x": 19,
+        "z": 4,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Orbit Window",
     "hint": "Everything is moving — even while you aim. Timing is everything.",
     "difficulty": 4
   },
@@ -1500,7 +1618,125 @@ export const LEVELS = [
       "z": 46
     },
     "goal": {
-      "x": 26,
+      "x": 14,
+      "z": -47,
+      "r": 4.9
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Lumen",
+        "mass": 1384,
+        "radius": 5.3,
+        "color": 0xc8b6ff,
+        "orbit": {
+          "cx": -12,
+          "cz": -12,
+          "radius": 13.7,
+          "omega": 0.33,
+          "phase": 3.78
+        }
+      },
+      {
+        "name": "Nova",
+        "mass": 1377,
+        "radius": 5.4,
+        "color": 0xf4a261,
+        "orbit": {
+          "cx": -12,
+          "cz": -12,
+          "radius": 13.7,
+          "omega": 0.33,
+          "phase": 6.92
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 1,
+        "z": 8,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Waltz",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": -19,
+      "z": 46
+    },
+    "goal": {
+      "x": -29,
+      "z": -47,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Mint",
+        "mass": 1223,
+        "radius": 5.4,
+        "color": 0x90e0ef,
+        "orbit": {
+          "cx": -9,
+          "cz": 0,
+          "radius": 12.7,
+          "omega": -0.34,
+          "phase": 1.41
+        }
+      },
+      {
+        "name": "Rhea",
+        "mass": 1075,
+        "radius": 4.8,
+        "color": 0xc8b6ff,
+        "orbit": {
+          "cx": -9,
+          "cz": 0,
+          "radius": 12.7,
+          "omega": -0.34,
+          "phase": 4.55
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -40,
+        "z": 26,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -6,
+        "z": -28,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "pickups": [
+      {
+        "x": -23,
+        "z": -26,
+        "fuel": 1.5
+      }
+    ],
+    "name": "First Haul",
+    "hint": "Grab the cargo 📦, then haul it to the dropoff 📥. It's heavy — thrusters suffer.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": -7,
+      "z": 46
+    },
+    "goal": {
+      "x": 5,
       "z": -47,
       "r": 4.8
     },
@@ -1509,37 +1745,449 @@ export const LEVELS = [
     "bodies": [
       {
         "name": "Atlas",
-        "mass": 1353,
+        "mass": 1299,
+        "radius": 5,
+        "color": 0x8ecae6,
+        "orbit": {
+          "cx": -2,
+          "cz": 5,
+          "radius": 12,
+          "omega": -0.32,
+          "phase": 4.97
+        }
+      },
+      {
+        "name": "Onyx",
+        "mass": 1343,
+        "radius": 5.3,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": -2,
+          "cz": 5,
+          "radius": 12,
+          "omega": -0.32,
+          "phase": 8.11
+        }
+      },
+      {
+        "name": "Cinder",
+        "mass": 1110,
+        "radius": 3.9,
+        "color": 0xff8fa3,
+        "x": 22,
+        "z": -29
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 16,
+        "z": 26,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -17,
+        "z": -25,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "pickups": [
+      {
+        "x": 12,
+        "z": -25,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Pendulum",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": 18,
+      "z": 46
+    },
+    "goal": {
+      "x": -30,
+      "z": -47,
+      "r": 5
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Ember",
+        "mass": 1235,
+        "radius": 5.2,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": -6,
+          "cz": 5,
+          "radius": 12.3,
+          "omega": 0.34,
+          "phase": 6.07
+        }
+      },
+      {
+        "name": "Zephyr",
+        "mass": 1224,
+        "radius": 5.3,
+        "color": 0xf4a261,
+        "orbit": {
+          "cx": -6,
+          "cz": 5,
+          "radius": 12.3,
+          "omega": 0.34,
+          "phase": 9.21
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 20,
+        "z": 11,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -29,
+        "z": -14,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 35,
+          "z1": -1,
+          "x2": 54,
+          "z2": -9,
+          "period": 4.3,
+          "phase": 0.06
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -27,
+        "z": -25,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Metronome",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": -27,
+      "z": 46
+    },
+    "goal": {
+      "x": 27,
+      "z": -47,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Mica",
+        "mass": 1022,
+        "radius": 4.9,
+        "color": 0xf4a261,
+        "orbit": {
+          "cx": 1,
+          "cz": 4,
+          "radius": 13,
+          "omega": 0.35,
+          "phase": 0.71
+        }
+      },
+      {
+        "name": "Onyx",
+        "mass": 1078,
         "radius": 5.5,
         "color": 0x95d5b2,
         "orbit": {
-          "cx": -9,
-          "cz": 9,
-          "radius": 14.1,
-          "omega": 0.45,
-          "phase": 4.34
+          "cx": 1,
+          "cz": 4,
+          "radius": 13,
+          "omega": 0.35,
+          "phase": 3.85
         }
+      },
+      {
+        "name": "Coral",
+        "mass": 917,
+        "radius": 4,
+        "color": 0xffc8dd,
+        "x": 28,
+        "z": 16
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -29,
+        "z": 14,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 31,
+        "z": -18,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -19,
+          "z1": -16,
+          "x2": -4,
+          "z2": -33,
+          "period": 5.3,
+          "phase": 0.65
+        }
+      }
+    ],
+    "name": "Eclipse",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": 7,
+      "z": 46
+    },
+    "goal": {
+      "x": -17,
+      "z": -47,
+      "r": 5
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Mica",
+        "mass": 1292,
+        "radius": 5.2,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": -2,
+          "cz": -11,
+          "radius": 11.2,
+          "omega": -0.52,
+          "phase": 6.12
+        }
+      },
+      {
+        "name": "Onyx",
+        "mass": 1155,
+        "radius": 5.5,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": -2,
+          "cz": -11,
+          "radius": 11.2,
+          "omega": -0.52,
+          "phase": 9.26
+        }
+      },
+      {
+        "name": "Coral",
+        "mass": 734,
+        "radius": 3.8,
+        "color": 0xffc8dd,
+        "x": -14,
+        "z": 29
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 14,
+        "z": 12,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -32,
+        "z": -25,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 32,
+          "z1": 18,
+          "x2": 35,
+          "z2": 34,
+          "period": 6.1,
+          "phase": 0.87
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 10,
+        "z": 22,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Revolution",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": 10,
+      "z": 46
+    },
+    "goal": {
+      "x": 26,
+      "z": -47,
+      "r": 5.2
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Sage",
+        "mass": 2213,
+        "radius": 7.1,
+        "color": 0xf4a261,
+        "x": -7,
+        "z": -15
       },
       {
         "name": "Dune",
-        "mass": 1236,
-        "radius": 5.4,
-        "color": 0xffd166,
+        "mass": 633,
+        "radius": 3,
+        "color": 0xe2e2e2,
         "orbit": {
-          "cx": -9,
-          "cz": 9,
-          "radius": 14.1,
-          "omega": 0.45,
-          "phase": 7.48
+          "parent": 0,
+          "radius": 19.9,
+          "omega": -0.53,
+          "phase": 0.19
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 28,
+        "z": 6,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 29,
+        "z": -20,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 26,
+          "z1": 22,
+          "x2": 16,
+          "z2": 34,
+          "period": 6.5,
+          "phase": 0.74
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 19,
+        "z": 5,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Perfect Timing",
+    "hint": "Everything is moving — even while you aim. Timing is everything.",
+    "difficulty": 4
+  },
+  {
+    "extent": 64,
+    "ship": {
+      "x": -13,
+      "z": 46
+    },
+    "goal": {
+      "x": 21,
+      "z": -47,
+      "r": 4.9
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Onyx",
+        "mass": 1050,
+        "radius": 4.5,
+        "color": 0x8ecae6,
+        "orbit": {
+          "cx": 11,
+          "cz": 5,
+          "radius": 13.5,
+          "omega": -0.33,
+          "phase": 4.95
         }
       },
       {
-        "name": "Quartz",
-        "mass": 842,
-        "radius": 4.4,
-        "color": 0x95d5b2,
-        "x": -44,
-        "z": -13
+        "name": "Vesta",
+        "mass": 1237,
+        "radius": 5.1,
+        "color": 0xffd166,
+        "orbit": {
+          "cx": 11,
+          "cz": 5,
+          "radius": 13.5,
+          "omega": -0.33,
+          "phase": 8.09
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -20,
+        "z": 20,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 27,
+        "z": -18,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 35,
+          "z1": 6,
+          "x2": 46,
+          "z2": 25,
+          "period": 7.9,
+          "phase": 0.46
+        }
       }
     ],
     "name": "Clockwork",
@@ -1573,430 +2221,6 @@ export const LEVELS = [
         "type": "blackhole"
       }
     ],
-    "difficulty": 5
-  },
-  {
-    "extent": 74,
-    "ship": {
-      "x": 12,
-      "z": 53
-    },
-    "goal": {
-      "x": -35,
-      "z": -54,
-      "r": 4.6
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Helios",
-        "mass": 3364,
-        "radius": 9,
-        "color": 0xffd166,
-        "x": 3,
-        "z": -4
-      },
-      {
-        "name": "Jasper",
-        "mass": 607,
-        "radius": 3.6,
-        "color": 0xffd166,
-        "orbit": {
-          "cx": 3,
-          "cz": -4,
-          "radius": 21,
-          "omega": 0.22,
-          "phase": 6.26
-        }
-      },
-      {
-        "name": "Mint",
-        "mass": 810,
-        "radius": 3.8,
-        "color": 0x7ae582,
-        "orbit": {
-          "cx": 3,
-          "cz": -4,
-          "radius": 38,
-          "omega": 0.37,
-          "phase": 3.05
-        }
-      }
-    ],
-    "name": "Three-Body Problem",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 71,
-    "ship": {
-      "x": 25,
-      "z": 51
-    },
-    "goal": {
-      "x": -20,
-      "z": -52,
-      "r": 4.7
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Tsuki",
-        "mass": 2662,
-        "radius": 9.2,
-        "color": 0xffd166,
-        "x": 7,
-        "z": -3
-      },
-      {
-        "name": "Coral",
-        "mass": 941,
-        "radius": 3.6,
-        "color": 0xf4a261,
-        "orbit": {
-          "cx": 7,
-          "cz": -3,
-          "radius": 21,
-          "omega": -0.42,
-          "phase": 1.72
-        }
-      },
-      {
-        "name": "Juno",
-        "mass": 908,
-        "radius": 4.1,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": 7,
-          "cz": -3,
-          "radius": 38,
-          "omega": 0.32,
-          "phase": 5.03
-        }
-      }
-    ],
-    "name": "Star System",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 68,
-    "ship": {
-      "x": -22,
-      "z": 49
-    },
-    "goal": {
-      "x": 6,
-      "z": -50,
-      "r": 4.5
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Aurum",
-        "mass": 2823,
-        "radius": 8.4,
-        "color": 0xffd166,
-        "x": 0,
-        "z": 1
-      },
-      {
-        "name": "Pebble",
-        "mass": 800,
-        "radius": 4.4,
-        "color": 0xff8fa3,
-        "orbit": {
-          "cx": 0,
-          "cz": 1,
-          "radius": 21,
-          "omega": -0.28,
-          "phase": 5.66
-        }
-      },
-      {
-        "name": "Juno",
-        "mass": 739,
-        "radius": 3.9,
-        "color": 0xf4a261,
-        "orbit": {
-          "cx": 0,
-          "cz": 1,
-          "radius": 38,
-          "omega": 0.16,
-          "phase": 0.64
-        }
-      }
-    ],
-    "name": "Dark Passage",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 67,
-    "ship": {
-      "x": -27,
-      "z": 48
-    },
-    "goal": {
-      "x": 25,
-      "z": -49,
-      "r": 4.6
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Vera",
-        "mass": 3213,
-        "radius": 8.4,
-        "color": 0xff9e6b,
-        "x": 6,
-        "z": 4
-      },
-      {
-        "name": "Lyra",
-        "mass": 614,
-        "radius": 4.1,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": 6,
-          "cz": 4,
-          "radius": 21,
-          "omega": -0.26,
-          "phase": 4.41
-        }
-      },
-      {
-        "name": "Jasper",
-        "mass": 528,
-        "radius": 3.7,
-        "color": 0xbde0fe,
-        "orbit": {
-          "cx": 6,
-          "cz": 4,
-          "radius": 38,
-          "omega": -0.33,
-          "phase": 5.1
-        }
-      }
-    ],
-    "name": "Planetfall",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 68,
-    "ship": {
-      "x": -30,
-      "z": 49
-    },
-    "goal": {
-      "x": 14,
-      "z": -50,
-      "r": 4.8
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Tsuki",
-        "mass": 3374,
-        "radius": 8.3,
-        "color": 0xffd166,
-        "x": 3,
-        "z": 1
-      },
-      {
-        "name": "Cinder",
-        "mass": 781,
-        "radius": 4.6,
-        "color": 0x90e0ef,
-        "orbit": {
-          "cx": 3,
-          "cz": 1,
-          "radius": 21,
-          "omega": -0.34,
-          "phase": 5.17
-        }
-      },
-      {
-        "name": "Rhea",
-        "mass": 791,
-        "radius": 3.8,
-        "color": 0xff8fa3,
-        "orbit": {
-          "cx": 3,
-          "cz": 1,
-          "radius": 38,
-          "omega": 0.22,
-          "phase": 6.14
-        }
-      }
-    ],
-    "name": "The Gauntlet",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -16,
-      "z": 50
-    },
-    "goal": {
-      "x": 20,
-      "z": -51,
-      "r": 4.7
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Vera",
-        "mass": 3068,
-        "radius": 9.4,
-        "color": 0xffb703,
-        "x": 6,
-        "z": 2
-      },
-      {
-        "name": "Zephyr",
-        "mass": 905,
-        "radius": 3.7,
-        "color": 0xbde0fe,
-        "orbit": {
-          "cx": 6,
-          "cz": 2,
-          "radius": 21,
-          "omega": 0.37,
-          "phase": 6.21
-        }
-      },
-      {
-        "name": "Nimbus",
-        "mass": 988,
-        "radius": 4.8,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": 6,
-          "cz": 2,
-          "radius": 38,
-          "omega": 0.38,
-          "phase": 2.11
-        }
-      }
-    ],
-    "name": "Singularity",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": 21,
-      "z": 50
-    },
-    "goal": {
-      "x": 12,
-      "z": -51,
-      "r": 4.8
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Helios",
-        "mass": 3601,
-        "radius": 8.7,
-        "color": 0xffd166,
-        "x": 0,
-        "z": 1
-      },
-      {
-        "name": "Willow",
-        "mass": 976,
-        "radius": 4.5,
-        "color": 0xbde0fe,
-        "orbit": {
-          "cx": 0,
-          "cz": 1,
-          "radius": 21,
-          "omega": 0.35,
-          "phase": 4.21
-        }
-      },
-      {
-        "name": "Dune",
-        "mass": 1046,
-        "radius": 4.3,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": 0,
-          "cz": 1,
-          "radius": 38,
-          "omega": 0.44,
-          "phase": 3.37
-        }
-      }
-    ],
-    "name": "Far Shore",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
-    "difficulty": 5
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": 15,
-      "z": 50
-    },
-    "goal": {
-      "x": -24,
-      "z": -51,
-      "r": 4.6
-    },
-    "maxLaunch": 48,
-    "fuel": 5,
-    "bodies": [
-      {
-        "name": "Aurum",
-        "mass": 3401,
-        "radius": 9.5,
-        "color": 0xff9e6b,
-        "x": -3,
-        "z": -3
-      },
-      {
-        "name": "Quartz",
-        "mass": 508,
-        "radius": 4.1,
-        "color": 0xc8b6ff,
-        "orbit": {
-          "cx": -3,
-          "cz": -3,
-          "radius": 21,
-          "omega": -0.43,
-          "phase": 2.34
-        }
-      },
-      {
-        "name": "Nimbus",
-        "mass": 859,
-        "radius": 4.7,
-        "color": 0x95d5b2,
-        "orbit": {
-          "cx": -3,
-          "cz": -3,
-          "radius": 38,
-          "omega": 0.35,
-          "phase": 4.8
-        }
-      }
-    ],
-    "name": "Last Light",
-    "hint": "Whole solar systems between you and the goal. Chart your course.",
     "difficulty": 5
   },
   {
@@ -2054,6 +2278,598 @@ export const LEVELS = [
         "type": "blackhole"
       }
     ],
+    "difficulty": 5
+  },
+  {
+    "extent": 71,
+    "ship": {
+      "x": -9,
+      "z": 51
+    },
+    "goal": {
+      "x": 27,
+      "z": -52,
+      "r": 4.4
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Helios",
+        "mass": 3076,
+        "radius": 9,
+        "color": 0xff9e6b,
+        "x": -5,
+        "z": -11,
+        "type": "sun"
+      },
+      {
+        "name": "Nimbus",
+        "mass": 739,
+        "radius": 4.9,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": -5,
+          "cz": -11,
+          "radius": 21,
+          "omega": 0.38,
+          "phase": 5.59
+        }
+      },
+      {
+        "name": "Willow",
+        "mass": 708,
+        "radius": 4.2,
+        "color": 0xc8b6ff,
+        "orbit": {
+          "cx": -5,
+          "cz": -11,
+          "radius": 38,
+          "omega": 0.44,
+          "phase": 4.63
+        }
+      },
+      {
+        "name": "Hush",
+        "mass": 3948,
+        "radius": 3,
+        "horizon": 5.8,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": 47,
+        "z": 34
+      }
+    ],
+    "name": "Star System",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 72,
+    "ship": {
+      "x": -20,
+      "z": 52
+    },
+    "goal": {
+      "x": 25,
+      "z": -53,
+      "r": 4.4
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 3576,
+        "radius": 9.1,
+        "color": 0xffd166,
+        "x": -5,
+        "z": -4,
+        "type": "sun"
+      },
+      {
+        "name": "Nova",
+        "mass": 790,
+        "radius": 4.6,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": -5,
+          "cz": -4,
+          "radius": 21,
+          "omega": 0.27,
+          "phase": 5.56
+        }
+      },
+      {
+        "name": "Fern",
+        "mass": 871,
+        "radius": 3.7,
+        "color": 0x8ecae6,
+        "orbit": {
+          "cx": -5,
+          "cz": -4,
+          "radius": 38,
+          "omega": -0.41,
+          "phase": 6.22
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -16,
+        "z": 24,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Dark Passage",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 73,
+    "ship": {
+      "x": -20,
+      "z": 53
+    },
+    "goal": {
+      "x": 19,
+      "z": -53,
+      "r": 4.4
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 3305,
+        "radius": 8.7,
+        "color": 0xff9e6b,
+        "x": -4,
+        "z": -1,
+        "type": "sun"
+      },
+      {
+        "name": "Quartz",
+        "mass": 1013,
+        "radius": 4.2,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": -4,
+          "cz": -1,
+          "radius": 21.6,
+          "omega": -0.37,
+          "phase": 1.35
+        }
+      },
+      {
+        "name": "Basil",
+        "mass": 958,
+        "radius": 4,
+        "color": 0xc8b6ff,
+        "orbit": {
+          "cx": -4,
+          "cz": -1,
+          "radius": 38.6,
+          "omega": -0.4,
+          "phase": 0.73
+        }
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 40,
+          "z1": -21,
+          "x2": 52,
+          "z2": -7,
+          "period": 5.1,
+          "phase": 0.11
+        }
+      }
+    ],
+    "name": "Planetfall",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 72,
+    "ship": {
+      "x": -8,
+      "z": 52
+    },
+    "goal": {
+      "x": -24,
+      "z": -53,
+      "r": 4.6
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Tsuki",
+        "mass": 3753,
+        "radius": 9.3,
+        "color": 0xffb703,
+        "x": 7,
+        "z": -6,
+        "type": "sun"
+      },
+      {
+        "name": "Mint",
+        "mass": 857,
+        "radius": 4.8,
+        "color": 0xff8fa3,
+        "orbit": {
+          "cx": 7,
+          "cz": -6,
+          "radius": 21,
+          "omega": -0.39,
+          "phase": 6.22
+        }
+      },
+      {
+        "name": "Dune",
+        "mass": 998,
+        "radius": 4,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": 7,
+          "cz": -6,
+          "radius": 38,
+          "omega": -0.24,
+          "phase": 4.5
+        }
+      },
+      {
+        "name": "Void",
+        "mass": 4439,
+        "radius": 3,
+        "horizon": 6.1,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": -57,
+        "z": 21
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -34,
+        "z": 36,
+        "r": 3.6,
+        "type": "cargo"
+      },
+      {
+        "x": -43,
+        "z": -20,
+        "r": 3.6,
+        "type": "dropoff"
+      }
+    ],
+    "name": "The Gauntlet",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": 21,
+      "z": 50
+    },
+    "goal": {
+      "x": 7,
+      "z": -51,
+      "r": 4.2
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Tsuki",
+        "mass": 3735,
+        "radius": 8.7,
+        "color": 0xff9e6b,
+        "x": -7,
+        "z": 4,
+        "type": "sun"
+      },
+      {
+        "name": "Basil",
+        "mass": 981,
+        "radius": 4.1,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": -7,
+          "cz": 4,
+          "radius": 21,
+          "omega": -0.33,
+          "phase": 0.9
+        }
+      },
+      {
+        "name": "Quartz",
+        "mass": 615,
+        "radius": 3.6,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": -7,
+          "cz": 4,
+          "radius": 38,
+          "omega": 0.34,
+          "phase": 3.85
+        }
+      },
+      {
+        "name": "Gulp",
+        "mass": 4735,
+        "radius": 3,
+        "horizon": 5.9,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": 51,
+        "z": -32
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 39,
+        "z": 35,
+        "r": 3.6,
+        "type": "cargo"
+      },
+      {
+        "x": 28,
+        "z": -35,
+        "r": 3.6,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 41,
+          "z1": -7,
+          "x2": 48,
+          "z2": 9,
+          "period": 4.7,
+          "phase": 0.89
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 37,
+        "z": 17,
+        "fuel": 1.5
+      }
+    ],
+    "name": "Singularity",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 72,
+    "ship": {
+      "x": 28,
+      "z": 52
+    },
+    "goal": {
+      "x": 24,
+      "z": -53,
+      "r": 4.5
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Aurum",
+        "mass": 2696,
+        "radius": 8.1,
+        "color": 0xffb703,
+        "x": 6,
+        "z": 3,
+        "type": "sun"
+      },
+      {
+        "name": "Echo",
+        "mass": 898,
+        "radius": 4.6,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": 6,
+          "cz": 3,
+          "radius": 21,
+          "omega": -0.2,
+          "phase": 2.61
+        }
+      },
+      {
+        "name": "Halo",
+        "mass": 728,
+        "radius": 4,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": 6,
+          "cz": 3,
+          "radius": 38,
+          "omega": 0.21,
+          "phase": 2.29
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 46,
+        "z": 34,
+        "r": 3.6,
+        "type": "cargo"
+      },
+      {
+        "x": 44,
+        "z": -37,
+        "r": 3.6,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -37,
+          "z1": 28,
+          "x2": -21,
+          "z2": 50,
+          "period": 6.2,
+          "phase": 0.3
+        }
+      }
+    ],
+    "name": "Far Shore",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 68,
+    "ship": {
+      "x": -28,
+      "z": 49
+    },
+    "goal": {
+      "x": -24,
+      "z": -50,
+      "r": 4.2
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Vera",
+        "mass": 2823,
+        "radius": 9.1,
+        "color": 0xffd166,
+        "x": -5,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mint",
+        "mass": 800,
+        "radius": 5,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": -5,
+          "cz": 0,
+          "radius": 21,
+          "omega": -0.43,
+          "phase": 5.12
+        }
+      },
+      {
+        "name": "Quartz",
+        "mass": 1041,
+        "radius": 3.9,
+        "color": 0xff8fa3,
+        "orbit": {
+          "cx": -5,
+          "cz": 0,
+          "radius": 38,
+          "omega": 0.28,
+          "phase": 1.29
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -47,
+        "z": 30,
+        "r": 3.6,
+        "type": "cargo"
+      },
+      {
+        "x": -43,
+        "z": -34,
+        "r": 3.6,
+        "type": "dropoff"
+      }
+    ],
+    "name": "Last Light",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
+    "difficulty": 5
+  },
+  {
+    "extent": 69,
+    "ship": {
+      "x": -14,
+      "z": 50
+    },
+    "goal": {
+      "x": -21,
+      "z": -50,
+      "r": 4.5
+    },
+    "maxLaunch": 48,
+    "fuel": 5,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 3286,
+        "radius": 8.3,
+        "color": 0xff9e6b,
+        "x": 4,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Lyra",
+        "mass": 776,
+        "radius": 4.1,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": 4,
+          "cz": -3,
+          "radius": 21,
+          "omega": 0.42,
+          "phase": 0.03
+        }
+      },
+      {
+        "name": "Jasper",
+        "mass": 713,
+        "radius": 3.9,
+        "color": 0xffd166,
+        "orbit": {
+          "cx": 4,
+          "cz": -3,
+          "radius": 38,
+          "omega": -0.27,
+          "phase": 2.63
+        }
+      }
+    ],
+    "waypoints": [
+      {
+        "x": -30,
+        "z": 34,
+        "r": 3.6,
+        "type": "cargo"
+      },
+      {
+        "x": -39,
+        "z": -32,
+        "r": 3.6,
+        "type": "dropoff"
+      }
+    ],
+    "pickups": [
+      {
+        "x": -21,
+        "z": -19,
+        "fuel": 1.5
+      }
+    ],
+    "name": "GravityLoop",
+    "hint": "Whole solar systems between you and the goal. Chart your course.",
     "difficulty": 5
   }
 ];

@@ -108,6 +108,39 @@ export function winSound() {
   });
 }
 
+export function dockSound() {
+  if (muted) return;
+  const c = ac(), t = c.currentTime;
+  [392, 523.25].forEach((f, i) => {
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    const g = c.createGain();
+    const s = t + i * 0.13;
+    g.gain.setValueAtTime(0.0001, s);
+    g.gain.exponentialRampToValueAtTime(0.2, s + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, s + 0.4);
+    osc.connect(g).connect(c.destination);
+    osc.start(s);
+    osc.stop(s + 0.45);
+  });
+}
+
+export function pickupSound() {
+  if (muted) return;
+  const c = ac(), t = c.currentTime;
+  const osc = c.createOscillator();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(880, t);
+  osc.frequency.exponentialRampToValueAtTime(1320, t + 0.09);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.16, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  osc.connect(g).connect(c.destination);
+  osc.start(t);
+  osc.stop(t + 0.2);
+}
+
 export function clickSound() {
   if (muted) return;
   const c = ac(), t = c.currentTime;

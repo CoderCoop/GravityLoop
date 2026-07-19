@@ -7,9 +7,12 @@ well, repulsors bulge it into hills, and black holes tear it into bottomless
 funnels. Your ship's height on the terrain *is* its potential energy — dive
 into a well and you speed up, climb out and you slow down.
 
-Slingshot-launch your ship (drag back and release, golf style), watch the live
-trajectory prediction bend through the gravity field, and reach the golden
-ring. Fewer launches = more stars.
+Slingshot-launch your ship (drag back and release, golf style — the farther
+you pull, the faster you fly and the more fuel the launch burns), watch the
+live trajectory prediction bend through the gravity field, and reach the
+golden ring. Grab fuel cells, dodge derelict and patrol ships, dock at
+stations to refuel mid-route, and haul heavy cargo that saps your thrusters.
+Fewer launches = more stars.
 
 ## Play
 
@@ -44,17 +47,22 @@ Then open <http://localhost:8000>.
 50 levels in 5 themed sets of 10, each set harder than the last (difficulty
 shown as ★–★★★★★ in the HUD), with more and more bodies in play:
 
-1. **Cadet Orbits** ★ — one or two gentle wells; learn to read the terrain
-2. **Slingshot Academy** ★★ — big blockers you must curve around
-3. **Repulsor Fields** ★★★ — anti-gravity hills, passes between push and pull
-4. **Clockwork Moons** ★★★★ — orbiting moons and waltzing binaries; timing matters
-5. **Deep Space** ★★★★★ — full solar systems: suns, orbiting planets, moons,
-   black holes
+Game elements are introduced set by set:
+
+1. **Cadet Orbits** ★ — gravity wells, then fuel cell pickups
+2. **Slingshot Academy** ★★ — big blockers to curve around; derelict and
+   patrol ships appear in the lanes
+3. **Repulsor Fields** ★★★ — anti-gravity hills; space stations turn levels
+   into multi-leg routes (dock to refuel, then fly the next leg)
+4. **Clockwork Moons** ★★★★ — orbiting moons and waltzing binaries; cargo
+   hauls (pick up 📦, deliver 📥 — carrying cargo halves your thrusters)
+5. **Deep Space** ★★★★★ — full solar systems (suns, orbiting planets, moons,
+   black holes) with stations, cargo runs and patrols combined
 
 Most levels are produced by a seeded generator that samples themed layouts
-and only keeps candidates the brute-force solver confirms are winnable inside
-each set's difficulty band (the 8 original handcrafted levels are folded into
-their matching sets):
+and only keeps candidates whose **every leg** the brute-force solver confirms
+is winnable inside the set's difficulty band (the 8 original handcrafted
+levels are folded into their matching sets):
 
 ```bash
 node tools/generate.js       # regenerate src/levels.js (deterministic)
