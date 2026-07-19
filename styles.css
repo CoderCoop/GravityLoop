@@ -90,16 +90,45 @@ html, body {
 /* ---------------------------------------------------------- level dots */
 #levels-bar {
   position: fixed;
-  bottom: 14px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
   z-index: 10;
 }
+#set-bar, #dot-bar { display: flex; gap: 8px; }
+#set-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(200, 214, 255, 0.75);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+.set-btn {
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  background: rgba(16, 14, 40, 0.72);
+  color: #ffd166;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: transform 0.1s, border-color 0.15s, background 0.15s;
+}
+.set-btn:hover:not(:disabled) { transform: scale(1.08); border-color: #ffd166; }
+.set-btn.current { background: rgba(255, 209, 102, 0.22); border-color: #ffd166; }
+.set-btn.locked { opacity: 0.4; cursor: default; }
+#difficulty { color: #ffd166; }
+
 .level-dot {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 1px solid rgba(120, 140, 255, 0.35);
   background: rgba(16, 14, 40, 0.72);
@@ -117,7 +146,7 @@ html, body {
 /* --------------------------------------------------------------- toast */
 #toast {
   position: fixed;
-  bottom: 72px;
+  bottom: 108px;
   left: 50%;
   transform: translate(-50%, 12px);
   background: rgba(16, 14, 40, 0.85);

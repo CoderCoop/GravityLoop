@@ -41,17 +41,25 @@ Then open <http://localhost:8000>.
 
 ## Levels
 
-Eight levels of gradually increasing difficulty: a straight tutorial shot, a
-first bending well, a forced slingshot, a binary-star saddle, a repulsor
-ridge, an orbiting moon that demands release timing, a black hole skim, and a
-grand finale with everything at once.
+50 levels in 5 themed sets of 10, each set harder than the last (difficulty
+shown as ★–★★★★★ in the HUD), with more and more bodies in play:
 
-Level difficulty is tuned with a headless solver that brute-forces launch
-angle/power/timing through the real physics:
+1. **Cadet Orbits** ★ — one or two gentle wells; learn to read the terrain
+2. **Slingshot Academy** ★★ — big blockers you must curve around
+3. **Repulsor Fields** ★★★ — anti-gravity hills, passes between push and pull
+4. **Clockwork Moons** ★★★★ — orbiting moons and waltzing binaries; timing matters
+5. **Deep Space** ★★★★★ — full solar systems: suns, orbiting planets, moons,
+   black holes
+
+Most levels are produced by a seeded generator that samples themed layouts
+and only keeps candidates the brute-force solver confirms are winnable inside
+each set's difficulty band (the 8 original handcrafted levels are folded into
+their matching sets):
 
 ```bash
-node tools/solve.js        # verify all levels are winnable + difficulty stats
-node tools/solve.js 4      # check a single level (0-indexed)
+node tools/generate.js       # regenerate src/levels.js (deterministic)
+node tools/solve.js --fast   # verify all 50 levels are winnable (CI grid)
+node tools/solve.js 14       # fine-grid stats for a single level (0-indexed)
 ```
 
 ## Tech
