@@ -1153,7 +1153,6 @@ function showMenu() {
     hideOverlay();
     resetLevel();
     state = 'ready';
-    toast(level.hint);
   });
 }
 
@@ -1192,7 +1191,6 @@ function showWin(earned) {
 function nextLevel() {
   hideOverlay();
   loadLevel(Math.min(levelIndex + 1, LEVELS.length - 1));
-  toast(level.hint);
 }
 
 // Minimal debug/test hooks (used by the headless smoke tests).
