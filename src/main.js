@@ -48,8 +48,8 @@ let aim = null;
 let launchVel = { x: 0, z: 0 };
 let pointers = new Map();     // active pointerId -> {x, y}
 let aimPointerId = null;
-let gesture = null;           // { d0, zoom0, anchor } — two-finger pinch/pan
-let camZoom = 1, camPan = { x: 0, z: 0 };
+let gesture = null;           // two-finger pinch/pan/rotate snapshot
+let camZoom = 1, camPan = { x: 0, z: 0 }, camYaw = 0;
 let keys = {};
 let save = loadSave();
 let lastFrame = performance.now();
@@ -92,6 +92,18 @@ function init() {
 
   document.getElementById('btn-retry').addEventListener('click', () => { sfx.clickSound(); if (state !== 'menu') resetLevel(); });
   document.getElementById('btn-mute').addEventListener('click', toggleMute);
+  const expBtn = document.getElementById('btn-exp');
+  expBtn.classList.toggle('on', !!save.experimental);
+  expBtn.addEventListener('click', () => {
+    sfx.clickSound();
+    save.experimental = !save.experimental;
+    storeSave();
+    expBtn.classList.toggle('on', !!save.experimental);
+    buildLevelBar();
+    toast(save.experimental
+      ? '🧪 Experimental mode ON — every level is open to explore!'
+      : '🧪 Experimental mode off — back to normal progression.');
+  });
 
   loadLevel(Math.min(save.unlocked - 1, LEVELS.length - 1));
   showMenu();
@@ -650,7 +662,10 @@ function onWin() {
   const legs = legCount(level);
   const earned = attempts <= legs ? 3 : attempts <= legs + 2 ? 2 : 1;
   save.stars[levelIndex] = Math.max(save.stars[levelIndex] || 0, earned);
-  save.unlocked = Math.max(save.unlocked, Math.min(levelIndex + 2, LEVELS.length));
+  // experimental-mode wins on levels beyond the frontier don't skip progression
+  if (levelIndex < save.unlocked) {
+    save.unlocked = Math.max(save.unlocked, Math.min(levelIndex + 2, LEVELS.length));
+  }
   storeSave();
   buildLevelBar();
   setTimeout(() => showWin(earned), 900);
@@ -723,14 +738,15 @@ function pointerToWorld(e) {
   return screenToWorld(e.clientX, e.clientY, shipY());
 }
 
-// -------------------------------------------------- pinch zoom / pan camera
-function gestureMid() {
+// ------------------------------------- pinch zoom / pan / rotate camera
+function gestureShape() {
   const [p1, p2] = [...pointers.values()];
-  return screenToWorld((p1.x + p2.x) / 2, (p1.y + p2.y) / 2, 0);
-}
-function gestureDist() {
-  const [p1, p2] = [...pointers.values()];
-  return Math.max(Math.hypot(p1.x - p2.x, p1.y - p2.y), 1);
+  return {
+    d: Math.max(Math.hypot(p1.x - p2.x, p1.y - p2.y), 1),
+    a: Math.atan2(p2.y - p1.y, p2.x - p1.x),
+    mx: (p1.x + p2.x) / 2,
+    my: (p1.y + p2.y) / 2,
+  };
 }
 function clampPan() {
   const lim = level.extent * 0.9;
@@ -739,6 +755,7 @@ function clampPan() {
 }
 function resetCamera() {
   camZoom = 1;
+  camYaw = 0;
   camPan = { x: 0, z: 0 };
 }
 function onWheel(e) {
@@ -752,7 +769,8 @@ function onPointerDown(e) {
     // second finger: switch from aiming to camera gesture
     if (state === 'aiming') { aim = null; cancelAim(); }
     aimPointerId = null;
-    gesture = { d0: gestureDist(), zoom0: camZoom, anchor: gestureMid() };
+    const s = gestureShape();
+    gesture = { d0: s.d, a0: s.a, mx0: s.mx, my0: s.my, zoom0: camZoom, yaw0: camYaw, pan0: { ...camPan } };
     return;
   }
   if (pointers.size > 2 || state !== 'ready') return;
@@ -767,14 +785,20 @@ function onPointerDown(e) {
 function onPointerMove(e) {
   if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (gesture && pointers.size === 2) {
-    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / gestureDist()), 0.45), 1.8);
-    const cur = gestureMid();
-    if (gesture.anchor && cur) {
-      // keep the grabbed world point under the fingers
-      camPan.x += gesture.anchor.x - cur.x;
-      camPan.z += gesture.anchor.z - cur.z;
-      clampPan();
-    }
+    const s = gestureShape();
+    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / s.d), 0.45), 1.8);
+    camYaw = gesture.yaw0 + (s.a - gesture.a0);
+    // pan from absolute screen deltas since gesture start — never re-derived
+    // through the (still-lerping) camera, so it cannot feed back and jump
+    const rect = renderer.domElement.getBoundingClientRect();
+    const dist = level.extent * 1.83 * camZoom;
+    const wpp = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / rect.height;
+    const wx = (s.mx - gesture.mx0) * wpp;
+    const wz = (s.my - gesture.my0) * wpp * 1.35;
+    const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
+    camPan.x = gesture.pan0.x - (wx * cos + wz * sin);
+    camPan.z = gesture.pan0.z - (-wx * sin + wz * cos);
+    clampPan();
     return;
   }
   if (state === 'aiming' && e.pointerId === aimPointerId) updateAim(e);
@@ -911,7 +935,10 @@ function thrustVector() {
   if (!tx2 && !tz) return null;
   const accel = THRUST_ACCEL * (carrying ? CARGO_THRUST_FACTOR : 1);
   const inv = accel / Math.hypot(tx2, tz);
-  return { x: tx2 * inv, z: tz * inv };
+  // rotate thrust into the (possibly yawed) camera frame so "up" stays screen-up
+  const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
+  const wx = tx2 * inv, wz = tz * inv;
+  return { x: wx * cos + wz * sin, z: -wx * sin + wz * cos };
 }
 
 function updateThrustSound() {
@@ -1143,10 +1170,13 @@ function updateCamera(dt) {
   const followX = inFlight ? ship.x * 0.25 : ship.x * 0.3;
   const followZ = inFlight ? ship.z * 0.15 : ship.z * 0.18;
   const target = new THREE.Vector3(followX * 0.4 + camPan.x, -4, followZ * 0.4 + camPan.z);
+  // offset from target, rotated about Y by the two-finger twist yaw
+  const ox = followX * 0.6, oz = E * 1.52 * camZoom + followZ * 0.6;
+  const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
   const desired = new THREE.Vector3(
-    followX + camPan.x,
+    target.x + ox * cos + oz * sin,
     E * 1.02 * camZoom,
-    E * 1.52 * camZoom + followZ + camPan.z,
+    target.z + (-ox * sin + oz * cos),
   );
   const k = Math.min(dt * (gesture ? 8 : 2.5), 1);
   camera.position.lerp(desired, k);
@@ -1217,8 +1247,9 @@ function buildLevelBar() {
   setBar.innerHTML = '';
   SETS.forEach((set, s) => {
     const b = document.createElement('button');
-    const unlocked = save.unlocked > s * 10;
-    b.className = 'set-btn' + (s === displaySet ? ' current' : '') + (unlocked ? '' : ' locked');
+    const earned = save.unlocked > s * 10;
+    const unlocked = earned || save.experimental;
+    b.className = 'set-btn' + (s === displaySet ? ' current' : '') + (unlocked ? '' : ' locked') + (unlocked && !earned ? ' exp' : '');
     b.textContent = unlocked ? `${'★'.repeat(set.difficulty)}` : '🔒';
     b.title = unlocked ? `${set.name} (levels ${s * 10 + 1}–${s * 10 + 10})` : 'Locked — finish the previous set';
     b.disabled = !unlocked;
@@ -1237,8 +1268,9 @@ function buildLevelBar() {
   for (let i = displaySet * 10; i < displaySet * 10 + 10; i++) {
     const lv = LEVELS[i];
     const b = document.createElement('button');
-    const unlocked = i < save.unlocked;
-    b.className = 'level-dot' + (i === levelIndex ? ' current' : '') + (unlocked ? '' : ' locked');
+    const earned = i < save.unlocked;
+    const unlocked = earned || save.experimental;
+    b.className = 'level-dot' + (i === levelIndex ? ' current' : '') + (unlocked ? '' : ' locked') + (unlocked && !earned ? ' exp' : '');
     const stars = save.stars[i] || 0;
     b.textContent = unlocked ? String(i + 1) : '🔒';
     b.title = unlocked ? `${lv.name}${stars ? ' ' + '★'.repeat(stars) : ''}` : 'Locked';

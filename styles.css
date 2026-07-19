@@ -56,6 +56,13 @@ html, body {
 .btn:hover { border-color: rgba(120, 200, 255, 0.7); transform: scale(1.08); }
 .btn:active { transform: scale(0.95); }
 
+#btn-exp.on {
+  border-color: #ffd166;
+  background: rgba(255, 209, 102, 0.25);
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.35);
+}
+.level-dot.exp, .set-btn.exp { border-style: dashed; border-color: rgba(255, 209, 102, 0.6); }
+
 #fuel { display: flex; align-items: center; gap: 8px; }
 #fuel-track {
   width: 84px;
