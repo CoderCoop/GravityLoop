@@ -68,7 +68,12 @@ levels are folded into their matching sets):
 node tools/generate.js       # regenerate src/levels.js (deterministic)
 node tools/solve.js --fast   # verify all 50 levels are winnable (CI grid)
 node tools/solve.js 14       # fine-grid stats for a single level (0-indexed)
+npm run test:ui              # HUD-overflow layout test at phone/tablet/desktop
+                             # sizes (needs npm install + a Chromium binary,
+                             # see CHROMIUM_PATH in tools/ui-test.mjs)
 ```
+
+Both checks run in CI on every pull request.
 
 ## Tech
 
