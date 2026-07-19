@@ -85,14 +85,14 @@ export function stepShip(level, ship, t, h, thrust) {
 // Returns { points: [{x,z}...], outcome: 'goal'|'crash'|'oob'|'fly', body? }.
 export function predict(level, x, z, vx, vz, t0, seconds = PREDICT_T) {
   const ship = { x, z, vx, vz };
-  const points = [{ x, z }];
+  const points = [{ x, z, t: 0 }];
   const steps = Math.floor(seconds / STEP);
   for (let i = 1; i <= steps; i++) {
     const positions = stepShip(level, ship, t0 + i * STEP, STEP);
-    if (i % 3 === 0) points.push({ x: ship.x, z: ship.z });
+    if (i % 3 === 0) points.push({ x: ship.x, z: ship.z, t: i * STEP });
     const st = checkState(level, ship.x, ship.z, positions);
     if (st) {
-      points.push({ x: ship.x, z: ship.z });
+      points.push({ x: ship.x, z: ship.z, t: i * STEP });
       return { points, outcome: st.type, body: st.body, time: i * STEP };
     }
   }

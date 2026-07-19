@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: 22
       - name: Brute-force solver over every level
-        run: node tools/solve.js
+        run: node tools/solve.js --fast

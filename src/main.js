@@ -3,7 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, OOB_FACTOR, bodiesAt, heightAt, checkState, stepShip, predict,
 } from './physics.js';
-import { LEVELS } from './levels.js';
+import { LEVELS, SETS } from './levels.js';
 import * as sfx from './audio.js';
 
 // ---------------------------------------------------------------------------
@@ -16,7 +16,7 @@ const THRUST_ACCEL = 16;
 const TRAIL_MAX = 260;
 const PREDICT_MAX = 640;      // max prediction points uploaded to the GPU
 
-const SAVE_KEY = 'gravityloop-save-v1';
+const SAVE_KEY = 'gravityloop-save-v2';
 
 let renderer, scene, camera;
 let terrain;                  // { lines, gridX, gridZ, posAttr, colAttr }
@@ -26,7 +26,8 @@ let predictLine, predictMarker;
 let goalGroup, padGroup;
 let fxList = [];
 
-let level = null, levelIndex = 0;
+let level = null, levelIndex = 0, displaySet = 0;
+let frameCount = 0;
 let state = 'menu';           // menu | ready | aiming | flying | crashed | won
 let simTime = 0;
 let physAcc = 0;
@@ -329,6 +330,7 @@ function buildPredict() {
 function loadLevel(i) {
   levelIndex = i;
   level = LEVELS[i];
+  displaySet = Math.floor(i / 10);
   simTime = 0;
   attempts = 0;
   buildTerrain();
@@ -337,6 +339,9 @@ function loadLevel(i) {
   buildPad();
   resetShip(false);
   document.getElementById('level-label').textContent = `${i + 1} · ${level.name}`;
+  const d = level.difficulty || 1;
+  document.getElementById('difficulty').textContent = '★'.repeat(d) + '☆'.repeat(5 - d);
+  document.getElementById('difficulty').title = `${SETS[displaySet].name} — difficulty ${d}/5`;
   setHint(level.hint);
   buildLevelBar();
 }
@@ -471,11 +476,15 @@ function updatePrediction() {
   const v = Math.hypot(launchVel.x, launchVel.z);
   if (v < MIN_LAUNCH) { predictLine.visible = false; predictMarker.visible = false; return; }
   const r = predict(level, ship.x, ship.z, launchVel.x, launchVel.z, simTime, PREDICT_T);
-  const positions = bodiesAt(level, simTime);
+  const dynamic = level.bodies.some(b => b.orbit);
+  const nowPositions = bodiesAt(level, simTime);
   const attr = predictLine.geometry.getAttribute('position');
   const n = Math.min(r.points.length, PREDICT_MAX);
   for (let i = 0; i < n; i++) {
     const pt = r.points[i];
+    // sample terrain against where the bodies WILL be when the ship gets there,
+    // so the line doesn't dip into wells that have moved on
+    const positions = dynamic ? bodiesAt(level, simTime + pt.t) : nowPositions;
     attr.array[i * 3] = pt.x;
     attr.array[i * 3 + 1] = heightAt(level, pt.x, pt.z, positions) + 1.3;
     attr.array[i * 3 + 2] = pt.z;
@@ -487,6 +496,7 @@ function updatePrediction() {
   predictLine.visible = true;
   if (r.outcome === 'goal' || r.outcome === 'crash') {
     const last = r.points[r.points.length - 1];
+    const positions = dynamic ? bodiesAt(level, simTime + last.t) : nowPositions;
     predictMarker.position.set(last.x, heightAt(level, last.x, last.z, positions) + 1.5, last.z);
     predictMarker.material.color.setHex(color);
     predictMarker.visible = true;
@@ -607,8 +617,11 @@ function frame(now) {
     }
   }
 
+  frameCount++;
   const positions = bodiesAt(level, simTime);
-  if (dynamic) updateTerrain(positions);
+  // big solar systems refresh the grid every other frame — imperceptible,
+  // halves the heaviest per-frame cost
+  if (dynamic && (level.bodies.length <= 4 || frameCount % 2 === 0)) updateTerrain(positions);
 
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
@@ -678,8 +691,11 @@ function goalY(positions) {
 
 function updateCamera(dt) {
   const E = level.extent;
-  const followX = state === 'flying' ? ship.x * 0.25 : 0;
-  const followZ = state === 'flying' ? ship.z * 0.15 : 0;
+  // in flight, drift after the ship; otherwise frame the launch pad so the
+  // ship is always on screen when you start aiming
+  const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
+  const followX = inFlight ? ship.x * 0.25 : level.ship.x * 0.3;
+  const followZ = inFlight ? ship.z * 0.15 : level.ship.z * 0.18;
   const target = new THREE.Vector3(followX * 0.4, -4, followZ * 0.4);
   const desired = new THREE.Vector3(followX, E * 1.02, E * 1.52 + followZ);
   const k = Math.min(dt * 2.5, 1);
@@ -722,9 +738,30 @@ function toast(msg) {
 }
 
 function buildLevelBar() {
-  const bar = document.getElementById('levels-bar');
+  const setBar = document.getElementById('set-bar');
+  setBar.innerHTML = '';
+  SETS.forEach((set, s) => {
+    const b = document.createElement('button');
+    const unlocked = save.unlocked > s * 10;
+    b.className = 'set-btn' + (s === displaySet ? ' current' : '') + (unlocked ? '' : ' locked');
+    b.textContent = unlocked ? `${'★'.repeat(set.difficulty)}` : '🔒';
+    b.title = unlocked ? `${set.name} (levels ${s * 10 + 1}–${s * 10 + 10})` : 'Locked — finish the previous set';
+    b.disabled = !unlocked;
+    b.addEventListener('click', () => {
+      sfx.clickSound();
+      displaySet = s;
+      buildLevelBar();
+    });
+    setBar.appendChild(b);
+  });
+
+  const setInfo = document.getElementById('set-name');
+  setInfo.textContent = SETS[displaySet].name;
+
+  const bar = document.getElementById('dot-bar');
   bar.innerHTML = '';
-  LEVELS.forEach((lv, i) => {
+  for (let i = displaySet * 10; i < displaySet * 10 + 10; i++) {
+    const lv = LEVELS[i];
     const b = document.createElement('button');
     const unlocked = i < save.unlocked;
     b.className = 'level-dot' + (i === levelIndex ? ' current' : '') + (unlocked ? '' : ' locked');
@@ -738,7 +775,7 @@ function buildLevelBar() {
       loadLevel(i);
     });
     bar.appendChild(b);
-  });
+  }
 }
 
 function overlayEl() { return document.getElementById('overlay'); }
@@ -759,7 +796,8 @@ function showMenu() {
         <b>Drag back</b> from your ship and release to launch.<br>
         The terrain <i>is</i> gravity — dive into wells to speed up, ride ridges to save fuel.<br>
         <b>WASD / arrows</b> give tiny mid-flight nudges (limited fuel ⛽).<br>
-        <b>R</b> restart · <b>M</b> mute · fewer attempts = more stars ⭐
+        <b>R</b> restart · <b>M</b> mute · fewer attempts = more stars ⭐<br>
+        50 levels across 5 sets, from <b>Cadet Orbits</b> ★ to <b>Deep Space</b> ★★★★★
       </p>
       <button id="btn-play" class="big">▶ Play</button>
     </div>`);
@@ -774,15 +812,20 @@ function showMenu() {
 
 function showWin(earned) {
   const last = levelIndex === LEVELS.length - 1;
+  const setDone = (levelIndex + 1) % 10 === 0 && !last;
   const starStr = '★'.repeat(earned) + '☆'.repeat(3 - earned);
   const msg = attempts <= 1 ? 'Hole in one! 🏌️' : attempts <= 3 ? 'Smooth flying!' : 'Made it!';
+  const setIdx = Math.floor(levelIndex / 10);
   showOverlay(`
     <div class="panel">
       <h2>${msg}</h2>
       <div class="stars">${starStr}</div>
       <p class="tagline">${level.name} cleared in ${attempts} launch${attempts === 1 ? '' : 'es'}</p>
+      ${setDone
+        ? `<p class="howto">🎓 <b>${SETS[setIdx].name} complete!</b><br>Next up: <b>${SETS[setIdx + 1].name}</b> ${'★'.repeat(SETS[setIdx + 1].difficulty)} — things get trickier from here.</p>`
+        : ''}
       ${last
-        ? '<p class="howto">🏆 That was the Grand Tour — you\'ve mastered the gravity wells!<br>Replay any level from the bar below to hunt three stars.</p>'
+        ? '<p class="howto">🏆 All 50 levels cleared — you\'ve mastered the gravity wells!<br>Replay any level from the bar below to hunt three stars.</p>'
         : ''}
       <div class="btn-row">
         <button id="btn-replay">↻ Replay</button>
