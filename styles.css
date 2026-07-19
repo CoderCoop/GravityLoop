@@ -8,6 +8,8 @@ html, body {
   color: #e8ecf8;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 #game, #game canvas {
