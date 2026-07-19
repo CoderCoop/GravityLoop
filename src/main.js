@@ -45,6 +45,10 @@ let pickupsDone = new Set(), pickupsTemp = new Set();
 let dockAnim = null;          // { fromX, fromZ, toX, toZ, t, index }
 let aim = null;
 let launchVel = { x: 0, z: 0 };
+let pointers = new Map();     // active pointerId -> {x, y}
+let aimPointerId = null;
+let gesture = null;           // { d0, zoom0, anchor } — two-finger pinch/pan
+let camZoom = 1, camPan = { x: 0, z: 0 };
 let keys = {};
 let save = loadSave();
 let lastFrame = performance.now();
@@ -73,6 +77,8 @@ function init() {
   el.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+  el.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', e => { keys[e.code] = false; updateThrustSound(); });
 
@@ -512,6 +518,7 @@ function loadLevel(i) {
   attempts = 0;
   stage = 0;
   pickupsDone = new Set();
+  resetCamera();
   buildTerrain();
   buildBodies();
   buildHazards();
@@ -566,6 +573,7 @@ function resetLevel() {
   if (state === 'menu') return;
   stage = 0;
   pickupsDone = new Set();
+  resetCamera();
   resetLeg();
 }
 
@@ -654,29 +662,80 @@ function crashMessage(st) {
 const _ray = new THREE.Raycaster();
 const _plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const _hit = new THREE.Vector3();
-function pointerToWorld(e) {
+function screenToWorld(clientX, clientY, planeY) {
   const r = renderer.domElement.getBoundingClientRect();
-  const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
-  const ny = -((e.clientY - r.top) / r.height) * 2 + 1;
+  const nx = ((clientX - r.left) / r.width) * 2 - 1;
+  const ny = -((clientY - r.top) / r.height) * 2 + 1;
   _ray.setFromCamera({ x: nx, y: ny }, camera);
-  _plane.constant = -shipY();
+  _plane.constant = -planeY;
   return _ray.ray.intersectPlane(_plane, _hit) ? { x: _hit.x, z: _hit.z } : null;
+}
+function pointerToWorld(e) {
+  return screenToWorld(e.clientX, e.clientY, shipY());
+}
+
+// -------------------------------------------------- pinch zoom / pan camera
+function gestureMid() {
+  const [p1, p2] = [...pointers.values()];
+  return screenToWorld((p1.x + p2.x) / 2, (p1.y + p2.y) / 2, 0);
+}
+function gestureDist() {
+  const [p1, p2] = [...pointers.values()];
+  return Math.max(Math.hypot(p1.x - p2.x, p1.y - p2.y), 1);
+}
+function clampPan() {
+  const lim = level.extent * 0.9;
+  camPan.x = Math.min(Math.max(camPan.x, -lim), lim);
+  camPan.z = Math.min(Math.max(camPan.z, -lim), lim);
+}
+function resetCamera() {
+  camZoom = 1;
+  camPan = { x: 0, z: 0 };
+}
+function onWheel(e) {
+  e.preventDefault();
+  camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.45), 1.8);
 }
 
 function onPointerDown(e) {
-  if (state !== 'ready') return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    // second finger: switch from aiming to camera gesture
+    if (state === 'aiming') { aim = null; cancelAim(); }
+    aimPointerId = null;
+    gesture = { d0: gestureDist(), zoom0: camZoom, anchor: gestureMid() };
+    return;
+  }
+  if (pointers.size > 2 || state !== 'ready') return;
   const p = pointerToWorld(e);
   if (!p) return;
   aim = { sx: p.x, sz: p.z };
+  aimPointerId = e.pointerId;
   state = 'aiming';
   updateAim(e);
 }
 
 function onPointerMove(e) {
-  if (state === 'aiming') updateAim(e);
+  if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (gesture && pointers.size === 2) {
+    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / gestureDist()), 0.45), 1.8);
+    const cur = gestureMid();
+    if (gesture.anchor && cur) {
+      // keep the grabbed world point under the fingers
+      camPan.x += gesture.anchor.x - cur.x;
+      camPan.z += gesture.anchor.z - cur.z;
+      clampPan();
+    }
+    return;
+  }
+  if (state === 'aiming' && e.pointerId === aimPointerId) updateAim(e);
 }
 
 function onPointerUp(e) {
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) gesture = null;
+  if (e.pointerId !== aimPointerId) return;
+  aimPointerId = null;
   if (state !== 'aiming') return;
   updateAim(e);
   const v = Math.hypot(launchVel.x, launchVel.z);
@@ -1019,9 +1078,13 @@ function updateCamera(dt) {
   const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
   const followX = inFlight ? ship.x * 0.25 : ship.x * 0.3;
   const followZ = inFlight ? ship.z * 0.15 : ship.z * 0.18;
-  const target = new THREE.Vector3(followX * 0.4, -4, followZ * 0.4);
-  const desired = new THREE.Vector3(followX, E * 1.02, E * 1.52 + followZ);
-  const k = Math.min(dt * 2.5, 1);
+  const target = new THREE.Vector3(followX * 0.4 + camPan.x, -4, followZ * 0.4 + camPan.z);
+  const desired = new THREE.Vector3(
+    followX + camPan.x,
+    E * 1.02 * camZoom,
+    E * 1.52 * camZoom + followZ + camPan.z,
+  );
+  const k = Math.min(dt * (gesture ? 8 : 2.5), 1);
   camera.position.lerp(desired, k);
   camera.lookAt(target);
 }
@@ -1144,6 +1207,7 @@ function showMenu() {
         The terrain <i>is</i> gravity — dive into wells to speed up, ride ridges to coast.<br>
         <b>WASD / arrows</b> nudge mid-flight. Grab fuel cells, dodge patrol ships,<br>
         dock at stations 🛰 and haul cargo 📦 across the void.<br>
+        <b>Pinch</b> or <b>scroll</b> to zoom, two-finger drag to pan.<br>
         <b>R</b> restart · <b>M</b> mute · fewer launches = more stars ⭐
       </p>
       <button id="btn-play" class="big">▶ Play</button>
