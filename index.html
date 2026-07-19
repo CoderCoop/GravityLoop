@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GravityLoop — spaceship golf on the curves of spacetime</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+</head>
+<body>
+  <div id="game"></div>
+
+  <div id="hud">
+    <div id="hud-left">
+      <span id="level-label" class="pill">1 · Liftoff</span>
+      <span id="attempts" class="pill">🚀 0</span>
+    </div>
+    <div id="hud-center">
+      <div id="power" class="pill" hidden></div>
+    </div>
+    <div id="hud-right">
+      <div id="fuel" class="pill" title="Thruster fuel (WASD / arrows in flight)">
+        <span>⛽</span>
+        <div id="fuel-track"><div id="fuel-fill"></div></div>
+      </div>
+      <button id="btn-retry" class="pill btn" title="Restart (R)">↻</button>
+      <button id="btn-mute" class="pill btn" title="Mute (M)">🔊</button>
+    </div>
+  </div>
+
+  <div id="hint"></div>
+  <div id="levels-bar"></div>
+  <div id="toast"></div>
+  <div id="overlay"></div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
