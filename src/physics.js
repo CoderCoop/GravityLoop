@@ -5,7 +5,7 @@
 export const G = 1;
 export const SHIP_R = 1.2;          // ship collision radius
 export const STEP = 1 / 120;        // fixed physics timestep (s)
-export const PREDICT_T = 16;        // seconds of trajectory prediction
+export const PREDICT_T = 30;        // seconds of trajectory prediction
 export const HEIGHT_K = 0.09;       // potential -> terrain height scale
 export const DEPTH_MAX = 26;        // terrain depth clamp
 export const OOB_FACTOR = 1.35;     // out-of-bounds beyond extent * factor

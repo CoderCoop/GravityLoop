@@ -17,7 +17,7 @@ const MIN_LAUNCH = 6;
 const THRUST_ACCEL = 16;
 const CARGO_THRUST_FACTOR = 0.55;
 const TRAIL_MAX = 260;
-const PREDICT_MAX = 800;      // max prediction points uploaded to the GPU
+const PREDICT_MAX = 1400;     // max prediction points uploaded to the GPU
 const PICKUP_R = 3.5;
 
 const SAVE_KEY = 'gravityloop-save-v2';
@@ -30,6 +30,7 @@ let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
 let shipGroup, engineSprite, cargoBox, trailLine, trailPts = [];
 let predictLine, predictMarker, aimArrow;
+let aimAnchor, aimHandle, aimBand;
 let goalGroup, padGroup;
 let fxList = [];
 
@@ -79,6 +80,13 @@ function init() {
   window.addEventListener('pointerup', onPointerUp);
   window.addEventListener('pointercancel', onPointerUp);
   el.addEventListener('wheel', onWheel, { passive: false });
+  // keep the browser's own pinch/double-tap zoom out of the game — it scales
+  // the page mid-gesture and makes the grid render doubled/smeared
+  for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
+    document.addEventListener(t, e => e.preventDefault());
+  }
+  el.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+  el.addEventListener('dblclick', e => e.preventDefault());
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', e => { keys[e.code] = false; updateThrustSound(); });
 
@@ -505,6 +513,51 @@ function buildPredict() {
   aimArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(), 6, 0x7cff6b, 2.4, 1.6);
   aimArrow.visible = false;
   scene.add(aimArrow);
+
+  // slingshot touch indicators: ring where the drag started, a handle dot
+  // under the finger, and a dashed rubber band between them
+  aimAnchor = new THREE.Mesh(
+    new THREE.TorusGeometry(1.7, 0.2, 8, 28),
+    new THREE.MeshBasicMaterial({ color: 0x9bd5ff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }),
+  );
+  aimAnchor.rotation.x = Math.PI / 2;
+  aimAnchor.visible = false;
+  scene.add(aimAnchor);
+
+  aimHandle = new THREE.Group();
+  const handleRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1.2, 0.22, 8, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }),
+  );
+  handleRing.rotation.x = Math.PI / 2;
+  handleRing.name = 'hring';
+  const handleDot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 10, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 }),
+  );
+  handleDot.name = 'hdot';
+  aimHandle.add(handleRing, handleDot);
+  aimHandle.visible = false;
+  scene.add(aimHandle);
+
+  const bandGeo = new THREE.BufferGeometry();
+  bandGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  aimBand = new THREE.Line(bandGeo, new THREE.LineDashedMaterial({
+    color: 0x9bd5ff, dashSize: 1.4, gapSize: 0.9, transparent: true, opacity: 0.75,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  aimBand.frustumCulled = false;
+  aimBand.visible = false;
+  scene.add(aimBand);
+}
+
+function hideAimUI() {
+  predictLine.visible = false;
+  predictMarker.visible = false;
+  aimArrow.visible = false;
+  aimAnchor.visible = false;
+  aimHandle.visible = false;
+  aimBand.visible = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -555,9 +608,7 @@ function resetLeg() {
   pickupsTemp = new Set();
   trailPts = [];
   trailLine.geometry.setDrawRange(0, 0);
-  predictLine.visible = false;
-  predictMarker.visible = false;
-  aimArrow.visible = false;
+  hideAimUI();
   aim = null;
   dockAnim = null;
   shipGroup.visible = true;
@@ -587,9 +638,7 @@ function launch(vx, vz) {
   updateFuelBar();
   physAcc = 0;
   sfx.launchSound(speed / level.maxLaunch);
-  predictLine.visible = false;
-  predictMarker.visible = false;
-  aimArrow.visible = false;
+  hideAimUI();
   hidePower();
 }
 
@@ -749,9 +798,7 @@ function onPointerUp(e) {
 
 function cancelAim() {
   state = 'ready';
-  predictLine.visible = false;
-  predictMarker.visible = false;
-  aimArrow.visible = false;
+  hideAimUI();
   hidePower();
   updateFuelBar();
 }
@@ -772,7 +819,24 @@ function updateAim(e) {
   const power = speed / level.maxLaunch;
   showPower(power, launchFuelCost(speed, level.maxLaunch));
   updateAimArrow(power);
+  updateAimTouchUI(p, power);
   updatePrediction();
+}
+
+function updateAimTouchUI(p, power) {
+  const y = shipY() + 0.5;
+  const col = power < 0.5 ? lerpColor(0x7cff6b, 0xffd166, power * 2) : lerpColor(0xffd166, 0xff5d5d, (power - 0.5) * 2);
+  aimAnchor.position.set(aim.sx, y, aim.sz);
+  aimAnchor.visible = true;
+  aimHandle.position.set(p.x, y, p.z);
+  aimHandle.getObjectByName('hring').material.color.setHex(col);
+  aimHandle.visible = true;
+  const attr = aimBand.geometry.getAttribute('position');
+  attr.array.set([aim.sx, y, aim.sz, p.x, y, p.z]);
+  attr.needsUpdate = true;
+  aimBand.computeLineDistances();
+  aimBand.material.color.setHex(col);
+  aimBand.visible = true;
 }
 
 const _dir = new THREE.Vector3();
@@ -1092,6 +1156,7 @@ function updateCamera(dt) {
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
