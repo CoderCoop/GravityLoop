@@ -13,8 +13,12 @@ ring. Fewer launches = more stars.
 
 ## Play
 
-The game is a static page but uses ES modules, so it needs any local web
-server:
+**Online:** once this repo's Pages deployment is live, play at
+<https://codercoop.github.io/GravityLoop/> (deployed automatically from
+`main` by `.github/workflows/pages.yml`).
+
+**Locally:** the game is a static page but uses ES modules, so it needs any
+local web server:
 
 ```bash
 cd GravityLoop
