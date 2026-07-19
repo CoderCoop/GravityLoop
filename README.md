@@ -8,11 +8,16 @@ funnels. Your ship's height on the terrain *is* its potential energy — dive
 into a well and you speed up, climb out and you slow down.
 
 Slingshot-launch your ship (drag back and release, golf style — the farther
-you pull, the faster you fly and the more fuel the launch burns), watch the
-live trajectory prediction bend through the gravity field, and reach the
-golden ring. Grab fuel cells, dodge derelict and patrol ships, dock at
-stations to refuel mid-route, and haul heavy cargo that saps your thrusters.
+you pull, the faster you fly and the more fuel the launch burns, up to your
+engine's power limit ⚙), watch the live trajectory prediction bend through
+the gravity field, and reach the golden ring. Grab fuel cells placed along
+the good routes, dodge derelict and patrol ships, dock at stations to refuel
+mid-route, and haul heavy cargo that saps your thrusters. On advanced levels
+the engine alone won't get you there — launch when a moving planet can sling
+you forward (a real gravity assist steals the body's orbital momentum).
 Fewer launches = more stars.
+
+Tap the level name (top left) to open the level select.
 
 ## Play
 

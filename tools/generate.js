@@ -43,33 +43,69 @@ function isDynamic(level) {
 }
 
 function solveLeg(level, stage) {
-  const times = isDynamic(level) ? Array.from({ length: 11 }, (_, i) => i * 0.9) : [0];
+  const dynamic = isDynamic(level);
+  const times = dynamic ? Array.from({ length: 11 }, (_, i) => i * 0.9) : [0];
   const start = legStart(level, stage);
   let wins = 0, total = 0;
-  for (const t0 of times) {
+  const byT0 = dynamic ? new Array(times.length).fill(0) : null;
+  const winners = [];
+  for (let ti = 0; ti < times.length; ti++) {
+    const t0 = times[ti];
     for (let ang = 0; ang < 360; ang += 3) {
       const rad = (ang * Math.PI) / 180;
       for (let sp = 10; sp <= level.maxLaunch; sp += 4) {
         total++;
         const r = predict(level, start.x, start.z,
-          Math.cos(rad) * sp, Math.sin(rad) * sp, t0, 12, stage);
-        if (r.outcome === 'goal' || r.outcome === 'waypoint') wins++;
+          Math.cos(rad) * sp, Math.sin(rad) * sp, t0, 10, stage);
+        if (r.outcome === 'goal' || r.outcome === 'waypoint') {
+          wins++;
+          if (byT0) byT0[ti]++;
+          if (winners.length < 40) winners.push({ ang, sp, t0 });
+        }
       }
     }
   }
-  return { wins, rate: (wins / total) * 100 };
+  return { wins, rate: (wins / total) * 100, byT0, winners };
 }
 
-// min rate across legs; every leg must clear MIN_WINS
-function solveLevel(level) {
+// Gravity-assist timing sensitivity: how much of the leg's wins concentrate
+// in the best 4 of 11 launch-time buckets (0.36 = timing-insensitive).
+function concentration(byT0) {
+  const total = byT0.reduce((a, b) => a + b, 0);
+  if (!total) return 0;
+  const sorted = [...byT0].sort((a, b) => b - a);
+  return (sorted[0] + sorted[1] + sorted[2] + sorted[3]) / total;
+}
+
+// Per-leg verdict for a candidate: every leg in band, legs of comparable
+// difficulty, and (when required) timing-window sensitivity on the first
+// launch. Aborts early once a candidate cannot beat the best found so far.
+function evaluate(set, needsTiming, level, bestDist = Infinity) {
   const legs = legCount(level);
-  let minRate = Infinity, minWins = Infinity;
+  // per-leg hops are intrinsically shorter/easier, so multi-leg levels get a
+  // wider per-leg ceiling; balance and timing terms below keep them honest
+  const low = set.band[0], high = set.band[1] * (legs > 1 ? 2.2 : 1);
+  const rates = [], winners = [];
+  let dist = 0, minWins = Infinity, conc = 0;
   for (let s = 0; s < legs; s++) {
     const r = solveLeg(level, s);
-    minRate = Math.min(minRate, r.rate);
     minWins = Math.min(minWins, r.wins);
+    if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
+    rates.push(r.rate);
+    winners.push(r.winners);
+    if (r.rate < low) dist += low - r.rate;
+    else if (r.rate > high) dist += r.rate - high;
+    if (s === 0 && needsTiming) {
+      conc = r.byT0 ? concentration(r.byT0) : 0;
+      if (conc < 0.5) dist += (0.5 - conc) * 6;      // demand launch windows
+    }
+    if (dist >= bestDist) return { minWins, rates, dist, conc, legs, winners };
   }
-  return { rate: minRate, wins: minWins, legs };
+  if (legs > 1) {
+    const ratio = Math.max(...rates) / Math.max(Math.min(...rates), 1e-9);
+    if (ratio > 2.5) dist += ratio - 2.5;            // legs must be comparable
+  }
+  return { minWins, rates, dist, conc, legs, winners };
 }
 
 // ---------------------------------------------------------------------------
@@ -142,7 +178,7 @@ function levelGeometryOk(level, padClear, goalClear) {
     }
   }
   // waypoints: apart from each other and from pad/goal
-  const sep = level.extent >= 66 ? 22 : 26;
+  const sep = level.extent >= 66 ? 20 : 26;
   const kps = keyPoints(level);
   for (let i = 0; i < kps.length; i++) {
     for (let j = i + 1; j < kps.length; j++) {
@@ -210,14 +246,21 @@ function pickupOk(level, x, z) {
 // ---------------------------------------------------------------------------
 // Mechanic add-ons
 // ---------------------------------------------------------------------------
-// Pickups scattered near the route from pad toward the goal.
-function addPickups(rng, level, n) {
-  level.pickups = level.pickups || [];
-  for (let i = 0; i < n; i++) {
-    for (let tries = 0; tries < 30; tries++) {
-      const t = rand(rng, 0.25, 0.75);
-      const x = Math.round(level.ship.x + (level.goal.x - level.ship.x) * t + rand(rng, -0.3, 0.3) * level.extent);
-      const z = Math.round(level.ship.z + (level.goal.z - level.ship.z) * t + rand(rng, -0.18, 0.18) * level.extent);
+// Fuel cells placed just off solver-found winning trajectories, so grabbing
+// one is a deliberate small detour a player can plan for.
+function placePickupsOnPaths(rng, level, winnersByLeg, count) {
+  level.pickups = [];
+  const legsWithWins = winnersByLeg.map((w, i) => (w.length ? i : -1)).filter(i => i >= 0);
+  for (let i = 0; i < count; i++) {
+    for (let tries = 0; tries < 25; tries++) {
+      const leg = legsWithWins[(i + tries) % legsWithWins.length];
+      const w = pick(rng, winnersByLeg[leg]);
+      const start = legStart(level, leg);
+      const rad = (w.ang * Math.PI) / 180;
+      const r = predict(level, start.x, start.z, Math.cos(rad) * w.sp, Math.sin(rad) * w.sp, w.t0, 12, leg);
+      const pt = r.points[Math.floor(r.points.length * rand(rng, 0.35, 0.68))];
+      const x = Math.round(pt.x + rand(rng, -4, 4));
+      const z = Math.round(pt.z + rand(rng, -4, 4));
       if (pickupOk(level, x, z)) {
         level.pickups.push({ x, z, fuel: 1.5 });
         break;
@@ -225,6 +268,18 @@ function addPickups(rng, level, n) {
     }
   }
   if (!level.pickups.length) delete level.pickups;
+}
+
+// Static planet with an orbiting moon (moons orbit planets, planets orbit
+// stars — this is the planet-moon tier).
+function addMoonTo(rng, lv, name, parentIdx) {
+  const parent = lv.bodies[parentIdx];
+  const orbR = +rand(rng, parent.radius + 7, parent.radius + 13).toFixed(1);
+  lv.bodies.push({
+    name: name(BODY_NAMES), mass: Math.round(rand(rng, 250, 500)),
+    radius: +rand(rng, 2, 3).toFixed(1), color: 0xe2e2e2,
+    orbit: { parent: parentIdx, radius: orbR, omega: +(sign(rng) * rand(rng, 0.5, 1)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+  });
 }
 
 function addDerelict(rng, level) {
@@ -281,7 +336,7 @@ function addWaypoints(rng, level, specs) {
   const wps = [];
   for (const spec of specs) {
     let placed = false;
-    for (let tries = 0; tries < 40 && !placed; tries++) {
+    for (let tries = 0; tries < 80 && !placed; tries++) {
       const t = spec.t + rand(rng, -0.08, 0.08);
       const x = Math.round(level.ship.x + (level.goal.x - level.ship.x) * t + rand(rng, -0.32, 0.32) * level.extent);
       const z = Math.round(level.ship.z + (level.goal.z - level.ship.z) * t + rand(rng, -0.14, 0.14) * level.extent);
@@ -341,18 +396,16 @@ function addPlanet(rng, lv, name, massLo, massHi, rLo, rHi) {
 
 function sampleSet1(rng, slot) {
   const E = 58;
-  const lv = { extent: E, ...padAndGoal(rng, E, 6.3 - slot * 0.13), maxLaunch: 50, fuel: 3, bodies: [] };
+  const lv = { extent: E, ...padAndGoal(rng, E, 6.3 - slot * 0.13), maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
   const name = namer(rng);
-  const n = 1 + (slot >= 3 ? 1 : 0) + (slot >= 7 && rng() < 0.6 ? 1 : 0);
+  const n = 2 + (slot >= 5 && rng() < 0.6 ? 1 : 0);
   for (let i = 0; i < n; i++) addPlanet(rng, lv, name(BODY_NAMES), 400, 1350, 3, 5);
-  if (!levelGeometryOk(lv, 17, 15)) return null;
-  if (slot >= 3) addPickups(rng, lv, 1 + (rng() < 0.4 ? 1 : 0));
-  return lv;
+  return levelGeometryOk(lv, 17, 15) ? lv : null;
 }
 
 function sampleSet2(rng, slot) {
   const E = 60;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.9, 5.5)), maxLaunch: 48, fuel: 3, bodies: [] };
+  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.9, 5.5)), maxLaunch: Math.round(rand(rng, 46, 50)), fuel: 3, bodies: [] };
   const name = namer(rng);
   const mx = (lv.ship.x + lv.goal.x) / 2, mz = (lv.ship.z + lv.goal.z) / 2;
   lv.bodies.push({
@@ -360,18 +413,18 @@ function sampleSet2(rng, slot) {
     radius: +rand(rng, 6, 7.5).toFixed(1), color: pick(rng, PLANET_COLORS),
     x: Math.round(mx + rand(rng, -10, 10)), z: Math.round(mz + rand(rng, -12, 12)),
   });
-  const extra = 1 + (rng() < 0.5 ? 1 : 0);
-  for (let i = 0; i < extra; i++) addPlanet(rng, lv, name(BODY_NAMES), 700, 1500, 4, 5.5);
+  const extra = 2 + (rng() < 0.4 ? 1 : 0);
+  for (let i = 0; i < extra; i++) addPlanet(rng, lv, name(BODY_NAMES), 600, 1500, 3.5, 5.5);
+  if (slot >= 4 && rng() < 0.3) addMoonTo(rng, lv, name, 0);
   if (!levelGeometryOk(lv, 15, 13)) return null;
   if (slot >= 2) for (let i = 0; i < 1 + (slot >= 4 ? 1 : 0); i++) addDerelict(rng, lv);
   if (slot >= 6) addPatrol(rng, lv);
-  if (rng() < 0.5) addPickups(rng, lv, 1);
   return lv;
 }
 
 function sampleSet3(rng, slot) {
   const E = 62;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.6, 5.4)), maxLaunch: 48, fuel: 3.5, bodies: [] };
+  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.6, 5.4)), maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
   const name = namer(rng);
   const nRep = rng() < 0.45 ? 2 : 1;
   for (let i = 0; i < nRep; i++) {
@@ -382,19 +435,20 @@ function sampleSet3(rng, slot) {
       x: Math.round(mx + rand(rng, -0.35, 0.35) * E), z: Math.round(mz + rand(rng, -0.35, 0.35) * E),
     });
   }
-  const nPl = 1 + (rng() < 0.5 ? 1 : 0);
-  for (let i = 0; i < nPl; i++) addPlanet(rng, lv, name(BODY_NAMES), 800, 1600, 4, 5.5);
+  const planetStart = lv.bodies.length;
+  const nPl = 2 + (rng() < 0.5 ? 1 : 0);
+  for (let i = 0; i < nPl; i++) addPlanet(rng, lv, name(BODY_NAMES), 700, 1600, 3.5, 5.5);
+  if (rng() < 0.35) addMoonTo(rng, lv, name, planetStart);
   if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   if (slot >= 2 && rng() < 0.7) addDerelict(rng, lv);
   if (slot >= 6) addPatrol(rng, lv);
-  if (rng() < 0.6) addPickups(rng, lv, 1);
   return lv;
 }
 
 function sampleSet4(rng, slot) {
   const E = 64;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.8, 5.2)), maxLaunch: 48, fuel: 4, bodies: [] };
+  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.8, 5.2)), maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
   const name = namer(rng);
   if (rng() < 0.35) {
     const cx = Math.round(rand(rng, -0.2, 0.2) * E), cz = Math.round(rand(rng, -0.25, 0.15) * E);
@@ -426,7 +480,8 @@ function sampleSet4(rng, slot) {
       });
     }
   }
-  if (rng() < 0.5) addPlanet(rng, lv, name(BODY_NAMES), 600, 1200, 3.5, 5);
+  addPlanet(rng, lv, name(BODY_NAMES), 600, 1300, 3.5, 5);
+  if (rng() < 0.4) addPlanet(rng, lv, name(BODY_NAMES), 500, 1000, 3, 4.5);
   if (!levelGeometryOk(lv, 14, 11)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
@@ -434,13 +489,12 @@ function sampleSet4(rng, slot) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   }
   if (slot >= 5) addPatrol(rng, lv);
-  if (rng() < 0.6) addPickups(rng, lv, 1);
   return lv;
 }
 
 function sampleSet5(rng, slot) {
   const E = Math.round(rand(rng, 66, 74));
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.2, 4.6)), maxLaunch: 48, fuel: 5, bodies: [] };
+  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.2, 4.6)), maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
   const name = namer(rng);
   const sx = Math.round(rand(rng, -0.12, 0.12) * E), sz = Math.round(rand(rng, -0.18, 0.08) * E);
   lv.bodies.push({
@@ -454,17 +508,21 @@ function sampleSet5(rng, slot) {
     lv.bodies.push({
       name: name(BODY_NAMES), mass: Math.round(rand(rng, 500, 1100)),
       radius: +rand(rng, 3.5, 5).toFixed(1), color: pick(rng, PLANET_COLORS),
-      orbit: { cx: sx, cz: sz, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.15, 0.45)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+      orbit: { cx: sx, cz: sz, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
     orbR += Math.max(17, rand(rng, 0.16, 0.2) * E);
   }
-  if (rng() < 0.4) {
-    const pIdx = lv.bodies.length - 1;
+  // moons orbit the planets (up to two, on distinct planets)
+  const planetIdxs = lv.bodies.map((b, i) => (b.orbit && b.orbit.parent == null ? i : -1)).filter(i => i > 0);
+  let moons = 0;
+  for (const pIdx of planetIdxs) {
+    if (moons >= 2 || rng() >= 0.45) continue;
     lv.bodies.push({
-      name: name(BODY_NAMES), mass: Math.round(rand(rng, 180, 300)),
+      name: name(BODY_NAMES), mass: Math.round(rand(rng, 180, 320)),
       radius: +rand(rng, 2, 2.5).toFixed(1), color: 0xe2e2e2,
       orbit: { parent: pIdx, radius: +rand(rng, 8, 11).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
+    moons++;
   }
   if (rng() < 0.45) {
     const ang = rand(rng, 0, Math.PI * 2);
@@ -489,8 +547,6 @@ function sampleSet5(rng, slot) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4, type: 'station' }])) return null;
   }
   if (slot >= 3) addPatrol(rng, lv);
-  if (slot >= 7) addPatrol(rng, lv);
-  if (rng() < 0.7) addPickups(rng, lv, 1 + (rng() < 0.3 ? 1 : 0));
   return lv;
 }
 
@@ -512,9 +568,10 @@ const SETS = [
   {
     name: 'Cadet Orbits', difficulty: 1, sample: sampleSet1, band: [1.1, 2.7],
     originals: [{ level: ORIGINALS.liftoff, slot: 0 }, { level: ORIGINALS.thedip, slot: 1 }],
-    hint: 'Small wells, gentle bends. Learn to read the terrain.',
-    slotHints: { 3: 'Orange fuel cells top up your tank — swing by and grab them!' },
-    names: ['First Glide', 'Two Stones', 'Long Coast', 'Fuel Run', 'Downhill Run', 'Easy Does It', 'Twin Dimples', 'Drift Lane', 'Warm Up', 'Graduation'],
+    hint: 'Multiple wells bend every shot. Learn to read the terrain.',
+    slotHints: { 2: 'Orange fuel cells sit near good routes — big launches burn fuel, so top up!' },
+    pickups: slot => (slot >= 2 ? 1 : 0),
+    names: ['First Glide', 'Two Stones', 'Fuel Run', 'Long Coast', 'Downhill Run', 'Easy Does It', 'Twin Dimples', 'Drift Lane', 'Warm Up', 'Graduation'],
   },
   {
     name: 'Slingshot Academy', difficulty: 2, sample: sampleSet2, band: [0.6, 1.8],
@@ -524,6 +581,7 @@ const SETS = [
       2: 'Derelict ships drift in the lanes now — one touch and it\'s over.',
       6: 'That ship is on patrol. Watch its route before you launch.',
     },
+    pickups: () => 1,
     names: ['Around the Bend', 'Deep Dive', 'Wreckage Field', 'Double Trouble', 'The Long Way', 'Whiplash', 'Picket Line', 'Gravity Assist', 'Full Send', 'Masterclass'],
   },
   {
@@ -531,20 +589,30 @@ const SETS = [
     originals: [{ level: ORIGINALS.repulsor, slot: 0 }],
     hint: 'Orange hills push you away. Ride the passes between push and pull.',
     slotHints: { 4: 'Dock at the station 🛰 first — it refuels you for the next leg.' },
+    pickups: () => 1,
     names: ['Uphill Battle', 'The Pass', 'Push and Pull', 'Ridge Runner', 'Waystation', 'Backpressure', 'Crosswind', 'The Squeeze', 'Turbulence', 'Summit'],
   },
   {
     name: 'Clockwork Moons', difficulty: 4, sample: sampleSet4, band: [0.25, 1.1],
     originals: [{ level: ORIGINALS.moonshot, slot: 0 }],
     hint: 'Everything is moving — even while you aim. Timing is everything.',
-    slotHints: { 3: 'Grab the cargo 📦, then haul it to the dropoff 📥. It\'s heavy — thrusters suffer.' },
+    slotHints: {
+      3: 'Grab the cargo 📦, then haul it to the dropoff 📥. It\'s heavy — thrusters suffer.',
+      6: 'Gravity assist: launch when a moving body can sling you forward, not against you.',
+    },
+    pickups: slot => 1 + (slot >= 6 ? 1 : 0),
+    timing: 6,
     names: ['Tick Tock', 'Orbit Window', 'Waltz', 'First Haul', 'Pendulum', 'Metronome', 'Eclipse', 'Revolution', 'Perfect Timing', 'Clockwork'],
   },
   {
     name: 'Deep Space', difficulty: 5, sample: sampleSet5, band: [0.08, 0.9],
     originals: [{ level: ORIGINALS.horizon, slot: 0 }, { level: ORIGINALS.grandtour, slot: 1 }],
-    hint: 'Whole solar systems between you and the goal. Chart your course.',
-    slotHints: {},
+    hint: 'Whole solar systems, weak engines. Ride the planets\' orbital momentum — launch windows matter.',
+    slotHints: {
+      3: 'Your engine can\'t brute-force this one. Wait for a planet to swing by and steal its momentum.',
+    },
+    pickups: slot => 1 + (slot >= 4 ? 1 : 0),
+    timing: 3,
     names: ['Outer Rim', 'Three-Body Problem', 'Star System', 'Dark Passage', 'Planetfall', 'The Gauntlet', 'Singularity', 'Far Shore', 'Last Light', 'GravityLoop'],
   },
 ];
@@ -553,42 +621,48 @@ const SETS = [
 // Generate
 // ---------------------------------------------------------------------------
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
-const ATTEMPTS = 250;
+const ATTEMPTS = 500;
 
 const allLevels = [];
 for (let s = 0; s < SETS.length; s++) {
   const set = SETS[s];
   const slots = new Array(10).fill(null);
   for (const o of set.originals) {
-    const r = solveLevel(o.level);
+    const r = evaluate(set, false, o.level);
     slots[o.slot] = o.level;
-    console.log(`[set ${s + 1}] slot ${o.slot} original  ${o.level.name.padEnd(18)} rate ${r.rate.toFixed(2)}% wins ${r.wins}`);
+    console.log(`[set ${s + 1}] slot ${o.slot} original  ${o.level.name.padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%`);
   }
   for (let slot = 0; slot < 10; slot++) {
     if (slots[slot]) continue;
+    const needsTiming = set.timing != null && slot >= set.timing;
     let best = null;
     let found = null;
     let geoOk = 0, solvable = 0;
     for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-      const rng = mulberry32(2e6 + s * 100003 + slot * 1009 + attempt);
+      const rng = mulberry32(3e6 + s * 100003 + slot * 1009 + attempt);
       const lv = set.sample(rng, slot);
       if (!lv) continue;
       geoOk++;
-      const r = solveLevel(lv);
-      if (r.wins < MIN_WINS) continue;
+      const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
+      if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
       solvable++;
-      const ceil = set.band[1] * (r.legs > 1 ? 1.4 : 1);
-      const inBand = r.rate >= set.band[0] && r.rate <= ceil;
-      const distToBand = inBand ? 0 : Math.min(Math.abs(r.rate - set.band[0]), Math.abs(r.rate - ceil));
-      if (!best || distToBand < best.distToBand) best = { level: lv, rate: r.rate, wins: r.wins, legs: r.legs, distToBand };
-      if (inBand) { found = { level: lv, rate: r.rate, wins: r.wins, legs: r.legs }; break; }
+      if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng };
+      if (r.dist === 0) { found = { level: lv, res: r, rng }; break; }
     }
     const chosen = found || best;
     if (!chosen) throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
+    const nPickups = set.pickups ? set.pickups(slot) : 0;
+    if (nPickups > 0) placePickupsOnPaths(chosen.rng, chosen.level, chosen.res.winners, nPickups);
     chosen.level.name = set.names[slot];
     chosen.level.hint = set.slotHints[slot] || set.hint;
     slots[slot] = chosen.level;
-    console.log(`[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rate ${chosen.rate.toFixed(2)}% wins ${chosen.wins} legs ${chosen.legs}${found ? '' : '  (closest to band)'}`);
+    const r = chosen.res;
+    console.log(
+      `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
+      ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
+      `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
+      `${found ? '' : '  (closest to band)'}`
+    );
   }
   for (const lv of slots) {
     lv.difficulty = set.difficulty;

@@ -97,6 +97,9 @@ for (const vp of VIEWPORTS) {
   await page.waitForTimeout(300);
   await page.evaluate(() => window.GL.load(49));
   await page.waitForTimeout(500);
+  // open the level-select popover so its buttons are laid out and checked too
+  await page.click('#level-label');
+  await page.waitForTimeout(200);
 
   const issues = await page.evaluate(collectIssues, SELECTORS);
   if (pageErrors.length) issues.push(...pageErrors.map(m => `page error: ${m}`));
