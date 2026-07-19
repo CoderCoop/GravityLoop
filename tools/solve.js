@@ -5,6 +5,7 @@ import { predict } from '../src/physics.js';
 import { LEVELS } from '../src/levels.js';
 
 const only = process.argv[2] != null ? Number(process.argv[2]) : null;
+let unsolvable = 0;
 
 for (let li = 0; li < LEVELS.length; li++) {
   if (only != null && li !== only) continue;
@@ -35,6 +36,12 @@ for (let li = 0; li < LEVELS.length; li++) {
     `L${li + 1} ${level.name.padEnd(16)} wins ${String(wins).padStart(4)}/${total} (${pct}%)` +
     (best ? `  best: ang=${best.ang}° v=${best.sp} t0=${best.t0.toFixed(2)} flight=${best.time.toFixed(1)}s` : '  *** UNSOLVABLE ***')
   );
+  if (!best) unsolvable++;
+}
+
+if (unsolvable > 0) {
+  console.error(`\n${unsolvable} level(s) have no ballistic solution — failing.`);
+  process.exitCode = 1;
 }
 
 function range(a, b, step) {
