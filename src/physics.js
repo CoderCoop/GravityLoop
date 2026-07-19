@@ -9,7 +9,7 @@ export const PREDICT_T = 30;        // seconds of trajectory prediction
 export const HEIGHT_K = 0.09;       // potential -> terrain height scale
 export const DEPTH_MAX = 26;        // terrain depth clamp
 export const OOB_FACTOR = 1.35;     // out-of-bounds beyond extent * factor
-export const LAUNCH_FUEL_MAX = 1.5; // fuel cost of a full-power launch (quadratic in power)
+export const LAUNCH_FUEL_MAX = 2.2; // fuel cost of a full-power launch (quadratic in power)
 
 export function launchFuelCost(speed, maxLaunch) {
   const p = Math.min(speed / maxLaunch, 1);

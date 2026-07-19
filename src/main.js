@@ -92,6 +92,10 @@ function init() {
 
   document.getElementById('btn-retry').addEventListener('click', () => { sfx.clickSound(); if (state !== 'menu') resetLevel(); });
   document.getElementById('btn-mute').addEventListener('click', toggleMute);
+  document.getElementById('level-label').addEventListener('click', () => {
+    sfx.clickSound();
+    setLevelPanel(!levelPanelOpen());
+  });
   const expBtn = document.getElementById('btn-exp');
   expBtn.classList.toggle('on', !!save.experimental);
   expBtn.addEventListener('click', () => {
@@ -592,7 +596,9 @@ function loadLevel(i) {
   buildWaypoints();
   buildPad();
   resetLeg();
+  setLevelPanel(false);
   document.getElementById('level-label').textContent = `${i + 1} · ${level.name}`;
+  document.getElementById('engine').textContent = `⚙ ${level.maxLaunch}`;
   const d = level.difficulty || 1;
   document.getElementById('difficulty').textContent = '★'.repeat(d) + '☆'.repeat(5 - d);
   document.getElementById('difficulty').title = `${SETS[displaySet].name} — difficulty ${d}/5`;
@@ -763,7 +769,15 @@ function onWheel(e) {
   camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.45), 1.8);
 }
 
+function levelPanelOpen() {
+  return document.getElementById('levels-bar').classList.contains('open');
+}
+function setLevelPanel(open) {
+  document.getElementById('levels-bar').classList.toggle('open', open);
+}
+
 function onPointerDown(e) {
+  if (levelPanelOpen()) { setLevelPanel(false); return; }
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pointers.size === 2) {
     // second finger: switch from aiming to camera gesture
@@ -921,7 +935,10 @@ function onKeyDown(e) {
   updateThrustSound();
   if (e.code === 'KeyR') { sfx.clickSound(); if (state !== 'menu') resetLevel(); }
   if (e.code === 'KeyM') toggleMute();
-  if (e.code === 'Escape' && state === 'aiming') { aim = null; cancelAim(); }
+  if (e.code === 'Escape') {
+    if (levelPanelOpen()) setLevelPanel(false);
+    else if (state === 'aiming') { aim = null; cancelAim(); }
+  }
   if (e.code === 'KeyN' && state === 'won') nextLevel();
 }
 
