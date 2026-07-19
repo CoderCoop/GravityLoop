@@ -1,0 +1,13 @@
+{
+  "name": "gravityloop",
+  "private": true,
+  "type": "module",
+  "description": "Spaceship golf across gravity-well terrain",
+  "scripts": {
+    "test:levels": "node tools/solve.js --fast",
+    "test:ui": "node tools/ui-test.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}

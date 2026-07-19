@@ -21,9 +21,9 @@ html, body {
 /* ------------------------------------------------------------------ HUD */
 #hud {
   position: fixed;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -31,7 +31,8 @@ html, body {
   pointer-events: none;
   z-index: 10;
 }
-#hud-left, #hud-right { display: flex; gap: 8px; align-items: center; }
+#hud-left, #hud-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#hud-right { justify-content: flex-end; }
 
 .pill {
   background: rgba(16, 14, 40, 0.72);
@@ -112,7 +113,7 @@ html, body {
 /* ---------------------------------------------------------- level dots */
 #levels-bar {
   position: fixed;
-  bottom: 10px;
+  bottom: max(10px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -120,6 +121,7 @@ html, body {
   align-items: center;
   gap: 5px;
   z-index: 10;
+  max-width: 100vw;
 }
 #set-bar, #dot-bar { display: flex; gap: 8px; }
 #set-name {
@@ -252,10 +254,22 @@ html, body {
 .btn-row { display: flex; gap: 12px; justify-content: center; }
 
 @media (max-width: 640px) {
-  #hint { font-size: 12px; top: 54px; }
-  #toast { top: 112px; }
-  .pill { font-size: 12px; padding: 6px 10px; }
-  #fuel-track { width: 56px; }
-  .level-dot { width: 32px; height: 32px; }
+  #hud { top: 6px; left: 6px; right: 6px; gap: 4px; flex-wrap: wrap; }
+  #hud-left, #hud-right { flex-wrap: wrap; gap: 4px; }
+  #hud-right { justify-content: flex-end; }
+  .pill { font-size: 11px; padding: 4px 8px; }
+  .btn { font-size: 12px; }
+  #fuel-track { width: 38px; }
+  #hint { font-size: 11px; top: 64px; }
+  #toast { top: 118px; font-size: 13px; padding: 8px 14px; }
+  #levels-bar { bottom: 6px; gap: 3px; max-width: 98vw; }
+  #set-bar { gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .set-btn { padding: 3px 6px; font-size: 8px; }
+  #set-name { font-size: 9px; }
+  #dot-bar { gap: 4px; flex-wrap: wrap; justify-content: center; max-width: 98vw; }
+  .level-dot { width: 26px; height: 26px; font-size: 11px; }
+  .level-dot.locked { font-size: 9px; }
   .panel { padding: 26px 22px; }
+  .panel h1 { font-size: 30px; }
+  .howto { font-size: 12px; }
 }

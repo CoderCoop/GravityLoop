@@ -16,3 +16,15 @@ jobs:
           node-version: 22
       - name: Brute-force solver over every level
         run: node tools/solve.js --fast
+
+  ui-layout:
+    name: UI fits all viewports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: HUD overflow check at phone/tablet/desktop sizes
+        run: CHROMIUM_PATH="$(command -v google-chrome || command -v chromium-browser || command -v chromium)" node tools/ui-test.mjs
