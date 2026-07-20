@@ -40,7 +40,7 @@ let state = 'menu';           // menu | ready | aiming | flying | docked | crash
 let simTime = 0;
 let physAcc = 0;
 let ship = { x: 0, z: 0, vx: 0, vz: 0 };
-let fuel = 0, attempts = 0;
+let fuel = 0, legStartFuel = 0, attempts = 0;
 let stage = 0, carrying = false;
 let pickupsDone = new Set(), pickupsTemp = new Set();
 let dockAnim = null;          // { fromX, fromZ, toX, toZ, t, index }
@@ -223,8 +223,9 @@ function buildTerrain() {
 const _c = new THREE.Color();
 function heightColor(y, out, o) {
   if (y > 0.4) {
+    // antimatter hills glow violet
     const t = Math.min(y / 12, 1);
-    _c.setRGB(0.16 + 0.84 * t, 0.2 + 0.22 * t, 0.42 - 0.25 * t);
+    _c.setRGB(0.2 + 0.58 * t, 0.2 + 0.28 * t, 0.42 + 0.56 * t);
   } else {
     const d = -y;
     if (d < 7) {
@@ -286,16 +287,15 @@ function buildBodies() {
       group.add(core, ring, discGroup, makeGlow(0xff3355, body.horizon * 4));
       spin = 0.6;
     } else if (body.mass < 0) {
-      const rock = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(body.radius, 1),
-        new THREE.MeshBasicMaterial({ color: body.color }),
+      // antimatter star: burns violet-white and pushes everything away
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(body.radius, 24, 18),
+        new THREE.MeshBasicMaterial({ map: tx.sunTexture(0xb47aff, seed) }),
       );
-      const wire = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(body.radius * 1.12, 1),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.3 }),
-      );
-      group.add(rock, wire, makeGlow(body.color, body.radius * 5));
-      spin = 0.8;
+      const corona = makeGlow(0xc77dff, body.radius * 4.5, 0.85);
+      corona.name = 'corona';
+      group.add(sphere, corona, makeGlow(0xffffff, body.radius * 2.4, 0.5));
+      spin = 0.15;
     } else if (isSun(body)) {
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(body.radius, 28, 20),
@@ -381,7 +381,7 @@ function buildPickups() {
   });
 }
 
-const WP_COLORS = { station: 0x35e0ff, cargo: 0xffb703, dropoff: 0xc77dff };
+const WP_COLORS = { station: 0x35e0ff, cargo: 0xffb703, dropoff: 0x64dfdf };
 function buildWaypoints() {
   for (const wv of waypointVisuals) scene.remove(wv.group);
   waypointVisuals = [];
@@ -398,7 +398,7 @@ function buildWaypoints() {
     if (wp.type === 'cargo') {
       core = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 2.2), new THREE.MeshBasicMaterial({ color: 0xffd166 }));
     } else if (wp.type === 'dropoff') {
-      core = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.4, 0.7, 8), new THREE.MeshBasicMaterial({ color: 0xc77dff }));
+      core = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.4, 0.7, 8), new THREE.MeshBasicMaterial({ color: 0x64dfdf }));
     } else {
       core = new THREE.Group();
       const hub = new THREE.Mesh(new THREE.OctahedronGeometry(1.5), new THREE.MeshBasicMaterial({ color: 0xd7ecff }));
@@ -587,6 +587,7 @@ function loadLevel(i) {
   attempts = 0;
   stage = 0;
   pickupsDone = new Set();
+  legStartFuel = level.fuel;
   resetCamera();
   buildTerrain();
   buildBodies();
@@ -620,7 +621,7 @@ function resetLeg() {
   state = 'ready';
   const start = legStart(level, stage);
   ship = { x: start.x, z: start.z, vx: 0, vz: 0 };
-  fuel = level.fuel;
+  fuel = legStartFuel;   // stops never refuel — you fly the leg with what you docked with
   carrying = derivedCarrying();
   cargoBox.visible = carrying;
   pickupsTemp = new Set();
@@ -642,6 +643,7 @@ function resetLevel() {
   if (state === 'menu') return;
   stage = 0;
   pickupsDone = new Set();
+  legStartFuel = level.fuel;
   resetCamera();
   resetLeg();
 }
@@ -690,9 +692,12 @@ function finishDock() {
   stage = dockAnim.index + 1;
   for (const p of pickupsTemp) pickupsDone.add(p);
   dockAnim = null;
-  if (wp.type === 'cargo') toast('📦 Cargo secured! It\'s heavy — thrusters at half power.');
+  legStartFuel = fuel;   // no refueling at stops — what you have is what you fly with
+  const lowFuel = level.legMinCosts && fuel + 0.01 < level.legMinCosts[stage];
+  if (lowFuel) toast('⚠️ Not enough fuel for the next launch — press R and grab the fuel cells!');
+  else if (wp.type === 'cargo') toast('📦 Cargo secured! It\'s heavy — thrusters at half power.');
   else if (wp.type === 'dropoff') toast('📦 Cargo delivered!');
-  else toast('🛰 Docked — refueled and ready!');
+  else toast('🛰 Docked!');
   resetLeg();
 }
 
@@ -722,7 +727,7 @@ function crashMessage(st) {
   }
   const b = level.bodies[st.body];
   if (b.type === 'blackhole') return `🕳️ Swallowed by ${b.name}! Nothing escapes the red ring.`;
-  if (b.mass < 0) return `💥 Smacked into ${b.name}!`;
+  if (b.mass < 0) return `💥 Annihilated by the antimatter star ${b.name}!`;
   return `💥 Crashed into ${b.name}!`;
 }
 
@@ -778,6 +783,10 @@ function setLevelPanel(open) {
 
 function onPointerDown(e) {
   if (levelPanelOpen()) { setLevelPanel(false); return; }
+  // taps in the HUD strip must never start a slingshot
+  const hudB = document.getElementById('hud').getBoundingClientRect().bottom;
+  const hintB = document.getElementById('hint').getBoundingClientRect().bottom;
+  if (e.clientY <= Math.max(hudB, hintB) + 8) return;
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pointers.size === 2) {
     // second finger: switch from aiming to camera gesture
@@ -1317,10 +1326,10 @@ function showMenu() {
       <p class="tagline">Spaceship golf across the curves of spacetime.</p>
       <p class="howto">
         <b>Drag back</b> from your ship and release to launch — pull farther for more power,
-        but big launches burn more fuel ⛽.<br>
+        but big launches burn more fuel ⛽ and stops never refuel.<br>
         The terrain <i>is</i> gravity — dive into wells to speed up, ride ridges to coast.<br>
-        <b>WASD / arrows</b> nudge mid-flight. Grab fuel cells, dodge patrol ships,<br>
-        dock at stations 🛰 and haul cargo 📦 across the void.<br>
+        <b>WASD / arrows</b> nudge mid-flight. On multi-stop routes, grab fuel cells<br>
+        or you won't make the next hop. Dodge patrols, haul cargo 📦, mind the ⚙ engine.<br>
         <b>Pinch</b> or <b>scroll</b> to zoom, two-finger drag to pan.<br>
         <b>R</b> restart · <b>M</b> mute · fewer launches = more stars ⭐
       </p>
