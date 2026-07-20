@@ -52,17 +52,24 @@ Then open <http://localhost:8000>.
 50 levels in 5 themed sets of 10, each set harder than the last (difficulty
 shown as ★–★★★★★ in the HUD), with more and more bodies in play:
 
-Game elements are introduced set by set:
+Nearly every level is a little solar system — a sun with orbiting planets and
+moons (moons orbit planets, planets orbit stars). Game elements are
+introduced set by set:
 
-1. **Cadet Orbits** ★ — gravity wells, then fuel cell pickups
-2. **Slingshot Academy** ★★ — big blockers to curve around; derelict and
-   patrol ships appear in the lanes
-3. **Repulsor Fields** ★★★ — anti-gravity hills; space stations turn levels
-   into multi-leg routes (dock to refuel, then fly the next leg)
-4. **Clockwork Moons** ★★★★ — orbiting moons and waltzing binaries; cargo
-   hauls (pick up 📦, deliver 📥 — carrying cargo halves your thrusters)
-5. **Deep Space** ★★★★★ — full solar systems (suns, orbiting planets, moons,
-   black holes) with stations, cargo runs and patrols combined
+1. **Cadet Orbits** ★ — gentle systems with slow orbits
+2. **Slingshot Academy** ★★ — heavier stars to slingshot around; derelict
+   and patrol ships appear in the lanes
+3. **Antimatter Belt** ★★★ — violet antimatter stars push you away; space
+   stations turn levels into multi-leg routes
+4. **Clockwork Moons** ★★★★ — fast orbits everywhere; cargo hauls (pick up
+   📦, deliver 📥 — carrying cargo halves your thrusters)
+5. **Deep Space** ★★★★★ — big systems with black holes, weak engines and
+   launch windows
+
+Stops never refuel. On multi-leg routes the tank is deliberately smaller
+than the route costs at typical launch power — the generator places fuel
+cells just off winning trajectories on the early legs, and skipping them
+means docking too dry to continue (the game warns you; R restarts).
 
 Most levels are produced by a seeded generator that samples themed layouts
 and only keeps candidates whose **every leg** the brute-force solver confirms
