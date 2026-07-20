@@ -36,6 +36,7 @@ let fxList = [];
 
 let level = null, levelIndex = 0, displaySet = 0;
 let frameCount = 0;
+let vTime = 0;                // cosmetic clock — never pauses (pulses, spins, bobbing)
 let state = 'menu';           // menu | ready | aiming | flying | docked | crashed | won
 let simTime = 0;
 let physAcc = 0;
@@ -259,8 +260,32 @@ function updateTerrain(positions) {
 // ---------------------------------------------------------------------------
 function isSun(body) { return body.type === 'sun' || (body.mass >= 2500 && !body.type); }
 
+// small arrow showing a mover's current direction of travel
+function makeMotionArrow(color) {
+  const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(), 6, color, 2, 1.3);
+  arrow.line.material.transparent = true;
+  arrow.line.material.opacity = 0.75;
+  arrow.cone.material.transparent = true;
+  arrow.cone.material.opacity = 0.75;
+  scene.add(arrow);
+  return arrow;
+}
+
+const _mdir = new THREE.Vector3();
+function updateMotionArrow(arrow, posFn, i, baseY) {
+  const a = posFn(level, simTime), b = posFn(level, simTime + 0.05);
+  const vx = (b[i].x - a[i].x) / 0.05, vz = (b[i].z - a[i].z) / 0.05;
+  const speed = Math.hypot(vx, vz);
+  if (speed < 0.5) { arrow.visible = false; return; }
+  _mdir.set(vx / speed, 0, vz / speed);
+  arrow.position.set(a[i].x, baseY, a[i].z);
+  arrow.setDirection(_mdir);
+  arrow.setLength(Math.min(4 + speed * 0.35, 9), 2, 1.3);
+  arrow.visible = true;
+}
+
 function buildBodies() {
-  for (const bv of bodyVisuals) scene.remove(bv.group);
+  for (const bv of bodyVisuals) { scene.remove(bv.group); if (bv.arrow) scene.remove(bv.arrow); }
   bodyVisuals = [];
   for (const body of level.bodies) {
     const group = new THREE.Group();
@@ -329,7 +354,8 @@ function buildBodies() {
       spin = 0.22;
     }
     scene.add(group);
-    bodyVisuals.push({ group, body, spin, discGroup });
+    const arrow = body.orbit ? makeMotionArrow(0x9bd5ff) : null;
+    bodyVisuals.push({ group, body, spin, discGroup, arrow });
   }
 }
 
@@ -337,23 +363,33 @@ function buildBodies() {
 // Hazard ships, fuel pickups, waypoints
 // ---------------------------------------------------------------------------
 function buildHazards() {
-  for (const hv of hazardVisuals) scene.remove(hv.group);
+  for (const hv of hazardVisuals) { scene.remove(hv.group); if (hv.arrow) scene.remove(hv.arrow); }
   hazardVisuals = [];
   for (const hazard of (level.hazards || [])) {
     const group = new THREE.Group();
     const moving = !!(hazard.orbit || hazard.patrol);
-    const hull = new THREE.Mesh(
-      new THREE.ConeGeometry(hazard.radius * 0.55, hazard.radius * 1.9, 8),
-      new THREE.MeshBasicMaterial({ color: moving ? 0xd0d6e8 : 0x8a92a8 }),
-    );
-    hull.rotation.x = Math.PI / 2;
-    const wing = new THREE.Mesh(
-      new THREE.BoxGeometry(hazard.radius * 1.9, 0.25, hazard.radius * 0.6),
-      new THREE.MeshBasicMaterial({ color: moving ? 0x9aa8c8 : 0x6a7288 }),
-    );
-    group.add(hull, wing, makeGlow(0xff5d5d, hazard.radius * 4, 0.6));
+    if (hazard.kind === 'asteroid') {
+      const rock = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(hazard.radius, 1),
+        new THREE.MeshBasicMaterial({ map: tx.planetTexture(0x8a7f72, tx.hashStr(`ast${hazard.x},${hazard.z}`), 'rocky') }),
+      );
+      rock.rotation.set(Math.random() * 3, Math.random() * 3, 0);
+      group.add(rock, makeGlow(0xd0a070, hazard.radius * 3, 0.3));
+    } else {
+      const hull = new THREE.Mesh(
+        new THREE.ConeGeometry(hazard.radius * 0.55, hazard.radius * 1.9, 8),
+        new THREE.MeshBasicMaterial({ color: moving ? 0xd0d6e8 : 0x8a92a8 }),
+      );
+      hull.rotation.x = Math.PI / 2;
+      const wing = new THREE.Mesh(
+        new THREE.BoxGeometry(hazard.radius * 1.9, 0.25, hazard.radius * 0.6),
+        new THREE.MeshBasicMaterial({ color: moving ? 0x9aa8c8 : 0x6a7288 }),
+      );
+      group.add(hull, wing, makeGlow(0xff5d5d, hazard.radius * 4, 0.6));
+    }
     scene.add(group);
-    hazardVisuals.push({ group, hazard, prev: null });
+    const arrow = moving ? makeMotionArrow(0xff5d5d) : null;
+    hazardVisuals.push({ group, hazard, prev: null, arrow });
   }
 }
 
@@ -722,6 +758,7 @@ function failOOB() {
 function crashMessage(st) {
   if (st.type === 'hazard') {
     const h = level.hazards[st.hazard];
+    if (h.kind === 'asteroid') return '💥 Smashed into an asteroid!';
     const moving = !!(h.orbit || h.patrol);
     return moving ? '💥 Collided with a patrol ship!' : '💥 Collided with a derelict ship!';
   }
@@ -1029,7 +1066,10 @@ function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
-  simTime += dt;
+  vTime += dt;
+  // the world freezes while you aim, so the prediction line is EXACT: the
+  // flight you release is simulated from the same instant you saw drawn
+  if (state !== 'aiming') simTime += dt;
   frameCount++;
 
   const dynamic = level.bodies.some(b => b.orbit);
@@ -1076,11 +1116,12 @@ function frame(now) {
     const y = heightAt(level, p.x, p.z, positions);
     bv.group.position.set(p.x, y + bv.body.radius * 0.55, p.z);
     bv.group.rotation.y += bv.spin * dt;
+    if (bv.arrow) updateMotionArrow(bv.arrow, bodiesAt, i, y + bv.body.radius + 3, );
     if (bv.discGroup) bv.discGroup.children[0].rotation.z += dt * 0.5;
     const pulse = bv.group.getObjectByName('pulse');
-    if (pulse) pulse.scale.setScalar(1 + Math.sin(simTime * 3.2) * 0.06);
+    if (pulse) pulse.scale.setScalar(1 + Math.sin(vTime * 3.2) * 0.06);
     const corona = bv.group.getObjectByName('corona');
-    if (corona) corona.scale.setScalar(bv.body.radius * (5.2 + Math.sin(simTime * 1.7) * 0.5));
+    if (corona) corona.scale.setScalar(bv.body.radius * (5.2 + Math.sin(vTime * 1.7) * 0.5));
   }
 
   // hazards
@@ -1095,6 +1136,8 @@ function frame(now) {
       else hv.group.rotation.y += 0.5 * dt;
     }
     hv.prev = { x: p.x, z: p.z };
+    if (hv.arrow) updateMotionArrow(hv.arrow, hazardsAt, i, y + hv.hazard.radius + 2.5);
+    if (hv.hazard.kind === 'asteroid') hv.group.rotation.y += dt * 0.3;
   }
 
   // pickups
@@ -1103,7 +1146,7 @@ function frame(now) {
     pv.group.visible = !taken;
     if (!taken) {
       const y = heightAt(level, pv.pickup.x, pv.pickup.z, positions);
-      pv.group.position.set(pv.pickup.x, y + 2.2 + Math.sin(simTime * 2 + pv.index) * 0.5, pv.pickup.z);
+      pv.group.position.set(pv.pickup.x, y + 2.2 + Math.sin(vTime * 2 + pv.index) * 0.5, pv.pickup.z);
       pv.group.rotation.y += dt * 1.2;
     }
   }
@@ -1113,7 +1156,7 @@ function frame(now) {
     const y = heightAt(level, wv.wp.x, wv.wp.z, positions);
     wv.group.position.set(wv.wp.x, y + 0.5, wv.wp.z);
     const ring = wv.group.getObjectByName('ring');
-    if (wv.index === stage) ring.scale.setScalar(1 + Math.sin(simTime * 2.6) * 0.07);
+    if (wv.index === stage) ring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
     const core = wv.group.getObjectByName('core');
     if (core) core.rotation.y += dt * 0.8;
   }
@@ -1122,13 +1165,13 @@ function frame(now) {
   const gy = goalY(positions);
   goalGroup.position.set(level.goal.x, gy + 0.5, level.goal.z);
   const gring = goalGroup.getObjectByName('pulse');
-  if (gring && stage >= (level.waypoints || []).length) gring.scale.setScalar(1 + Math.sin(simTime * 2.6) * 0.07);
+  if (gring && stage >= (level.waypoints || []).length) gring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
   padGroup.position.set(level.ship.x, heightAt(level, level.ship.x, level.ship.z, positions) + 0.4, level.ship.z);
 
   // ship
   if (shipGroup.visible) {
     const sy = shipY(positions);
-    const bob = state === 'ready' || state === 'aiming' ? Math.sin(simTime * 2.2) * 0.35 : 0;
+    const bob = state === 'ready' || state === 'aiming' ? Math.sin(vTime * 2.2) * 0.35 : 0;
     shipGroup.position.set(ship.x, sy + bob, ship.z);
     if (state === 'flying' && (ship.vx || ship.vz)) {
       shipGroup.rotation.y = Math.atan2(ship.vx, ship.vz);
@@ -1160,7 +1203,6 @@ function frame(now) {
     trailLine.geometry.setDrawRange(0, trailPts.length);
   }
 
-  if (state === 'aiming' && (dynamic || level.hazards)) updatePrediction();
 
   updateFx(dt);
   updateCamera(dt);

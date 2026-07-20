@@ -263,22 +263,26 @@ html, body {
 .btn-row { display: flex; gap: 12px; justify-content: center; }
 
 @media (max-width: 640px) {
-  #hud { top: 6px; left: 6px; right: 6px; gap: 4px; flex-wrap: wrap; }
-  #hud-left, #hud-right { flex-wrap: wrap; gap: 4px; }
+  #hud { top: 6px; left: 6px; right: 6px; gap: 5px; flex-wrap: wrap; }
+  #hud-left, #hud-right { flex-wrap: wrap; gap: 5px; }
   #hud-right { justify-content: flex-end; }
-  .pill { font-size: 11px; padding: 4px 8px; }
-  .btn { font-size: 12px; }
-  #fuel-track { width: 38px; }
-  #hint { font-size: 11px; top: 64px; }
-  #toast { top: 118px; font-size: 13px; padding: 8px 14px; }
-  #levels-bar { bottom: 6px; gap: 3px; max-width: 98vw; }
-  #set-bar { gap: 4px; flex-wrap: wrap; justify-content: center; }
-  .set-btn { padding: 3px 6px; font-size: 8px; }
-  #set-name { font-size: 9px; }
-  #dot-bar { gap: 4px; flex-wrap: wrap; justify-content: center; max-width: 98vw; }
-  .level-dot { width: 26px; height: 26px; font-size: 11px; }
-  .level-dot.locked { font-size: 9px; }
+  .pill { font-size: 12px; padding: 6px 10px; }
+  /* comfortable thumb targets for every tappable control */
+  .btn { font-size: 16px; min-width: 42px; min-height: 38px; }
+  #level-label { min-height: 38px; font-size: 13px; }
+  #fuel { min-height: 38px; }
+  #fuel-track { width: 44px; }
+  #hint { font-size: 11px; top: 104px; }
+  #toast { top: 150px; font-size: 13px; padding: 8px 14px; }
+  #levels-bar { bottom: 6px; gap: 6px; max-width: 98vw; padding: 12px 10px; }
+  #set-bar { gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .set-btn { padding: 8px 10px; font-size: 9px; min-height: 36px; }
+  #set-name { font-size: 10px; }
+  #dot-bar { gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 96vw; }
+  .level-dot { width: 38px; height: 38px; font-size: 13px; }
+  .level-dot.locked { font-size: 11px; }
   .panel { padding: 26px 22px; }
   .panel h1 { font-size: 30px; }
   .howto { font-size: 12px; }
+  .panel button { padding: 14px 22px; }
 }
