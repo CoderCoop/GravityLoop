@@ -52,24 +52,30 @@ Then open <http://localhost:8000>.
 50 levels in 5 themed sets of 10, each set harder than the last (difficulty
 shown as ★–★★★★★ in the HUD), with more and more bodies in play:
 
-Nearly every level is a little solar system — a sun with orbiting planets and
-moons (moons orbit planets, planets orbit stars). Game elements are
-introduced set by set:
+The campaign starts at home and works outward. Bodies use realistic size
+tiers (suns dwarf gas giants, which dwarf rocky planets and moons), and
+every moving object shows an arrow with its current direction of travel:
 
-1. **Cadet Orbits** ★ — gentle systems with slow orbits
-2. **Slingshot Academy** ★★ — heavier stars to slingshot around; derelict
-   and patrol ships appear in the lanes
-3. **Antimatter Belt** ★★★ — violet antimatter stars push you away; space
-   stations turn levels into multi-leg routes
-4. **Clockwork Moons** ★★★★ — fast orbits everywhere; cargo hauls (pick up
-   📦, deliver 📥 — carrying cargo halves your thrusters)
-5. **Deep Space** ★★★★★ — big systems with black holes, weak engines and
-   launch windows
+1. **Earthrise** ★ — launch from Earth to the Moon, then Venus and Mars
+2. **Inner System** ★★ — Mercury to Mars around a heavy Sun; derelicts and
+   patrols drift in the lanes
+3. **Outer Planets** ★★★ — Jupiter, Saturn and their moons; station routes
+4. **Asteroid Belt** ★★★★ — thread the rocks; cargo hauls (📦 → 📥, cargo
+   halves your thrusters) and patrol lanes
+5. **New Star Systems** ★★★★★ — alien suns with moving orbits, antimatter
+   stars, black holes, weak engines and launch windows
+
+Sets 1–4 are static snapshots of their systems; set 5's systems move — and
+while you aim, time freezes, so the prediction line is exactly the flight
+you get.
 
 Stops never refuel. On multi-leg routes the tank is deliberately smaller
-than the route costs at typical launch power — the generator places fuel
-cells just off winning trajectories on the early legs, and skipping them
-means docking too dry to continue (the game warns you; R restarts).
+than the route costs at typical launch power — and fuel cells sit at the
+apex of the CURVIEST winning routes, so you must deliberately fly the
+detour to refuel. Docking too dry triggers a warning; R restarts.
+
+The game is an installable PWA ("Gravity Loop" on your home screen) with
+an offline cache.
 
 Most levels are produced by a seeded generator that samples themed layouts
 and only keeps candidates whose **every leg** the brute-force solver confirms

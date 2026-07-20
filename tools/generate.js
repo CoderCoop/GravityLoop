@@ -1,17 +1,18 @@
 // GravityLoop — level generator.
 // Samples themed levels with a seeded RNG, keeps only candidates whose every
 // leg the brute-force solver confirms is winnable inside the set's difficulty
-// band, then writes the full 50-level roster (originals + generated) to
-// src/levels.js.
+// band, then writes the full 50-level roster to src/levels.js.
 //
 //   node tools/generate.js
 //
 // Deterministic: same seeds -> same levels.
 //
-// Mechanics are introduced gradually by slot within each set:
-//   set 1: gravity + fuel cells          set 2: + derelict/patrol ships
-//   set 3: + station docking (2 legs)    set 4: + cargo hauling (3 legs)
-//   set 5: everything, in solar systems
+// Campaign: the game starts at Earth and works outward —
+//   set 1 Earthrise        launch from Earth to the Moon, Venus, Mars (static)
+//   set 2 Inner System     Mercury..Mars around a heavy Sun (static)
+//   set 3 Outer Planets    gas giants + moons, station routes (static)
+//   set 4 Asteroid Belt    rock fields, cargo hauls, patrol lanes
+//   set 5 New Star Systems alien suns, antimatter stars, black holes (moving)
 import { predict, legStart, legCount, launchFuelCost } from '../src/physics.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -77,40 +78,40 @@ function concentration(byT0) {
   return (sorted[0] + sorted[1] + sorted[2] + sorted[3]) / total;
 }
 
-// Per-leg verdict for a candidate: every leg in band, legs of comparable
-// difficulty, and (when required) timing-window sensitivity on the first
-// launch. Aborts early once a candidate cannot beat the best found so far.
+// Per-leg verdict: every leg in band, legs of comparable difficulty, and
+// (when required) timing-window sensitivity on the first launch. Aborts
+// early once a candidate cannot beat the best found so far.
 function evaluate(set, needsTiming, level, bestDist = Infinity) {
   const legs = legCount(level);
-  // per-leg hops are intrinsically shorter/easier, so multi-leg levels get a
-  // wider per-leg ceiling; balance and timing terms below keep them honest
   const low = set.band[0], high = set.band[1] * (legs > 1 ? 2.2 : 1);
   const rates = [], winners = [];
-  let dist = 0, minWins = Infinity, conc = 0;
+  let dist2 = 0, minWins = Infinity, conc = 0;
   for (let s = 0; s < legs; s++) {
     const r = solveLeg(level, s);
     minWins = Math.min(minWins, r.wins);
     if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
     rates.push(r.rate);
     winners.push(r.winners);
-    if (r.rate < low) dist += low - r.rate;
-    else if (r.rate > high) dist += r.rate - high;
+    if (r.rate < low) dist2 += low - r.rate;
+    else if (r.rate > high) dist2 += r.rate - high;
     if (s === 0 && needsTiming) {
       conc = r.byT0 ? concentration(r.byT0) : 0;
-      if (conc < 0.5) dist += (0.5 - conc) * 6;      // demand launch windows
+      if (conc < 0.5) dist2 += (0.5 - conc) * 6;     // demand launch windows
     }
-    if (dist >= bestDist) return { minWins, rates, dist, conc, legs, winners };
+    if (dist2 >= bestDist) return { minWins, rates, dist: dist2, conc, legs, winners };
   }
   if (legs > 1) {
     const ratio = Math.max(...rates) / Math.max(Math.min(...rates), 1e-9);
-    if (ratio > 2.5) dist += ratio - 2.5;            // legs must be comparable
+    if (ratio > 2.5) dist2 += ratio - 2.5;           // legs must be comparable
   }
-  return { minWins, rates, dist, conc, legs, winners };
+  return { minWins, rates, dist: dist2, conc, legs, winners };
 }
 
 // ---------------------------------------------------------------------------
-// Geometry helpers. A moving body's possible positions form an annulus
-// (ring band) around its root center — clearance is distance to the band.
+// Geometry. A moving body's possible positions form an annulus around its
+// root center — clearance is distance to the band. The designated home body
+// (Earth, next to the pad) and target body (next to the goal) are exempt
+// from the usual big margins.
 // ---------------------------------------------------------------------------
 function annulus(level, i) {
   const b = level.bodies[i];
@@ -133,7 +134,6 @@ function annulusGap(a, b) {
   return Math.max(0, d - a.maxR - b.maxR, a.minR - d - b.maxR, b.minR - d - a.maxR);
 }
 
-// clearance of a point from every body (bodies only, not hazards)
 function bodyClearance(level, x, z) {
   let min = Infinity;
   for (let i = 0; i < level.bodies.length; i++) {
@@ -143,7 +143,6 @@ function bodyClearance(level, x, z) {
   return min;
 }
 
-// key points a level must keep clear: pad, goal, waypoints
 function keyPoints(level) {
   return [
     { x: level.ship.x, z: level.ship.z },
@@ -158,9 +157,10 @@ function levelGeometryOk(level, padClear, goalClear) {
     const bi = level.bodies[i];
     const a = annulus(level, i);
     const moving = !!bi.orbit;
-    if (Math.hypot(a.x, a.z) + a.maxR + bi.radius > E * 0.92) return false;
-    const padM = moving ? Math.min(padClear, 10) : padClear;
-    const goalM = moving ? Math.min(goalClear, 8) : goalClear;
+    if (Math.hypot(a.x, a.z) + a.maxR + bi.radius > E * 0.95) return false;
+    const isHome = level.homeIdx === i, isTarget = level.targetIdx === i;
+    const padM = isHome ? 5 : moving ? Math.min(padClear, 10) : padClear;
+    const goalM = isTarget ? 4 : moving ? Math.min(goalClear, 8) : goalClear;
     if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return false;
     if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return false;
     for (const wp of level.waypoints || []) {
@@ -170,6 +170,10 @@ function levelGeometryOk(level, padClear, goalClear) {
       const bj = level.bodies[j];
       const oi = bi.orbit, oj = bj.orbit;
       if ((oj && oj.parent === i) || (oi && oi.parent === j)) continue;
+      if (bi.moonOf === j || bj.moonOf === i) {
+        if (dist(a.x, a.z, annulus(level, j).x, annulus(level, j).z) < bi.radius + bj.radius + 2.5) return false;
+        continue;
+      }
       if (oi && oj && oi.parent == null && oj.parent == null &&
           (oi.cx || 0) === (oj.cx || 0) && (oi.cz || 0) === (oj.cz || 0) && oi.omega === oj.omega) {
         continue;
@@ -177,8 +181,7 @@ function levelGeometryOk(level, padClear, goalClear) {
       if (annulusGap(a, annulus(level, j)) < bi.radius + bj.radius + 6) return false;
     }
   }
-  // waypoints: apart from each other and from pad/goal
-  const sep = level.extent >= 66 ? 20 : 26;
+  const sep = level.extent >= 66 ? 20 : 24;
   const kps = keyPoints(level);
   for (let i = 0; i < kps.length; i++) {
     for (let j = i + 1; j < kps.length; j++) {
@@ -188,9 +191,8 @@ function levelGeometryOk(level, padClear, goalClear) {
   return true;
 }
 
-// hazard motion envelope for clearance checks
 function hazardPoints(h) {
-  if (h.orbit) return null; // handled as annulus
+  if (h.orbit) return null;
   if (h.patrol) {
     const p = h.patrol, out = [];
     for (let k = 0; k <= 4; k++) out.push({ x: p.x1 + (p.x2 - p.x1) * (k / 4), z: p.z1 + (p.z2 - p.z1) * (k / 4) });
@@ -199,13 +201,18 @@ function hazardPoints(h) {
   return [{ x: h.x, z: h.z }];
 }
 
-function hazardOk(level, h) {
+function hazardOk(level, h, keyMargin = 12) {
   const E = level.extent;
   const clear = (x, z) => {
     if (Math.hypot(x, z) > E * 0.88) return false;
     if (bodyClearance(level, x, z) < h.radius + 3) return false;
     for (const kp of keyPoints(level)) {
-      if (dist(x, z, kp.x, kp.z) < 12) return false;
+      if (dist(x, z, kp.x, kp.z) < keyMargin) return false;
+    }
+    for (const other of level.hazards || []) {
+      for (const p of hazardPoints(other) || [{ x: other.orbit.cx, z: other.orbit.cz }]) {
+        if (dist(x, z, p.x, p.z) < h.radius + other.radius + 3) return false;
+      }
     }
     return true;
   };
@@ -246,25 +253,45 @@ function pickupOk(level, x, z) {
 // ---------------------------------------------------------------------------
 // Mechanic add-ons
 // ---------------------------------------------------------------------------
-// Fuel cells placed just off solver-found winning trajectories, so grabbing
-// one is a deliberate small detour a player can plan for.
+// Fuel cells sit at the apex of DETOUR winning routes: among a leg's winning
+// trajectories, prefer the ones that bow far away from the straight line to
+// the target, and drop the cell at the farthest point of that bow. Direct
+// routes miss it — you must deliberately fly the curved route to refuel.
 function placePickupsOnPaths(rng, level, winnersByLeg, count) {
   level.pickups = [];
-  // only legs BEFORE the last one — fuel collected on a leg can only pay for
-  // launches after it, so cells on the final leg would be dead weight
   const lastLeg = winnersByLeg.length - 1;
   const legsWithWins = winnersByLeg.map((w, i) => (w.length && i < lastLeg ? i : -1)).filter(i => i >= 0);
   if (!legsWithWins.length) { delete level.pickups; return; }
+
+  const apexes = new Map();   // leg -> [{dev, pt}] sorted by deviation desc
+  for (const leg of legsWithWins) {
+    const start = legStart(level, leg);
+    const scored = [];
+    for (const w of winnersByLeg[leg].slice(0, 25)) {
+      const rad = (w.ang * Math.PI) / 180;
+      const r = predict(level, start.x, start.z, Math.cos(rad) * w.sp, Math.sin(rad) * w.sp, w.t0, 10, leg);
+      const end = r.points[r.points.length - 1];
+      const ex = end.x - start.x, ez = end.z - start.z;
+      const len = Math.max(Math.hypot(ex, ez), 1e-6);
+      let dev = 0, apex = null;
+      for (const pt of r.points) {
+        const d = Math.abs((pt.x - start.x) * ez - (pt.z - start.z) * ex) / len;
+        if (d > dev) { dev = d; apex = pt; }
+      }
+      if (apex) scored.push({ dev, pt: apex });
+    }
+    scored.sort((a, b) => b.dev - a.dev);
+    apexes.set(leg, scored.slice(0, 8));
+  }
+
   for (let i = 0; i < count; i++) {
     for (let tries = 0; tries < 25; tries++) {
       const leg = legsWithWins[(i + tries) % legsWithWins.length];
-      const w = pick(rng, winnersByLeg[leg]);
-      const start = legStart(level, leg);
-      const rad = (w.ang * Math.PI) / 180;
-      const r = predict(level, start.x, start.z, Math.cos(rad) * w.sp, Math.sin(rad) * w.sp, w.t0, 12, leg);
-      const pt = r.points[Math.floor(r.points.length * rand(rng, 0.35, 0.68))];
-      const x = Math.round(pt.x + rand(rng, -4, 4));
-      const z = Math.round(pt.z + rand(rng, -4, 4));
+      const cands = apexes.get(leg);
+      if (!cands || !cands.length) continue;
+      const c = pick(rng, cands);
+      const x = Math.round(c.pt.x + rand(rng, -2.5, 2.5));
+      const z = Math.round(c.pt.z + rand(rng, -2.5, 2.5));
       if (pickupOk(level, x, z)) {
         level.pickups.push({ x, z, fuel: 1.5 });
         break;
@@ -272,69 +299,6 @@ function placePickupsOnPaths(rng, level, winnersByLeg, count) {
     }
   }
   if (!level.pickups.length) delete level.pickups;
-}
-
-// Static planet with an orbiting moon (moons orbit planets, planets orbit
-// stars — this is the planet-moon tier).
-function addMoonTo(rng, lv, name, parentIdx) {
-  const parent = lv.bodies[parentIdx];
-  const orbR = +rand(rng, parent.radius + 7, parent.radius + 13).toFixed(1);
-  lv.bodies.push({
-    name: name(BODY_NAMES), mass: Math.round(rand(rng, 250, 500)),
-    radius: +rand(rng, 2, 3).toFixed(1), color: 0xe2e2e2,
-    orbit: { parent: parentIdx, radius: orbR, omega: +(sign(rng) * rand(rng, 0.5, 1)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
-  });
-}
-
-// A whole star system: central sun, planets on spaced circular orbits, moons
-// orbiting some of the planets. Returns indices of the planet bodies.
-function addSystem(rng, lv, name, opts) {
-  const E = lv.extent;
-  const off = opts.offset || [0, 0.12];
-  const sx = Math.round(sign(rng) * rand(rng, off[0], off[1]) * E);
-  const sz = Math.round(rand(rng, -0.18, 0.08) * E);
-  lv.bodies.push({
-    name: pick(rng, ['Sol', 'Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']),
-    mass: Math.round(rand(rng, opts.starMass[0], opts.starMass[1])),
-    radius: +rand(rng, 6.5, 8.5).toFixed(1), color: pick(rng, SUN_COLORS), x: sx, z: sz, type: 'sun',
-  });
-  const planetIdxs = [];
-  let orbR = Math.max(19, rand(rng, 0.26, 0.3) * E);
-  for (let i = 0; i < opts.nPlanets; i++) {
-    if (orbR > E * 0.62) break;
-    planetIdxs.push(lv.bodies.length);
-    lv.bodies.push({
-      name: name(BODY_NAMES), mass: Math.round(rand(rng, opts.planetMass[0], opts.planetMass[1])),
-      radius: +rand(rng, 3.5, 5).toFixed(1), color: pick(rng, PLANET_COLORS),
-      orbit: { cx: sx, cz: sz, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, opts.omega[0], opts.omega[1])).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
-    });
-    orbR += Math.max(16, rand(rng, 0.16, 0.2) * E);
-  }
-  let moons = 0;
-  for (const pIdx of planetIdxs) {
-    if (moons >= (opts.maxMoons || 1) || rng() >= (opts.moonProb || 0)) continue;
-    lv.bodies.push({
-      name: name(BODY_NAMES), mass: Math.round(rand(rng, 180, 320)),
-      radius: +rand(rng, 2, 2.5).toFixed(1), color: 0xe2e2e2,
-      orbit: { parent: pIdx, radius: +rand(rng, 8, 11).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
-    });
-    moons++;
-  }
-  return planetIdxs;
-}
-
-// Antimatter star parked beyond the system's outer ring (a rogue star at the
-// edge of the system, not inside the orbital lanes).
-function addAntimatter(rng, lv, name, planetIdxs) {
-  const sun = lv.bodies[0];
-  const outer = planetIdxs.length ? lv.bodies[planetIdxs[planetIdxs.length - 1]].orbit.radius : 20;
-  const ang = rand(rng, 0, Math.PI * 2);
-  const d = outer + rand(rng, 13, 22);
-  lv.bodies.push({
-    name: name(ANTIMATTER_NAMES), mass: -Math.round(rand(rng, 500, 1000)),
-    radius: +rand(rng, 3.5, 4.5).toFixed(1), color: 0xc77dff,
-    x: Math.round(sun.x + Math.cos(ang) * d), z: Math.round(sun.z + Math.sin(ang) * d),
-  });
 }
 
 function addDerelict(rng, level) {
@@ -386,7 +350,6 @@ function addPatrol(rng, level) {
   }
 }
 
-// Waypoints along the route: fractions of the pad->goal line with lateral jitter.
 function addWaypoints(rng, level, specs) {
   const wps = [];
   for (const spec of specs) {
@@ -410,13 +373,33 @@ function addWaypoints(rng, level, specs) {
 }
 
 // ---------------------------------------------------------------------------
-// Flavour
+// Fuel economy: fuel (and fuel cells) only exist on multi-hop levels, and
+// there the tank covers a typical first launch but NOT the whole route at
+// typical power — cells along the early legs bridge the gap.
 // ---------------------------------------------------------------------------
-const BODY_NAMES = ['Pebble', 'Mint', 'Coral', 'Sage', 'Ember', 'Nimbus', 'Juno', 'Vesta', 'Lyra', 'Atlas',
-  'Rhea', 'Iris', 'Quartz', 'Basil', 'Echo', 'Fern', 'Opal', 'Dune', 'Frost', 'Halo',
+function tuneFuelEconomy(rng, level, res) {
+  if (res.legs <= 1) return;
+  placePickupsOnPaths(rng, level, res.winners, res.legs);
+  const median = arr => [...arr].sort((a, b) => a - b)[Math.floor(arr.length / 2)];
+  const costs = res.winners.map(w => w.map(x => launchFuelCost(x.sp, level.maxLaunch)));
+  level.legMinCosts = costs.map(c => +(c.length ? Math.min(...c) : 0.4).toFixed(2));
+  const med = costs.map(c => (c.length ? median(c) : 0.8));
+  const medTotal = med.reduce((a, b) => a + b, 0);
+  if ((level.pickups || []).length >= 1) {
+    level.fuel = +Math.min(5, Math.max(1.4, med[0] + 0.4)).toFixed(1);
+  } else {
+    level.fuel = +Math.min(5, medTotal + 1.2).toFixed(1);
+  }
+  level.fuelRequired = level.fuel < medTotal;
+}
+
+// ---------------------------------------------------------------------------
+// Bodies: realistic size tiers
+// ---------------------------------------------------------------------------
+const SUN_COLORS = [0xffd166, 0xffb703, 0xff9e6b];
+const ALIEN_NAMES = ['Vesta', 'Lyra', 'Atlas', 'Rhea', 'Iris', 'Quartz', 'Echo', 'Opal', 'Dune', 'Frost',
   'Jasper', 'Koa', 'Lumen', 'Mica', 'Nova', 'Onyx', 'Pip', 'Zephyr', 'Cinder', 'Willow'];
 const PLANET_COLORS = [0x8ecae6, 0x7ae582, 0xff8fa3, 0xffd166, 0xf4a261, 0x90e0ef, 0xbde0fe, 0xc8b6ff, 0xffc8dd, 0x95d5b2];
-const SUN_COLORS = [0xffd166, 0xffb703, 0xff9e6b];
 const ANTIMATTER_NAMES = ['Nulla', 'Antara', 'Umbra', 'Vex', 'Inverse', 'Aversa'];
 const HOLE_NAMES = ['Maw', 'Gulp', 'Void', 'Abyss', 'Hush'];
 
@@ -431,97 +414,203 @@ function namer(rng) {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Theme samplers — sample(rng, slot) returns a candidate level or null
-// ---------------------------------------------------------------------------
-function padAndGoal(rng, E, goalR) {
-  return {
-    ship: { x: Math.round(rand(rng, -0.5, 0.5) * E * 0.9), z: Math.round(E * 0.72) },
-    goal: { x: Math.round(rand(rng, -0.55, 0.55) * E * 0.9), z: Math.round(-E * 0.73), r: +goalR.toFixed(1) },
+const ringPos = (c, R, a) => ({ x: Math.round(c.x + Math.cos(a) * R), z: Math.round(c.z + Math.sin(a) * R) });
+const unit = (dx, dz) => { const d = Math.max(Math.hypot(dx, dz), 1e-9); return { x: dx / d, z: dz / d }; };
+
+function mkSun(rng, lv, name2, mLo = 2200, mHi = 3200) {
+  const E = lv.extent;
+  const body = {
+    name: name2, mass: Math.round(rand(rng, mLo, mHi)),
+    radius: +rand(rng, 9, 11.5).toFixed(1), color: pick(rng, SUN_COLORS),
+    x: Math.round(sign(rng) * rand(rng, 0.02, 0.14) * E),
+    z: Math.round(rand(rng, -0.12, 0.04) * E),
+    type: 'sun',
   };
+  lv.bodies.push(body);
+  return body;
 }
 
-function addPlanet(rng, lv, name, massLo, massHi, rLo, rHi) {
-  lv.bodies.push({
-    name, mass: Math.round(rand(rng, massLo, massHi)),
-    radius: +rand(rng, rLo, rHi).toFixed(1), color: pick(rng, PLANET_COLORS),
-    x: Math.round(rand(rng, -0.75, 0.75) * lv.extent), z: Math.round(rand(rng, -0.58, 0.58) * lv.extent),
-  });
+function mkPlanet(lv, name2, R, ang, sun, size) {
+  const p = ringPos(sun, R, ang);
+  const body = { name: name2, mass: size.m, radius: size.r, color: size.c, x: p.x, z: p.z };
+  lv.bodies.push(body);
+  return lv.bodies.length - 1;
 }
 
-function sampleSet1(rng, slot) {
-  const E = 60;
-  const lv = { extent: E, ...padAndGoal(rng, E, 6.3 - slot * 0.13), maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
-  const name = namer(rng);
-  addSystem(rng, lv, name, {
-    starMass: [1500, 2100], nPlanets: 2, planetMass: [450, 950],
-    omega: [0.08, 0.18], moonProb: slot >= 4 ? 0.3 : 0, maxMoons: 1,
-  });
+// planet size presets (rough real-world tiering)
+const rocky = (rng, c) => ({ r: +rand(rng, 2.4, 3.8).toFixed(1), m: Math.round(rand(rng, 300, 700)), c });
+const small = (rng, c) => ({ r: +rand(rng, 1.5, 2.2).toFixed(1), m: Math.round(rand(rng, 90, 250)), c });
+const gas = (rng, c) => ({ r: +rand(rng, 5.5, 6.5).toFixed(1), m: Math.round(rand(rng, 1100, 1700)), c });
+const iceGiant = (rng, c) => ({ r: +rand(rng, 4.4, 5).toFixed(1), m: Math.round(rand(rng, 800, 1100)), c });
+
+// place the launch pad just off a home body, and the goal just past a target
+function padByBody(lv, body, sun, gap) {
+  const u = unit(body.x - sun.x, body.z - sun.z);
+  lv.ship = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)) };
+}
+function goalByBody(lv, body, sun, gap, r) {
+  const u = unit(body.x - sun.x, body.z - sun.z);
+  lv.goal = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)), r };
+}
+
+// ---------------------------------------------------------------------------
+// Set 1 — Earthrise: launch from Earth to the Moon, Venus, Mars. Static.
+// ---------------------------------------------------------------------------
+function sampleEarthrise(rng, slot) {
+  const E = 62;
+  const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 6 }, maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2000, 2600);
+  const angPad = Math.atan2(0.72 * E - sun.z, rand(rng, -0.3, 0.3) * E - sun.x) + rand(rng, -0.25, 0.25);
+  const Re = sun.radius + rand(rng, 13, 17);
+  const earthIdx = mkPlanet(lv, 'Earth', Re, angPad, sun, { r: 3.4, m: Math.round(rand(rng, 480, 620)), c: 0x4d9de0 });
+  const earth = lv.bodies[earthIdx];
+  padByBody(lv, earth, sun, rand(rng, 8, 10));
+  lv.homeIdx = earthIdx;
+
+  let targetIdx;
+  if (slot < 3) {
+    const angM = angPad + sign(rng) * rand(rng, 0.55, 0.95);
+    targetIdx = mkPlanet(lv, 'Moon', Re + rand(rng, 11, 15), angM, sun, small(rng, 0xd8d8d8));
+  } else if (slot < 6) {
+    const angT = Math.atan2(-0.73 * E - sun.z, rand(rng, -0.35, 0.35) * E - sun.x) + rand(rng, -0.2, 0.2);
+    targetIdx = mkPlanet(lv, 'Venus', Re + rand(rng, 14, 19), angT, sun, { r: 3.2, m: Math.round(rand(rng, 430, 560)), c: 0xe8c07d });
+  } else {
+    const angT = Math.atan2(-0.73 * E - sun.z, rand(rng, -0.35, 0.35) * E - sun.x) + rand(rng, -0.2, 0.2);
+    targetIdx = mkPlanet(lv, 'Mars', Re + rand(rng, 15, 20), angT, sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
+    if (rng() < 0.6) mkPlanet(lv, 'Mercury', sun.radius + rand(rng, 6.5, 8.5), rand(rng, 0, 6.28), sun, small(rng, 0xb5a642));
+  }
+  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +(6.4 - slot * 0.12).toFixed(1));
+  lv.targetIdx = targetIdx;
   return levelGeometryOk(lv, 16, 14) ? lv : null;
 }
 
-function sampleSet2(rng, slot) {
-  const E = 62;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.9, 5.5)), maxLaunch: Math.round(rand(rng, 46, 50)), fuel: 3, bodies: [] };
-  const name = namer(rng);
-  addSystem(rng, lv, name, {
-    starMass: [2100, 2800], nPlanets: 2 + (rng() < 0.5 ? 1 : 0), planetMass: [550, 1200],
-    omega: [0.1, 0.25], moonProb: 0.4, maxMoons: 1,
-  });
-  if (!levelGeometryOk(lv, 15, 13)) return null;
+// ---------------------------------------------------------------------------
+// Set 2 — Inner System: Mercury..Mars around a heavy Sun. Static + wrecks.
+// ---------------------------------------------------------------------------
+function sampleInner(rng, slot) {
+  const E = 66;
+  const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 5.2 }, maxLaunch: Math.round(rand(rng, 46, 50)), fuel: 3, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2400, 3000);
+  const Rmer = sun.radius + rand(rng, 6.5, 8.5);
+  const Rven = Rmer + rand(rng, 9, 12);
+  const Rear = Rven + rand(rng, 9, 12);
+  const Rmar = Rear + rand(rng, 9, 12);
+  const angs = [0, 1, 2, 3].map(() => rand(rng, 0, 6.28));
+  const mer = mkPlanet(lv, 'Mercury', Rmer, angs[0], sun, small(rng, 0xb5a642));
+  const ven = mkPlanet(lv, 'Venus', Rven, angs[1], sun, { r: 3.2, m: Math.round(rand(rng, 430, 560)), c: 0xe8c07d });
+  const ear = mkPlanet(lv, 'Earth', Rear, angs[2], sun, { r: 3.4, m: Math.round(rand(rng, 480, 620)), c: 0x4d9de0 });
+  const mar = mkPlanet(lv, 'Mars', Rmar, angs[3], sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
+  padByBody(lv, lv.bodies[ear], sun, rand(rng, 8, 10));
+  lv.homeIdx = ear;
+  const targetIdx = slot < 3 ? ven : slot < 6 ? mer : mar;
+  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +rand(rng, 4.9, 5.5).toFixed(1));
+  lv.targetIdx = targetIdx;
+  if (!levelGeometryOk(lv, 16, 14)) return null;
   if (slot >= 2) for (let i = 0; i < 1 + (slot >= 4 ? 1 : 0); i++) addDerelict(rng, lv);
   if (slot >= 6) addPatrol(rng, lv);
   return lv;
 }
 
-function sampleSet3(rng, slot) {
-  const E = 64;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.6, 5.4)), maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
-  const name = namer(rng);
-  const planetIdxs = addSystem(rng, lv, name, {
-    starMass: [1800, 2400], nPlanets: 2, planetMass: [600, 1300],
-    omega: [0.12, 0.3], moonProb: 0.35, maxMoons: 1, offset: [0.05, 0.25],
+// ---------------------------------------------------------------------------
+// Set 3 — Outer Planets: gas giants with moons; station routes. Static.
+// ---------------------------------------------------------------------------
+function sampleOuter(rng, slot) {
+  const E = 70;
+  const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.35, 0.35) * E), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.4, 0.4) * E), z: Math.round(-0.73 * E), r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2600, 3400);
+  const Rj = sun.radius + rand(rng, 12, 16);
+  const Rs = Rj + rand(rng, 13, 17);
+  const jup = mkPlanet(lv, 'Jupiter', Rj, rand(rng, 0, 6.28), sun, gas(rng, 0xd9a066));
+  const sat = mkPlanet(lv, 'Saturn', Rs, rand(rng, 0, 6.28), sun, { ...gas(rng, 0xe3c896), r: +rand(rng, 5.2, 5.8).toFixed(1) });
+  if (slot >= 4 && Rs + 14 < E * 0.62) {
+    mkPlanet(lv, pick(rng, ['Uranus', 'Neptune']), Rs + rand(rng, 12, 15), rand(rng, 0, 6.28), sun, iceGiant(rng, pick(rng, [0x9ad1d4, 0x5b7fde])));
+  }
+  // moons hug their giants (static snapshots of their orbits)
+  const moonNames = [['Io', 'Europa', 'Ganymede'], ['Titan', 'Rhea', 'Enceladus']];
+  [jup, sat].forEach((pi, k) => {
+    if (rng() < 0.6) {
+      const parent = lv.bodies[pi];
+      const ang = rand(rng, 0, 6.28);
+      const d = parent.radius + rand(rng, 7, 10);
+      const idx = mkPlanet(lv, pick(rng, moonNames[k]), 0, 0, { x: parent.x + Math.cos(ang) * d, z: parent.z + Math.sin(ang) * d, radius: 0 }, small(rng, 0xd8d8d8));
+      lv.bodies[idx].moonOf = pi;
+    }
   });
-  const nAnti = rng() < 0.4 ? 2 : 1;
-  for (let i = 0; i < nAnti; i++) addAntimatter(rng, lv, name, planetIdxs);
   if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
-  if (slot >= 2 && rng() < 0.7) addDerelict(rng, lv);
-  if (slot >= 6) addPatrol(rng, lv);
+  if (slot >= 2 && rng() < 0.6) addDerelict(rng, lv);
+  if (slot >= 7) addPatrol(rng, lv);
   return lv;
 }
 
-function sampleSet4(rng, slot) {
-  const E = 66;
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.8, 5.2)), maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
-  const name = namer(rng);
-  // clockwork systems: faster orbits, more moons
-  addSystem(rng, lv, name, {
-    starMass: [2200, 3000], nPlanets: 2 + (rng() < 0.5 ? 1 : 0), planetMass: [600, 1300],
-    omega: [0.3, 0.6], moonProb: 0.55, maxMoons: 2, offset: [0.1, 0.28],
-  });
-  if (!levelGeometryOk(lv, 14, 11)) return null;
+// ---------------------------------------------------------------------------
+// Set 4 — Asteroid Belt: rock fields between Mars and Jupiter; cargo hauls.
+// ---------------------------------------------------------------------------
+function sampleBelt(rng, slot) {
+  const E = 70;
+  const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.35, 0.35) * E), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.4, 0.4) * E), z: Math.round(-0.73 * E), r: +rand(rng, 4.8, 5.2).toFixed(1) }, maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2400, 3000);
+  mkPlanet(lv, 'Mars', sun.radius + rand(rng, 8, 11), rand(rng, 0, 6.28), sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
+  mkPlanet(lv, 'Jupiter', sun.radius + rand(rng, 34, 40), rand(rng, 0, 6.28), sun, gas(rng, 0xd9a066));
+  if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
   } else if (slot >= 1 && rng() < 0.5) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   }
+  // the belt itself: static rocks in an annulus between the two planets
+  const nRocks = 7 + Math.min(slot, 5);
+  let placed = 0;
+  lv.hazards = lv.hazards || [];
+  for (let i = 0; i < nRocks * 6 && placed < nRocks; i++) {
+    const R = sun.radius + rand(rng, 15, 31);
+    const ang = rand(rng, 0, 6.28);
+    const h = {
+      kind: 'asteroid', radius: +rand(rng, 1.5, 2.5).toFixed(1),
+      x: Math.round(sun.x + Math.cos(ang) * R), z: Math.round(sun.z + Math.sin(ang) * R),
+    };
+    if (hazardOk(lv, h, 10)) { lv.hazards.push(h); placed++; }
+  }
+  if (placed < 5) return null;
   if (slot >= 5) addPatrol(rng, lv);
   return lv;
 }
 
-function sampleSet5(rng, slot) {
+// ---------------------------------------------------------------------------
+// Set 5 — New Star Systems: alien suns, moving orbits, exotic objects.
+// ---------------------------------------------------------------------------
+function sampleAlien(rng, slot) {
   const E = Math.round(rand(rng, 68, 76));
-  const lv = { extent: E, ...padAndGoal(rng, E, rand(rng, 4.2, 4.6)), maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
+  const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.45, 0.45) * E * 0.9), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.5, 0.5) * E * 0.9), z: Math.round(-0.73 * E), r: +rand(rng, 4.2, 4.6).toFixed(1) }, maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
   const name = namer(rng);
-  const planetIdxs = addSystem(rng, lv, name, {
-    starMass: [2600, 3800], nPlanets: 3 + (rng() < 0.4 ? 1 : 0), planetMass: [500, 1100],
-    omega: [0.22, 0.55], moonProb: 0.5, maxMoons: 3, offset: [0.05, 0.22],
-  });
+  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800);
+  const planetIdxs = [];
+  let orbR = sun.radius + rand(rng, 11, 15);
+  const nPl = 3 + (rng() < 0.4 ? 1 : 0);
+  for (let i = 0; i < nPl; i++) {
+    if (orbR > E * 0.62) break;
+    const size = rng() < 0.4 ? { ...gas(rng, pick(rng, PLANET_COLORS)), r: +rand(rng, 5, 6).toFixed(1) } : rocky(rng, pick(rng, PLANET_COLORS));
+    planetIdxs.push(lv.bodies.length);
+    lv.bodies.push({
+      name: name(ALIEN_NAMES), mass: size.m, radius: size.r, color: size.c,
+      orbit: { cx: sun.x, cz: sun.z, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+    });
+    orbR += Math.max(16, rand(rng, 0.16, 0.2) * E);
+  }
   if (!planetIdxs.length) return null;
-  const sun = lv.bodies[0];
+  let moons = 0;
+  for (const pIdx of planetIdxs) {
+    if (moons >= 2 || rng() >= 0.45) continue;
+    const parent = lv.bodies[pIdx];
+    lv.bodies.push({
+      name: name(ALIEN_NAMES), mass: Math.round(rand(rng, 80, 220)),
+      radius: +rand(rng, 1.4, 2).toFixed(1), color: 0xe2e2e2,
+      orbit: { parent: pIdx, radius: +(parent.radius + rand(rng, 5.5, 8)).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+    });
+    moons++;
+  }
+  const outer = lv.bodies[planetIdxs[planetIdxs.length - 1]].orbit.radius;
   if (rng() < 0.45) {
-    const outer = lv.bodies[planetIdxs[planetIdxs.length - 1]].orbit.radius;
     const ang = rand(rng, 0, Math.PI * 2);
     const d = outer + rand(rng, 12, 20);
     lv.bodies.push({
@@ -530,7 +619,15 @@ function sampleSet5(rng, slot) {
       x: Math.round(sun.x + Math.cos(ang) * d), z: Math.round(sun.z + Math.sin(ang) * d),
     });
   }
-  if (rng() < 0.35) addAntimatter(rng, lv, name, planetIdxs);
+  if (rng() < 0.35) {
+    const ang = rand(rng, 0, Math.PI * 2);
+    const d = outer + rand(rng, 13, 22);
+    lv.bodies.push({
+      name: name(ANTIMATTER_NAMES), mass: -Math.round(rand(rng, 500, 1000)),
+      radius: +rand(rng, 3.5, 4.5).toFixed(1), color: 0xc77dff,
+      x: Math.round(sun.x + Math.cos(ang) * d), z: Math.round(sun.z + Math.sin(ang) * d),
+    });
+  }
   if (!levelGeometryOk(lv, 14, 11)) return null;
   if (slot >= 5) {
     if (!addWaypoints(rng, lv, [{ t: 0.3, r: 3.6, type: 'cargo' }, { t: 0.7, r: 3.6, type: 'dropoff' }])) return null;
@@ -542,64 +639,62 @@ function sampleSet5(rng, slot) {
 }
 
 // ---------------------------------------------------------------------------
-// Sets: themes, difficulty bands (coarse min-leg win %), fixed original slots
+// Sets
 // ---------------------------------------------------------------------------
 const ORIGINALS = {
-  liftoff: { name: 'Liftoff', hint: 'Drag back from your ship to aim — like a slingshot — then release to launch!', extent: 60, ship: { x: 0, z: 42 }, goal: { x: 0, z: -40, r: 7 }, maxLaunch: 50, fuel: 3, bodies: [{ name: 'Pebble', mass: 260, radius: 3, color: 0x8ecae6, x: -34, z: -4 }] },
-  thedip: { name: 'The Dip', hint: 'That well will bend your shot. Watch the prediction line and aim off-center.', extent: 60, ship: { x: 0, z: 42 }, goal: { x: 0, z: -42, r: 5.5 }, maxLaunch: 50, fuel: 3, bodies: [{ name: 'Mint', mass: 1300, radius: 5, color: 0x7ae582, x: 15, z: 0 }] },
-  slingshot: { name: 'Slingshot', hint: 'No way through — so curve around. Dive into the well and let it fling you!', extent: 60, ship: { x: 0, z: 44 }, goal: { x: 0, z: -44, r: 5 }, maxLaunch: 48, fuel: 3, bodies: [{ name: 'Rusty', mass: 2100, radius: 7, color: 0xff8fa3, x: 0, z: -2 }] },
-  saddle: { name: 'The Saddle', hint: 'Two wells, one ridge between them. Thread the saddle — or swing wide.', extent: 62, ship: { x: -10, z: 44 }, goal: { x: 4, z: -44, r: 4.5 }, maxLaunch: 48, fuel: 3, bodies: [{ name: 'Castor', mass: 1500, radius: 6, color: 0xffd166, x: -16, z: 0 }, { name: 'Pollux', mass: 1500, radius: 6, color: 0xf4a261, x: 16, z: 0 }] },
-  repulsor: { name: 'Antimatter Ridge', hint: 'That antimatter star pushes you AWAY. Ride the pass between push and pull.', extent: 62, ship: { x: 0, z: 44 }, goal: { x: 0, z: -44, r: 5 }, maxLaunch: 48, fuel: 3.5, bodies: [{ name: 'Nulla', mass: -900, radius: 4.5, color: 0xc77dff, x: -12, z: 0 }, { name: 'Anchor', mass: 1300, radius: 5, color: 0x90e0ef, x: 16, z: -2 }] },
-  moonshot: { name: 'Moonshot', hint: 'The moon keeps moving — even while you aim. Time your release!', extent: 62, ship: { x: 0, z: 44 }, goal: { x: 0, z: -46, r: 5 }, maxLaunch: 48, fuel: 3.5, bodies: [{ name: 'Aegis', mass: 2200, radius: 7, color: 0xbde0fe, x: 0, z: -4 }, { name: 'Luna', mass: 520, radius: 3, color: 0xe2e2e2, orbit: { parent: 0, radius: 20, omega: 0.7, phase: 0.8 } }] },
   horizon: { name: 'Event Horizon', hint: 'Nothing escapes the red ring. Skim close for a huge slingshot — but not TOO close.', extent: 64, ship: { x: -38, z: 44 }, goal: { x: 34, z: -44, r: 4.5 }, maxLaunch: 44, fuel: 4, bodies: [{ name: 'Maw', mass: 5200, radius: 3.5, horizon: 6.5, color: 0x1a1a2e, x: 0, z: 0, type: 'blackhole' }] },
-  grandtour: { name: 'Grand Tour', hint: 'Everything at once. Take your time — plot the long way round.', extent: 74, ship: { x: 30, z: 56 }, goal: { x: -34, z: -50, r: 5 }, maxLaunch: 48, fuel: 5, bodies: [{ name: 'Titan', mass: 1700, radius: 6, color: 0xffd166, x: 26, z: 14 }, { name: 'Wisp', mass: 420, radius: 2.5, color: 0xe2e2e2, orbit: { parent: 0, radius: 15, omega: 0.8, phase: 2.1 } }, { name: 'Umbra', mass: -900, radius: 4.5, color: 0xc77dff, x: 2, z: -4 },{ name: 'Maw II', mass: 4200, radius: 3, horizon: 5.5, color: 0x1a1a2e, x: -26, z: -18, type: 'blackhole' }] },
+  grandtour: { name: 'Grand Tour', hint: 'Everything at once. Take your time — plot the long way round.', extent: 74, ship: { x: 30, z: 56 }, goal: { x: -34, z: -50, r: 5 }, maxLaunch: 48, fuel: 5, bodies: [{ name: 'Titan', mass: 1700, radius: 6, color: 0xffd166, x: 26, z: 14 }, { name: 'Wisp', mass: 420, radius: 2.5, color: 0xe2e2e2, orbit: { parent: 0, radius: 15, omega: 0.8, phase: 2.1 } }, { name: 'Umbra', mass: -900, radius: 4.5, color: 0xc77dff, x: 2, z: -4 }, { name: 'Maw II', mass: 4200, radius: 3, horizon: 5.5, color: 0x1a1a2e, x: -26, z: -18, type: 'blackhole' }] },
 };
 
 const SETS = [
   {
-    name: 'Cadet Orbits', difficulty: 1, sample: sampleSet1, band: [1.1, 2.7],
-    originals: [{ level: ORIGINALS.liftoff, slot: 0 }, { level: ORIGINALS.thedip, slot: 1 }],
-    hint: 'A little star system: every well bends your shot. Learn to read the terrain.',
-    slotHints: {},
-    names: ['First Glide', 'Two Stones', 'Slow Orbit', 'Long Coast', 'Downhill Run', 'Easy Does It', 'Twin Dimples', 'Drift Lane', 'Warm Up', 'Graduation'],
-  },
-  {
-    name: 'Slingshot Academy', difficulty: 2, sample: sampleSet2, band: [0.6, 1.8],
-    originals: [{ level: ORIGINALS.slingshot, slot: 0 }, { level: ORIGINALS.saddle, slot: 1 }],
-    hint: 'A heavy star blocks the way. Dive into its well and let gravity throw you.',
+    name: 'Earthrise', difficulty: 1, sample: sampleEarthrise, band: [1.1, 2.7],
+    originals: [],
+    hint: 'You launch from Earth. Every well between here and the target bends your shot.',
     slotHints: {
-      2: 'Derelict ships drift in the lanes now — one touch and it\'s over.',
-      6: 'That ship is on patrol. Watch its route before you launch.',
+      0: 'Welcome aboard! Drag back from your ship to launch from Earth to the Moon.',
+      3: 'Venus this time — swing around Sol and mind its huge well.',
+      6: 'All the way to Mars. Use the Sun\'s well; don\'t fall in.',
     },
-    names: ['Around the Bend', 'Deep Dive', 'Wreckage Field', 'Double Trouble', 'The Long Way', 'Whiplash', 'Picket Line', 'Gravity Assist', 'Full Send', 'Masterclass'],
+    names: ['Earthrise', 'To the Moon', 'Lunar Loop', 'Venus Bound', 'Morning Star', 'Transit of Venus', 'Halfway to Mars', 'Red Planet', 'Dusty Landing', 'Escape Velocity'],
   },
   {
-    name: 'Antimatter Belt', difficulty: 3, sample: sampleSet3, band: [0.4, 1.35],
-    originals: [{ level: ORIGINALS.repulsor, slot: 0 }],
-    hint: 'Violet antimatter stars push you AWAY. Ride the passes between push and pull.',
-    slotHints: { 4: 'Dock at the station 🛰 first — but stops never refuel. Grab fuel cells on the way!' },
-    names: ['Uphill Battle', 'The Pass', 'Push and Pull', 'Ridge Runner', 'Waystation', 'Backpressure', 'Crosswind', 'The Squeeze', 'Turbulence', 'Summit'],
-  },
-  {
-    name: 'Clockwork Moons', difficulty: 4, sample: sampleSet4, band: [0.25, 1.1],
-    originals: [{ level: ORIGINALS.moonshot, slot: 0 }],
-    hint: 'Everything is moving — even while you aim. Timing is everything.',
+    name: 'Inner System', difficulty: 2, sample: sampleInner, band: [0.6, 1.8],
+    originals: [],
+    hint: 'The inner system: tight, hot orbits around a heavy Sun.',
     slotHints: {
-      3: 'Grab the cargo 📦 and haul it to the dropoff 📥 — and fuel cells are NOT optional out here.',
-      6: 'Gravity assist: launch when a moving body can sling you forward, not against you.',
+      2: 'Derelict ships drift in the lanes — one touch and it\'s over.',
+      3: 'Mercury dive: skim Sol\'s well without falling in.',
+      6: 'That ship is on patrol. Watch its route arrow before you launch.',
     },
-    timing: 6,
-    names: ['Tick Tock', 'Orbit Window', 'Waltz', 'First Haul', 'Pendulum', 'Metronome', 'Eclipse', 'Revolution', 'Perfect Timing', 'Clockwork'],
+    names: ['Inner Ring', 'Crossing Venus', 'Sunward', 'Mercury Dive', 'Perihelion', 'Solar Wind', 'Retrograde', 'Hot Lap', 'Twin Transfer', 'Inner Mastery'],
   },
   {
-    name: 'Deep Space', difficulty: 5, sample: sampleSet5, band: [0.08, 0.9],
+    name: 'Outer Planets', difficulty: 3, sample: sampleOuter, band: [0.4, 1.35],
+    originals: [],
+    hint: 'Gas giants ahead: huge wells, huge slingshots.',
+    slotHints: { 4: 'Dock at the station 🛰 first. Stops never refuel — grab cells on the way.' },
+    names: ['Jovian Leap', 'Eye of Jupiter', 'Ring Runner', 'Saturn Swing', 'Titan Stop', 'Ice Giants', 'Sideways Uranus', 'Neptune Deep', 'Kuiper Edge', 'Grand Cruise'],
+  },
+  {
+    name: 'Asteroid Belt', difficulty: 4, sample: sampleBelt, band: [0.25, 1.1], timing: 6,
+    originals: [],
+    hint: 'The belt: thread the rocks between Mars and Jupiter.',
+    slotHints: {
+      3: 'Grab the cargo 📦 and haul it to the dropoff 📥 — and the fuel cells are NOT optional.',
+      6: 'Patrol lanes cross the belt. Time your launch around their arrows.',
+    },
+    names: ['Into the Belt', 'Rock Hopping', 'Ceres Approach', 'First Haul', 'Cargo Convoy', 'Rubble Field', 'Dodging Stones', 'Vesta Run', 'Dense Cluster', 'Belt Baron'],
+  },
+  {
+    name: 'New Star Systems', difficulty: 5, sample: sampleAlien, band: [0.08, 0.9], timing: 3,
     originals: [{ level: ORIGINALS.horizon, slot: 0 }, { level: ORIGINALS.grandtour, slot: 1 }],
-    hint: 'Whole solar systems, weak engines. Ride the planets\' orbital momentum — launch windows matter.',
+    hint: 'Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.',
     slotHints: {
       3: 'Your engine can\'t brute-force this one. Wait for a planet to swing by and steal its momentum.',
+      5: 'Cargo runs in a moving system, and stops never refuel. Plan the whole route.',
     },
-    timing: 3,
-    names: ['Outer Rim', 'Three-Body Problem', 'Star System', 'Dark Passage', 'Planetfall', 'The Gauntlet', 'Singularity', 'Far Shore', 'Last Light', 'GravityLoop'],
+    names: ['Event Horizon', 'Grand Tour', 'Star System', 'Dark Passage', 'Planetfall', 'The Gauntlet', 'Singularity', 'Far Shore', 'Last Light', 'GravityLoop'],
   },
 ];
 
@@ -625,7 +720,7 @@ for (let s = 0; s < SETS.length; s++) {
     let found = null;
     let geoOk = 0, solvable = 0;
     for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-      const rng = mulberry32(3e6 + s * 100003 + slot * 1009 + attempt);
+      const rng = mulberry32(4e6 + s * 100003 + slot * 1009 + attempt);
       const lv = set.sample(rng, slot);
       if (!lv) continue;
       geoOk++;
@@ -657,31 +752,6 @@ for (let s = 0; s < SETS.length; s++) {
 }
 
 // ---------------------------------------------------------------------------
-// Fuel economy: fuel (and fuel cells) only exist on multi-hop levels, and
-// there the tank is set BELOW the total of the cheapest winning launch costs,
-// so collecting a cell on an early leg is required to finish the route.
-// ---------------------------------------------------------------------------
-function tuneFuelEconomy(rng, level, res) {
-  if (res.legs <= 1) return;                          // single launch: no pickups needed
-  placePickupsOnPaths(rng, level, res.winners, res.legs);
-  const median = arr => [...arr].sort((a, b) => a - b)[Math.floor(arr.length / 2)];
-  const costs = res.winners.map(w => w.map(x => launchFuelCost(x.sp, level.maxLaunch)));
-  // true minimums drive the in-game "you're stuck" warning
-  level.legMinCosts = costs.map(c => +(c.length ? Math.min(...c) : 0.4).toFixed(2));
-  // typical (median) winning launch costs drive the economy: the tank covers
-  // a typical first launch but NOT the whole route at typical power — fuel
-  // cells along the early legs bridge the gap
-  const med = costs.map(c => (c.length ? median(c) : 0.8));
-  const medTotal = med.reduce((a, b) => a + b, 0);
-  if ((level.pickups || []).length >= 1) {
-    level.fuel = +Math.min(5, Math.max(1.4, med[0] + 0.4)).toFixed(1);
-  } else {
-    level.fuel = +Math.min(5, medTotal + 1.2).toFixed(1);   // no cells landed: keep it safe
-  }
-  level.fuelRequired = level.fuel < medTotal;         // logged; typical play needs a cell
-}
-
-// ---------------------------------------------------------------------------
 // Emit src/levels.js
 // ---------------------------------------------------------------------------
 const setsOut = SETS.map(s => ({ name: s.name, difficulty: s.difficulty }));
@@ -689,7 +759,7 @@ let js = `// GravityLoop — level data (50 levels in 5 themed sets of 10).
 // GENERATED by tools/generate.js — edit that file and re-run:
 //   node tools/generate.js
 // Coordinates: x is right, z is toward the camera (ship starts at +z).
-// mass < 0 makes a repulsor (a hill instead of a well).
+// mass < 0 makes an antimatter star (a hill instead of a well).
 
 export const SETS = ${JSON.stringify(setsOut, null, 2)};
 
