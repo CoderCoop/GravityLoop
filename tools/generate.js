@@ -414,6 +414,10 @@ function addWaypoints(rng, level, specs) {
       const x = Math.round(level.ship.x + (level.goal.x - level.ship.x) * t + rand(rng, -0.42, 0.42) * level.extent);
       const z = Math.round(level.ship.z + (level.goal.z - level.ship.z) * t + rand(rng, -0.16, 0.16) * level.extent);
       if (Math.hypot(x, z) > level.extent * 0.85) continue;
+      // prefer stations parked close to a body (first 50 tries): legs in and
+      // out of the dock then have to cross its well — empty-space hops are
+      // what tank a multi-leg level's route interest
+      if (tries < 50 && bodyClearance(level, x, z) > 14) continue;
       const cand = { x, z, r: spec.r, type: spec.type };
       const test = { ...level, waypoints: [...wps, cand] };
       if (levelGeometryOk(test, 14, 11)) {
