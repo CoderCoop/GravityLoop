@@ -29,60 +29,77 @@ export const SETS = [
 
 export const LEVELS = [
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": 0,
-      "z": 32
+      "x": 7,
+      "z": -40
     },
     "goal": {
-      "x": -43,
-      "z": 22,
+      "x": 30,
+      "z": -25,
       "r": 6.4
     },
-    "maxLaunch": 48,
+    "maxLaunch": 50,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2313,
-        "radius": 11.3,
+        "mass": 2268,
+        "radius": 11.4,
         "color": 0xffb703,
-        "x": 3,
-        "z": -7,
+        "x": -2,
+        "z": 1,
         "type": "sun"
       },
       {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -22,
+        "z": 0
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -5,
+        "z": 30
+      },
+      {
         "name": "Earth",
-        "mass": 577,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 1,
-        "z": 20
+        "x": 16,
+        "z": -34
       },
       {
         "name": "Moon",
-        "mass": 211,
-        "radius": 1.9,
+        "mass": 60,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -32,
-        "z": 15
+        "x": 22,
+        "z": -30,
+        "moonOf": 3
       }
     ],
-    "homeIdx": 1,
-    "targetIdx": 2,
+    "homeIdx": 3,
+    "targetIdx": 4,
     "name": "Earthrise",
-    "hint": "Welcome aboard! Drag back from your ship to launch from Earth to the Moon.",
+    "hint": "Welcome aboard! Drag back from your ship to launch from Earth to the lunar station.",
     "difficulty": 1
   },
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": -10,
-      "z": 33
+      "x": 28,
+      "z": 38
     },
     "goal": {
-      "x": 35,
-      "z": 29,
+      "x": 36,
+      "z": 12,
       "r": 6.3
     },
     "maxLaunch": 52,
@@ -90,466 +107,652 @@ export const LEVELS = [
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2397,
-        "radius": 9.6,
-        "color": 0xffb703,
-        "x": -6,
-        "z": -6,
-        "type": "sun"
-      },
-      {
-        "name": "Earth",
-        "mass": 532,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": -9,
-        "z": 20
-      },
-      {
-        "name": "Moon",
-        "mass": 156,
-        "radius": 2.1,
-        "color": 0xd8d8d8,
-        "x": 25,
-        "z": 21
-      }
-    ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "To the Moon",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
-    "difficulty": 1
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": -9,
-      "z": 41
-    },
-    "goal": {
-      "x": -52,
-      "z": 33,
-      "r": 6.2
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2409,
-        "radius": 11,
-        "color": 0xffb703,
-        "x": -8,
+        "mass": 2209,
+        "radius": 12,
+        "color": 0xffd166,
+        "x": 1,
         "z": 1,
         "type": "sun"
       },
       {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -15,
+        "z": 14
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -18,
+        "z": -24
+      },
+      {
         "name": "Earth",
-        "mass": 564,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": -9,
-        "z": 29
+        "x": 31,
+        "z": 28
       },
       {
         "name": "Moon",
-        "mass": 202,
-        "radius": 1.8,
+        "mass": 60,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -42,
-        "z": 26
+        "x": 33,
+        "z": 22,
+        "moonOf": 3
       }
     ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Lunar Loop",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
+    "homeIdx": 3,
+    "targetIdx": 4,
+    "name": "To the Moon",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
     "difficulty": 1
   },
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": 8,
-      "z": 31
+      "x": 16,
+      "z": 44
     },
     "goal": {
-      "x": 10,
-      "z": -51,
-      "r": 6
+      "x": 28,
+      "z": 19,
+      "r": 6.1
     },
     "maxLaunch": 51,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2330,
-        "radius": 9.7,
-        "color": 0xffb703,
-        "x": -9,
-        "z": -2,
+        "mass": 2073,
+        "radius": 12,
+        "color": 0xffd166,
+        "x": -4,
+        "z": 1,
         "type": "sun"
       },
       {
-        "name": "Earth",
-        "mass": 618,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": 2,
-        "z": 19
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 3,
+        "z": 21
       },
       {
         "name": "Venus",
-        "mass": 514,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": 6,
-        "z": -40
-      }
-    ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Venus Bound",
-    "hint": "Venus this time — swing around Sol and mind its huge well.",
-    "difficulty": 1
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": 12,
-      "z": 28
-    },
-    "goal": {
-      "x": 11,
-      "z": -54,
-      "r": 5.9
-    },
-    "maxLaunch": 49,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2573,
-        "radius": 10.9,
-        "color": 0xff9e6b,
-        "x": -5,
-        "z": -5,
-        "type": "sun"
+        "x": -3,
+        "z": 32
       },
       {
         "name": "Earth",
-        "mass": 486,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 6,
-        "z": 17
+        "x": 21,
+        "z": 34
       },
       {
-        "name": "Venus",
-        "mass": 510,
-        "radius": 3.2,
-        "color": 0xe8c07d,
-        "x": 7,
-        "z": -42
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 24,
+        "z": 28,
+        "moonOf": 3
       }
     ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Morning Star",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
+    "homeIdx": 3,
+    "targetIdx": 4,
+    "name": "Lunar Loop",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
     "difficulty": 1
   },
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": 8,
-      "z": 27
+      "x": 41,
+      "z": -32
     },
     "goal": {
-      "x": 11,
-      "z": -58,
+      "x": -28,
+      "z": -35,
       "r": 5.8
     },
-    "maxLaunch": 52,
+    "maxLaunch": 50,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2293,
-        "radius": 11.1,
-        "color": 0xffd166,
-        "x": -5,
-        "z": -7,
+        "mass": 2493,
+        "radius": 12.9,
+        "color": 0xffb703,
+        "x": -2,
+        "z": 0,
         "type": "sun"
       },
       {
-        "name": "Earth",
-        "mass": 561,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": 4,
-        "z": 16
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 20,
+        "z": -6
       },
       {
         "name": "Venus",
-        "mass": 546,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": 7,
-        "z": -46
+        "x": -21,
+        "z": -25
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 32,
+        "z": -25
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 39,
+        "z": -27,
+        "moonOf": 3
       }
     ],
-    "homeIdx": 1,
+    "homeIdx": 3,
     "targetIdx": 2,
-    "name": "Transit of Venus",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
+    "name": "Venus Bound",
+    "hint": "Venus this time — swing past Sol's huge well without falling in.",
     "difficulty": 1
   },
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": -19,
-      "z": 35
+      "x": -36,
+      "z": -39
     },
     "goal": {
-      "x": -11,
-      "z": -53,
+      "x": 37,
+      "z": -18,
       "r": 5.7
+    },
+    "maxLaunch": 51,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2368,
+        "radius": 12.3,
+        "color": 0xff9e6b,
+        "x": -2,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -20,
+        "z": 10
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 26,
+        "z": -13
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -29,
+        "z": -31
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -36,
+        "z": -33,
+        "moonOf": 3
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 2,
+    "name": "Morning Star",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 66,
+    "ship": {
+      "x": -48,
+      "z": -5
+    },
+    "goal": {
+      "x": 9,
+      "z": -42,
+      "r": 5.6
     },
     "maxLaunch": 48,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2488,
-        "radius": 9.7,
-        "color": 0xffb703,
-        "x": -5,
+        "mass": 2441,
+        "radius": 11.2,
+        "color": 0xffd166,
+        "x": 2,
         "z": -1,
         "type": "sun"
       },
       {
-        "name": "Earth",
-        "mass": 528,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": -14,
-        "z": 23
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -18,
+        "z": 5
       },
       {
-        "name": "Mars",
-        "mass": 412,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -10,
-        "z": -41
-      }
-    ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Halfway to Mars",
-    "hint": "All the way to Mars. Use the Sun's well; don't fall in.",
-    "difficulty": 1
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": -1,
-      "z": 35
-    },
-    "goal": {
-      "x": -26,
-      "z": -51,
-      "r": 5.6
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2500,
-        "radius": 10.5,
-        "color": 0xff9e6b,
-        "x": -1,
-        "z": -3,
-        "type": "sun"
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 7,
+        "z": -30
       },
       {
         "name": "Earth",
-        "mass": 517,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": -1,
-        "z": 22
-      },
-      {
-        "name": "Mars",
-        "mass": 407,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -20,
-        "z": -39
-      }
-    ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Red Planet",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
-    "difficulty": 1
-  },
-  {
-    "extent": 62,
-    "ship": {
-      "x": 7,
-      "z": 38
-    },
-    "goal": {
-      "x": 17,
-      "z": -50,
-      "r": 5.4
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2430,
-        "radius": 11.3,
-        "color": 0xffb703,
-        "x": -5,
-        "z": 2,
-        "type": "sun"
-      },
-      {
-        "name": "Earth",
-        "mass": 554,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": 3,
-        "z": 26
-      },
-      {
-        "name": "Mars",
         "mass": 420,
         "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 12,
-        "z": -39
+        "color": 0x4d9de0,
+        "x": -37,
+        "z": -4
       },
       {
-        "name": "Mercury",
-        "mass": 128,
-        "radius": 2,
-        "color": 0xb5a642,
-        "x": -20,
-        "z": 15
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -35,
+        "z": 2,
+        "moonOf": 3
       }
     ],
-    "homeIdx": 1,
+    "homeIdx": 3,
     "targetIdx": 2,
-    "name": "Dusty Landing",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
+    "name": "Transit of Venus",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
     "difficulty": 1
   },
   {
-    "extent": 62,
+    "extent": 66,
     "ship": {
-      "x": 8,
-      "z": 33
+      "x": 44,
+      "z": 29
     },
     "goal": {
-      "x": 24,
-      "z": -49,
-      "r": 5.3
+      "x": -28,
+      "z": 54,
+      "r": 5.5
     },
     "maxLaunch": 51,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2261,
-        "radius": 9.7,
-        "color": 0xff9e6b,
-        "x": -3,
-        "z": -2,
+        "mass": 2542,
+        "radius": 12.2,
+        "color": 0xffb703,
+        "x": 2,
+        "z": -3,
         "type": "sun"
       },
       {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 23,
+        "z": -3
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 6,
+        "z": -35
+      },
+      {
         "name": "Earth",
-        "mass": 583,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 4,
-        "z": 21
+        "x": 35,
+        "z": 22
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 28,
+        "z": 24,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 375,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": 18,
-        "z": -39
+        "x": -22,
+        "z": 43
       }
     ],
-    "homeIdx": 1,
-    "targetIdx": 2,
-    "name": "Escape Velocity",
-    "hint": "You launch from Earth. Every well between here and the target bends your shot.",
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "name": "Halfway to Mars",
+    "hint": "All the way to Mars station. Plot carefully.",
     "difficulty": 1
   },
   {
     "extent": 66,
     "ship": {
-      "x": -38,
-      "z": -34
+      "x": -16,
+      "z": -50
     },
     "goal": {
-      "x": 43,
-      "z": -23,
-      "r": 5.1
+      "x": 56,
+      "z": -38,
+      "r": 5.4
     },
-    "maxLaunch": 46,
+    "maxLaunch": 49,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2543,
-        "radius": 9.6,
+        "mass": 2263,
+        "radius": 11.7,
         "color": 0xffb703,
-        "x": 7,
-        "z": -6,
+        "x": 3,
+        "z": -3,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 111,
+        "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "x": -3,
-        "z": 8
+        "x": -1,
+        "z": 17
       },
       {
         "name": "Venus",
-        "mass": 501,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
         "x": 32,
-        "z": -18
+        "z": -10
       },
       {
         "name": "Earth",
-        "mass": 610,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": -27,
-        "z": -27
+        "x": -12,
+        "z": -40
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -13,
+        "z": -34,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 368,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": -20,
-        "z": 38
+        "x": 45,
+        "z": -31
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "name": "Red Planet",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 66,
+    "ship": {
+      "x": -35,
+      "z": -38
+    },
+    "goal": {
+      "x": 31,
+      "z": -54,
+      "r": 5.2
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2504,
+        "radius": 13,
+        "color": 0xffb703,
+        "x": -1,
+        "z": 2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -15,
+        "z": -14
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -6,
+        "z": 32
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -28,
+        "z": -29
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -27,
+        "z": -36,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 25,
+        "z": -43
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "name": "Dusty Landing",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 66,
+    "ship": {
+      "x": -30,
+      "z": 39
+    },
+    "goal": {
+      "x": 40,
+      "z": 51,
+      "r": 5.1
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2075,
+        "radius": 12.6,
+        "color": 0xff9e6b,
+        "x": 3,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 19,
+        "z": -15
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -22,
+        "z": -19
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -23,
+        "z": 31
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -18,
+        "z": 27,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 33,
+        "z": 42
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "name": "Escape Velocity",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": -35,
+      "z": -48
+    },
+    "goal": {
+      "x": -29,
+      "z": 34,
+      "r": 5.3
+    },
+    "maxLaunch": 49,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2738,
+        "radius": 12.7,
+        "color": 0xff9e6b,
+        "x": -4,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 12,
+        "z": 11
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -22,
+        "z": 24
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -28,
+        "z": -38
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -27,
+        "z": -45,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 36,
+        "z": 31
       }
     ],
     "homeIdx": 3,
@@ -559,59 +762,68 @@ export const LEVELS = [
     "difficulty": 2
   },
   {
-    "extent": 66,
+    "extent": 70,
     "ship": {
-      "x": -59,
-      "z": -16
+      "x": 51,
+      "z": -19
     },
     "goal": {
-      "x": -6,
-      "z": 36,
-      "r": 5
+      "x": 3,
+      "z": 44,
+      "r": 5.3
     },
-    "maxLaunch": 47,
+    "maxLaunch": 50,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2465,
-        "radius": 9.2,
-        "color": 0xffb703,
-        "x": -9,
-        "z": -7,
+        "mass": 2837,
+        "radius": 11.1,
+        "color": 0xff9e6b,
+        "x": 3,
+        "z": 0,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 185,
+        "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "x": 3,
-        "z": 5
+        "x": 11,
+        "z": -19
       },
       {
         "name": "Venus",
-        "mass": 459,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": -7,
-        "z": 22
+        "x": 3,
+        "z": 31
       },
       {
         "name": "Earth",
-        "mass": 537,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": -47,
-        "z": -14
+        "x": 41,
+        "z": -15
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 36,
+        "z": -20,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 392,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": 26,
-        "z": 26
+        "x": -32,
+        "z": 38
       }
     ],
     "homeIdx": 3,
@@ -621,300 +833,14 @@ export const LEVELS = [
     "difficulty": 2
   },
   {
-    "extent": 66,
+    "extent": 70,
     "ship": {
-      "x": -41,
-      "z": -44
+      "x": 50,
+      "z": -3
     },
     "goal": {
-      "x": -29,
-      "z": 33,
-      "r": 4.9
-    },
-    "maxLaunch": 49,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2421,
-        "radius": 9.6,
-        "color": 0xffb703,
-        "x": -8,
-        "z": -4,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 197,
-        "radius": 1.8,
-        "color": 0xb5a642,
-        "x": -13,
-        "z": 13
-      },
-      {
-        "name": "Venus",
-        "mass": 522,
-        "radius": 3.2,
-        "color": 0xe8c07d,
-        "x": -22,
-        "z": 21
-      },
-      {
-        "name": "Earth",
-        "mass": 567,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": -33,
-        "z": -34
-      },
-      {
-        "name": "Mars",
-        "mass": 399,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -56,
-        "z": 0
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 2,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 9,
-        "z": -1
-      }
-    ],
-    "name": "Sunward",
-    "hint": "Derelict ships drift in the lanes — one touch and it's over.",
-    "difficulty": 2
-  },
-  {
-    "extent": 66,
-    "ship": {
-      "x": -40,
-      "z": -20
-    },
-    "goal": {
-      "x": 22,
-      "z": 21,
-      "r": 5.2
-    },
-    "maxLaunch": 50,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2601,
-        "radius": 10.1,
-        "color": 0xffd166,
-        "x": 8,
-        "z": -6,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 139,
-        "radius": 1.7,
-        "color": 0xb5a642,
-        "x": 16,
-        "z": 10
-      },
-      {
-        "name": "Venus",
-        "mass": 467,
-        "radius": 3.2,
-        "color": 0xe8c07d,
-        "x": -17,
-        "z": 5
-      },
-      {
-        "name": "Earth",
-        "mass": 601,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": -29,
-        "z": -17
-      },
-      {
-        "name": "Mars",
-        "mass": 302,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 16,
-        "z": -55
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 1,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": -1,
-        "z": -20
-      }
-    ],
-    "name": "Mercury Dive",
-    "hint": "Mercury dive: skim Sol's well without falling in.",
-    "difficulty": 2
-  },
-  {
-    "extent": 66,
-    "ship": {
-      "x": 37,
-      "z": -37
-    },
-    "goal": {
-      "x": -35,
-      "z": 3,
-      "r": 5.4
-    },
-    "maxLaunch": 46,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2778,
-        "radius": 9.4,
-        "color": 0xffb703,
-        "x": -6,
-        "z": -7,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 126,
-        "radius": 1.8,
-        "color": 0xb5a642,
-        "x": -23,
-        "z": -1
-      },
-      {
-        "name": "Venus",
-        "mass": 445,
-        "radius": 3.2,
-        "color": 0xe8c07d,
-        "x": -6,
-        "z": -35
-      },
-      {
-        "name": "Earth",
-        "mass": 558,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": 27,
-        "z": -30
-      },
-      {
-        "name": "Mars",
-        "mass": 342,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -36,
-        "z": 34
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 1,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": -16,
-        "z": 9
-      },
-      {
-        "radius": 2,
-        "x": 28,
-        "z": -8
-      }
-    ],
-    "name": "Perihelion",
-    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
-    "difficulty": 2
-  },
-  {
-    "extent": 66,
-    "ship": {
-      "x": 45,
-      "z": -16
-    },
-    "goal": {
-      "x": -11,
-      "z": 27,
-      "r": 5
-    },
-    "maxLaunch": 47,
-    "fuel": 3,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2612,
-        "radius": 10,
-        "color": 0xffd166,
-        "x": -6,
-        "z": -3,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 212,
-        "radius": 2.1,
-        "color": 0xb5a642,
-        "x": -9,
-        "z": 15
-      },
-      {
-        "name": "Venus",
-        "mass": 511,
-        "radius": 3.2,
-        "color": 0xe8c07d,
-        "x": 14,
-        "z": 18
-      },
-      {
-        "name": "Earth",
-        "mass": 499,
-        "radius": 3.4,
-        "color": 0x4d9de0,
-        "x": 34,
-        "z": -13
-      },
-      {
-        "name": "Mars",
-        "mass": 365,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -33,
-        "z": -47
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 1,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 6,
-        "z": 28
-      },
-      {
-        "radius": 2,
-        "x": -38,
-        "z": 16
-      }
-    ],
-    "name": "Solar Wind",
-    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
-    "difficulty": 2
-  },
-  {
-    "extent": 66,
-    "ship": {
-      "x": -46,
-      "z": 15
-    },
-    "goal": {
-      "x": 47,
-      "z": 47,
+      "x": -7,
+      "z": 44,
       "r": 5.1
     },
     "maxLaunch": 48,
@@ -922,153 +848,514 @@ export const LEVELS = [
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2758,
-        "radius": 9.3,
+        "mass": 2603,
+        "radius": 11.5,
         "color": 0xff9e6b,
-        "x": 4,
-        "z": 2,
+        "x": -4,
+        "z": 0,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 233,
-        "radius": 2.1,
+        "mass": 120,
+        "radius": 1.5,
         "color": 0xb5a642,
-        "x": -10,
-        "z": -9
+        "x": 14,
+        "z": 10
       },
       {
         "name": "Venus",
-        "mass": 436,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": 13,
-        "z": 29
+        "x": -6,
+        "z": 32
       },
       {
         "name": "Earth",
-        "mass": 537,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": -35,
-        "z": 12
+        "x": 38,
+        "z": -2
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 31,
+        "z": 1,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 307,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": 38,
-        "z": 38
+        "x": 22,
+        "z": -44
       }
     ],
     "homeIdx": 3,
-    "targetIdx": 4,
+    "targetIdx": 2,
     "hazards": [
       {
         "radius": 2,
-        "x": -12,
-        "z": 22
-      },
-      {
-        "radius": 2,
-        "x": 27,
-        "z": -18
-      },
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": 34,
-          "z1": 2,
-          "x2": 51,
-          "z2": 11,
-          "period": 4.4,
-          "phase": 0.71
-        }
+        "x": -14,
+        "z": 34
       }
     ],
-    "name": "Retrograde",
-    "hint": "That ship is on patrol. Watch its route arrow before you launch.",
+    "name": "Sunward",
+    "hint": "Derelict ships drift in the lanes — one touch and it's over.",
     "difficulty": 2
   },
   {
-    "extent": 66,
+    "extent": 70,
     "ship": {
-      "x": 40,
-      "z": 24
+      "x": -15,
+      "z": 53
     },
     "goal": {
-      "x": 5,
-      "z": -57,
-      "r": 5
+      "x": -10,
+      "z": -29,
+      "r": 5.3
     },
-    "maxLaunch": 49,
+    "maxLaunch": 48,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2847,
-        "radius": 9.3,
+        "mass": 2579,
+        "radius": 12.7,
         "color": 0xff9e6b,
-        "x": -4,
+        "x": 3,
         "z": 2,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 168,
-        "radius": 1.7,
+        "mass": 120,
+        "radius": 1.5,
         "color": 0xb5a642,
-        "x": 13,
-        "z": 5
+        "x": -5,
+        "z": -18
       },
       {
         "name": "Venus",
-        "mass": 521,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": -4,
-        "z": 29
+        "x": 8,
+        "z": 34
       },
       {
         "name": "Earth",
-        "mass": 541,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 28,
-        "z": 18
+        "x": -11,
+        "z": 43
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -10,
+        "z": 49,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 408,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": 3,
-        "z": -45
+        "x": -48,
+        "z": -12
       }
     ],
     "homeIdx": 3,
-    "targetIdx": 4,
+    "targetIdx": 1,
     "hazards": [
       {
         "radius": 2,
+        "x": -38,
+        "z": 6
+      }
+    ],
+    "name": "Mercury Dive",
+    "hint": "Mercury station: skim Sol's well without falling in.",
+    "difficulty": 2
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": -51,
+      "z": -17
+    },
+    "goal": {
+      "x": 7,
+      "z": 28,
+      "r": 5
+    },
+    "maxLaunch": 48,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2622,
+        "radius": 11.5,
+        "color": 0xffd166,
+        "x": -4,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 3,
+        "z": 18
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -16,
+        "z": 27
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -41,
+        "z": -13
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -35,
+        "z": -16,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -17,
+        "z": 47
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 1,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -21,
+        "z": 3
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -4,
+          "cz": 0,
+          "a": 46,
+          "b": 20.7,
+          "rot": 2.36,
+          "omega": 0.055,
+          "phase": 2.95
+        }
+      }
+    ],
+    "name": "Comet Crossing",
+    "hint": "A comet crosses these lanes on a long ellipse. Watch its arrow.",
+    "difficulty": 2
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": -44,
+      "z": -34
+    },
+    "goal": {
+      "x": 25,
+      "z": -19,
+      "r": 5.3
+    },
+    "maxLaunch": 47,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2768,
+        "radius": 11.9,
+        "color": 0xff9e6b,
+        "x": -2,
+        "z": -2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 16,
+        "z": -13
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
         "x": -26,
-        "z": 0
+        "z": -23
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -36,
+        "z": -28
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -35,
+        "z": -35,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -43,
+        "z": 33
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 1,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -8,
+        "z": 16
       },
       {
         "radius": 2,
-        "x": -32,
-        "z": -30
+        "x": -18,
+        "z": -19
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -2,
+          "cz": -2,
+          "a": 48.2,
+          "b": 15.3,
+          "rot": 2.35,
+          "omega": 0.04,
+          "phase": 2.13
+        }
+      }
+    ],
+    "name": "Solar Wind",
+    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
+    "difficulty": 2
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": -28,
+      "z": -40
+    },
+    "goal": {
+      "x": 64,
+      "z": 9,
+      "r": 5.5
+    },
+    "maxLaunch": 46,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2942,
+        "radius": 11.9,
+        "color": 0xffb703,
+        "x": 2,
+        "z": 2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 0,
+        "z": 22
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -19,
+        "z": 25
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -22,
+        "z": -32
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -21,
+        "z": -25,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 53,
+        "z": 8
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 3,
+        "z": -15
       },
       {
         "radius": 2,
-        "patrol": {
-          "x1": 16,
-          "z1": -4,
-          "x2": -6,
-          "z2": -24,
-          "period": 7,
-          "phase": 0.24
+        "x": 25,
+        "z": 25
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 2,
+          "cz": 2,
+          "a": 49.2,
+          "b": 21.5,
+          "rot": 2.39,
+          "omega": -0.076,
+          "phase": 3.01
+        }
+      }
+    ],
+    "name": "Retrograde",
+    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
+    "difficulty": 2
+  },
+  {
+    "extent": 70,
+    "ship": {
+      "x": -18,
+      "z": -54
+    },
+    "goal": {
+      "x": 61,
+      "z": 2,
+      "r": 5.2
+    },
+    "maxLaunch": 50,
+    "fuel": 3,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2656,
+        "radius": 12.9,
+        "color": 0xffb703,
+        "x": -4,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -1,
+        "z": -25
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -37,
+        "z": 1
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -15,
+        "z": -44
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -8,
+        "z": -43,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 49,
+        "z": 1
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -31,
+        "z": 14
+      },
+      {
+        "radius": 2,
+        "x": -27,
+        "z": 28
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -4,
+          "cz": -3,
+          "a": 44.1,
+          "b": 23.2,
+          "rot": 1.96,
+          "omega": 0.069,
+          "phase": 3.7
         }
       }
     ],
@@ -1077,83 +1364,104 @@ export const LEVELS = [
     "difficulty": 2
   },
   {
-    "extent": 66,
+    "extent": 70,
     "ship": {
-      "x": 57,
-      "z": 16
+      "x": 31,
+      "z": 44
     },
     "goal": {
-      "x": -16,
-      "z": -65,
-      "r": 5.4
+      "x": -59,
+      "z": -8,
+      "r": 5.3
     },
-    "maxLaunch": 47,
+    "maxLaunch": 49,
     "fuel": 3,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2597,
-        "radius": 10.8,
+        "mass": 2968,
+        "radius": 12.2,
         "color": 0xff9e6b,
-        "x": 7,
-        "z": -6,
+        "x": 4,
+        "z": -2,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 114,
-        "radius": 2,
+        "mass": 120,
+        "radius": 1.5,
         "color": 0xb5a642,
-        "x": 4,
-        "z": -25
+        "x": 24,
+        "z": -7
       },
       {
         "name": "Venus",
-        "mass": 435,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": -7,
-        "z": -32
+        "x": 15,
+        "z": -31
       },
       {
         "name": "Earth",
-        "mass": 555,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 45,
-        "z": 11
+        "x": 25,
+        "z": 34
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 18,
+        "z": 30,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 418,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": -12,
-        "z": -54
+        "x": -47,
+        "z": -7
       }
     ],
     "homeIdx": 3,
-    "targetIdx": 4,
+    "targetIdx": 5,
     "hazards": [
       {
         "radius": 2,
-        "x": 28,
-        "z": 8
+        "x": -32,
+        "z": -18
       },
       {
         "radius": 2,
-        "x": 27,
-        "z": -16
+        "x": -42,
+        "z": 9
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 4,
+          "cz": -2,
+          "a": 44.2,
+          "b": 21.9,
+          "rot": 3.01,
+          "omega": -0.077,
+          "phase": 1.45
+        }
       },
       {
         "radius": 2,
         "patrol": {
-          "x1": -21,
-          "z1": -14,
-          "x2": -32,
-          "z2": -32,
-          "period": 6.5,
-          "phase": 0.96
+          "x1": -15,
+          "z1": -10,
+          "x2": -18,
+          "z2": 12,
+          "period": 7.6,
+          "phase": 0.28
         }
       }
     ],
@@ -1162,15 +1470,15 @@ export const LEVELS = [
     "difficulty": 2
   },
   {
-    "extent": 66,
+    "extent": 70,
     "ship": {
-      "x": 14,
-      "z": -54
+      "x": -53,
+      "z": -6
     },
     "goal": {
-      "x": -5,
-      "z": 52,
-      "r": 5
+      "x": -20,
+      "z": 56,
+      "r": 5.3
     },
     "maxLaunch": 46,
     "fuel": 3,
@@ -1178,67 +1486,88 @@ export const LEVELS = [
       {
         "name": "Sol",
         "mass": 2905,
-        "radius": 9.8,
+        "radius": 11.6,
         "color": 0xffd166,
-        "x": -9,
-        "z": -8,
+        "x": -4,
+        "z": -3,
         "type": "sun"
       },
       {
         "name": "Mercury",
-        "mass": 137,
-        "radius": 1.7,
+        "mass": 120,
+        "radius": 1.5,
         "color": 0xb5a642,
-        "x": -1,
-        "z": 8
+        "x": -4,
+        "z": -23
       },
       {
         "name": "Venus",
-        "mass": 470,
-        "radius": 3.2,
+        "mass": 380,
+        "radius": 2.5,
         "color": 0xe8c07d,
-        "x": 16,
-        "z": 4
+        "x": 9,
+        "z": 24
       },
       {
         "name": "Earth",
-        "mass": 563,
-        "radius": 3.4,
+        "mass": 420,
+        "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 8,
-        "z": -42
+        "x": -43,
+        "z": -5
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -43,
+        "z": 2,
+        "moonOf": 3
       },
       {
         "name": "Mars",
-        "mass": 384,
-        "radius": 2.6,
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": -6,
-        "z": 40
+        "x": -17,
+        "z": 44
       }
     ],
     "homeIdx": 3,
-    "targetIdx": 4,
+    "targetIdx": 5,
     "hazards": [
       {
         "radius": 2,
-        "x": -39,
-        "z": 6
+        "x": 31,
+        "z": -11
       },
       {
         "radius": 2,
-        "x": -39,
-        "z": -27
+        "x": -26,
+        "z": -7
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -4,
+          "cz": -3,
+          "a": 44.2,
+          "b": 15.3,
+          "rot": 2.31,
+          "omega": 0.051,
+          "phase": 1.7
+        }
       },
       {
         "radius": 2,
         "patrol": {
-          "x1": 15,
-          "z1": 19,
-          "x2": 31,
-          "z2": 24,
-          "period": 5.9,
-          "phase": 0.85
+          "x1": 30,
+          "z1": 6,
+          "x2": 29,
+          "z2": 23,
+          "period": 7.7,
+          "phase": 0.58
         }
       }
     ],
@@ -1247,279 +1576,570 @@ export const LEVELS = [
     "difficulty": 2
   },
   {
-    "extent": 70,
+    "extent": 84,
     "ship": {
-      "x": -19,
-      "z": 50
+      "x": -34,
+      "z": 39
     },
     "goal": {
-      "x": 9,
-      "z": -51,
-      "r": 5.1
+      "x": 64,
+      "z": 49,
+      "r": 4.9
+    },
+    "maxLaunch": 46,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2928,
+        "radius": 10.8,
+        "color": 0xffb703,
+        "x": -2,
+        "z": 1,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -7,
+        "z": -18
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -25,
+        "z": -17
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -27,
+        "z": 31
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -21,
+        "z": 28,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -51,
+        "z": 11
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 50,
+        "z": 39
+      },
+      {
+        "name": "Io",
+        "mass": 73,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 44,
+        "z": 47,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 92,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": 46,
+        "z": 28,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 105,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": 64,
+        "z": 38,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "name": "Jovian Leap",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 84,
+    "ship": {
+      "x": 48,
+      "z": 9
+    },
+    "goal": {
+      "x": -68,
+      "z": 52,
+      "r": 5
     },
     "maxLaunch": 44,
     "fuel": 3.5,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 3270,
-        "radius": 10.9,
-        "color": 0xff9e6b,
+        "mass": 2631,
+        "radius": 10,
+        "color": 0xffd166,
         "x": -3,
-        "z": -3,
+        "z": -2,
         "type": "sun"
       },
       {
-        "name": "Jupiter",
-        "mass": 1332,
-        "radius": 6,
-        "color": 0xd9a066,
-        "x": -26,
-        "z": -14
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 11,
+        "z": -15
       },
       {
-        "name": "Saturn",
-        "mass": 1337,
-        "radius": 5.5,
-        "color": 0xe3c896,
-        "x": 21,
-        "z": 29
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -30,
+        "z": 11
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 37,
+        "z": 7
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 34,
+        "z": 0,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -31,
+        "z": -45
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -54,
+        "z": 40
+      },
+      {
+        "name": "Io",
+        "mass": 93,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -60,
+        "z": 48,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 104,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": -61,
+        "z": 30,
+        "moonOf": 6
       }
     ],
-    "name": "Jovian Leap",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "name": "Eye of Jupiter",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
     "difficulty": 3
   },
   {
-    "extent": 70,
+    "extent": 84,
     "ship": {
-      "x": 2,
-      "z": 50
+      "x": -10,
+      "z": -50
     },
     "goal": {
-      "x": 18,
-      "z": -51,
-      "r": 5.3
+      "x": -72,
+      "z": 30,
+      "r": 5.2
     },
     "maxLaunch": 49,
     "fuel": 3.5,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2654,
-        "radius": 11,
-        "color": 0xffd166,
-        "x": -2,
-        "z": 1,
-        "type": "sun"
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1507,
-        "radius": 5.9,
-        "color": 0xd9a066,
-        "x": -19,
-        "z": -19
-      },
-      {
-        "name": "Saturn",
-        "mass": 1626,
-        "radius": 5.7,
-        "color": 0xe3c896,
-        "x": 30,
-        "z": -26
-      }
-    ],
-    "name": "Eye of Jupiter",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -10,
-      "z": 50
-    },
-    "goal": {
-      "x": 28,
-      "z": -51,
-      "r": 5.3
-    },
-    "maxLaunch": 46,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2776,
-        "radius": 9.5,
-        "color": 0xffb703,
-        "x": 8,
-        "z": -5,
-        "type": "sun"
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1343,
-        "radius": 6.3,
-        "color": 0xd9a066,
-        "x": 33,
-        "z": -6
-      },
-      {
-        "name": "Saturn",
-        "mass": 1684,
-        "radius": 5.7,
-        "color": 0xe3c896,
-        "x": -29,
-        "z": -22
-      },
-      {
-        "name": "Ganymede",
-        "mass": 122,
-        "radius": 1.6,
-        "color": 0xd8d8d8,
-        "x": 24,
-        "z": -18,
-        "moonOf": 1
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 2,
-        "x": -18,
-        "z": 30
-      }
-    ],
-    "name": "Ring Runner",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -14,
-      "z": 50
-    },
-    "goal": {
-      "x": 18,
-      "z": -51,
-      "r": 4.9
-    },
-    "maxLaunch": 46,
-    "fuel": 3.5,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 3000,
-        "radius": 9.9,
+        "mass": 3011,
+        "radius": 10.1,
         "color": 0xff9e6b,
-        "x": 7,
-        "z": 0,
+        "x": 4,
+        "z": -3,
         "type": "sun"
       },
       {
-        "name": "Jupiter",
-        "mass": 1133,
-        "radius": 6.4,
-        "color": 0xd9a066,
-        "x": -11,
-        "z": -16
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 15,
+        "z": 12
       },
       {
-        "name": "Saturn",
-        "mass": 1303,
-        "radius": 5.5,
-        "color": 0xe3c896,
-        "x": -25,
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 10,
         "z": 24
       },
       {
-        "name": "Rhea",
-        "mass": 90,
-        "radius": 1.9,
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -7,
+        "z": -40
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -11,
-        "z": 24,
-        "moonOf": 2
+        "x": -14,
+        "z": -38,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 35,
+        "z": 36
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -56,
+        "z": 23
+      },
+      {
+        "name": "Io",
+        "mass": 105,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -49,
+        "z": 16,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 62,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -53,
+        "z": 35,
+        "moonOf": 6
       }
     ],
+    "homeIdx": 3,
+    "targetIdx": 6,
     "hazards": [
       {
         "radius": 2,
-        "x": 24,
-        "z": 12
+        "x": 29,
+        "z": 29
       }
     ],
-    "name": "Saturn Swing",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
+    "name": "Io Flyby",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
     "difficulty": 3
   },
   {
-    "extent": 70,
+    "extent": 84,
     "ship": {
-      "x": -7,
-      "z": 50
+      "x": -38,
+      "z": 34
     },
     "goal": {
-      "x": 2,
-      "z": -51,
-      "r": 4.9
+      "x": 67,
+      "z": 38,
+      "r": 4.8
+    },
+    "maxLaunch": 48,
+    "fuel": 3.5,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 3159,
+        "radius": 10.3,
+        "color": 0xffb703,
+        "x": -3,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -21,
+        "z": 3
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -25,
+        "z": -22
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -30,
+        "z": 26
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -24,
+        "z": 26,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -15,
+        "z": 45
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 52,
+        "z": 29
+      },
+      {
+        "name": "Io",
+        "mass": 96,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 59,
+        "z": 22,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 89,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 53,
+        "z": 41,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 107,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 39,
+        "z": 24,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 31,
+        "z": -13
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -3,
+          "cz": -3,
+          "a": 60.1,
+          "b": 22.7,
+          "rot": 1.04,
+          "omega": -0.084,
+          "phase": 3.67
+        }
+      }
+    ],
+    "name": "Europa Run",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 84,
+    "ship": {
+      "x": -53,
+      "z": -2
+    },
+    "goal": {
+      "x": 60,
+      "z": 54,
+      "r": 4.7
     },
     "maxLaunch": 48,
     "fuel": 1.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2790,
-        "radius": 9.4,
+        "mass": 2723,
+        "radius": 10.5,
         "color": 0xffb703,
-        "x": 5,
-        "z": -4,
+        "x": -2,
+        "z": -1,
         "type": "sun"
       },
       {
-        "name": "Jupiter",
-        "mass": 1174,
-        "radius": 5.6,
-        "color": 0xd9a066,
-        "x": 24,
-        "z": -20
-      },
-      {
-        "name": "Saturn",
-        "mass": 1200,
-        "radius": 5.6,
-        "color": 0xe3c896,
-        "x": -27,
-        "z": 19
-      },
-      {
-        "name": "Rhea",
-        "mass": 171,
+        "name": "Mercury",
+        "mass": 120,
         "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -14,
+        "z": 14
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -15,
+        "z": 26
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -42,
+        "z": -2
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -16,
+        "x": -48,
+        "z": -4,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 14,
+        "z": -47
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 47,
+        "z": 42
+      },
+      {
+        "name": "Io",
+        "mass": 83,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 55,
+        "z": 48,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 91,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 37,
+        "z": 48,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 80,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 46,
         "z": 28,
-        "moonOf": 2
+        "moonOf": 6
       }
     ],
+    "homeIdx": 3,
+    "targetIdx": 6,
     "waypoints": [
       {
-        "x": -27,
-        "z": -2,
+        "x": 22,
+        "z": 16,
         "r": 4.5,
         "type": "station"
       }
     ],
-    "pickups": [
+    "hazards": [
       {
-        "x": -33,
-        "z": 28,
-        "fuel": 1.5
+        "radius": 2,
+        "x": -5,
+        "z": 15
       },
       {
-        "x": -14,
-        "z": 21,
+        "radius": 1.2,
+        "comet": {
+          "cx": -2,
+          "cz": -1,
+          "a": 44.2,
+          "b": 22.9,
+          "rot": 1.83,
+          "omega": 0.066,
+          "phase": 0.38
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -9,
+        "z": -16,
         "fuel": 1.5
       }
     ],
@@ -1528,1704 +2148,1776 @@ export const LEVELS = [
       0.19
     ],
     "fuelRequired": false,
-    "name": "Titan Stop",
-    "hint": "Dock at the station 🛰 first. Stops never refuel — grab cells on the way.",
+    "name": "Callisto Stop",
+    "hint": "Dock at the waystation 🛰 first. Stops never refuel — grab cells on the way.",
     "difficulty": 3
   },
   {
-    "extent": 70,
+    "extent": 98,
     "ship": {
-      "x": -11,
+      "x": -4,
       "z": 50
     },
     "goal": {
-      "x": -18,
-      "z": -51,
-      "r": 4.8
+      "x": 6,
+      "z": 103,
+      "r": 5.3
     },
-    "maxLaunch": 46,
-    "fuel": 1.4,
+    "maxLaunch": 47,
+    "fuel": 1.6,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 3386,
-        "radius": 11.2,
-        "color": 0xffb703,
-        "x": 6,
-        "z": 2,
+        "mass": 3033,
+        "radius": 10.2,
+        "color": 0xffd166,
+        "x": 4,
+        "z": 1,
         "type": "sun"
       },
       {
-        "name": "Jupiter",
-        "mass": 1109,
-        "radius": 6.2,
-        "color": 0xd9a066,
-        "x": 17,
-        "z": 23
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 5,
+        "z": -18
       },
       {
-        "name": "Saturn",
-        "mass": 1452,
-        "radius": 5.5,
-        "color": 0xe3c896,
-        "x": -32,
-        "z": 15
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -11,
+        "z": -23
       },
       {
-        "name": "Ganymede",
-        "mass": 127,
-        "radius": 1.7,
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -2,
+        "z": 39
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": 3,
-        "z": 26,
-        "moonOf": 1
+        "x": -9,
+        "z": 38,
+        "moonOf": 3
       },
       {
-        "name": "Rhea",
-        "mass": 144,
+        "name": "Mars",
+        "mass": 220,
         "radius": 1.9,
-        "color": 0xd8d8d8,
-        "x": -19,
-        "z": 12,
-        "moonOf": 2
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -38,
-        "z": -9,
-        "r": 4.5,
-        "type": "station"
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 3,
-        "z": -14
-      }
-    ],
-    "pickups": [
-      {
-        "x": -41,
-        "z": 24,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.1,
-      0.2
-    ],
-    "fuelRequired": true,
-    "name": "Ice Giants",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": 9,
-      "z": 50
-    },
-    "goal": {
-      "x": 3,
-      "z": -51,
-      "r": 5.1
-    },
-    "maxLaunch": 45,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2918,
-        "radius": 10.5,
-        "color": 0xffb703,
-        "x": 3,
-        "z": -1,
-        "type": "sun"
+        "color": 0xd1603d,
+        "x": -32,
+        "z": -32
       },
       {
         "name": "Jupiter",
-        "mass": 1255,
-        "radius": 6,
+        "mass": 1500,
+        "radius": 6.5,
         "color": 0xd9a066,
-        "x": 20,
-        "z": -19
-      },
-      {
-        "name": "Saturn",
-        "mass": 1530,
-        "radius": 5.3,
-        "color": 0xe3c896,
-        "x": 18,
-        "z": -37
+        "x": 31,
+        "z": -57
       },
       {
         "name": "Io",
-        "mass": 130,
-        "radius": 1.7,
+        "mass": 74,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": 30,
-        "z": -30,
-        "moonOf": 1
+        "x": 27,
+        "z": -66,
+        "moonOf": 6
       },
       {
-        "name": "Titan",
-        "mass": 204,
-        "radius": 2.2,
+        "name": "Europa",
+        "mass": 82,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": 4,
-        "z": -35,
-        "moonOf": 2
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -23,
-        "z": -1,
-        "r": 4.5,
-        "type": "station"
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 8,
-        "z": -21
-      }
-    ],
-    "pickups": [
-      {
-        "x": -15,
-        "z": 30,
-        "fuel": 1.5
-      },
-      {
-        "x": -10,
-        "z": 21,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.11,
-      0.21
-    ],
-    "fuelRequired": true,
-    "name": "Sideways Uranus",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": 8,
-      "z": 50
-    },
-    "goal": {
-      "x": 15,
-      "z": -51,
-      "r": 5.2
-    },
-    "maxLaunch": 45,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2929,
-        "radius": 10.3,
-        "color": 0xffd166,
-        "x": 5,
-        "z": -3,
-        "type": "sun"
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1180,
-        "radius": 5.9,
-        "color": 0xd9a066,
-        "x": 11,
-        "z": -26
-      },
-      {
-        "name": "Saturn",
-        "mass": 1195,
-        "radius": 5.5,
-        "color": 0xe3c896,
-        "x": 38,
-        "z": 15
+        "x": 42,
+        "z": -54,
+        "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 169,
-        "radius": 2.1,
+        "mass": 104,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": 3,
-        "z": -38,
-        "moonOf": 1
-      },
-      {
-        "name": "Rhea",
-        "mass": 91,
-        "radius": 2.2,
-        "color": 0xd8d8d8,
-        "x": 40,
-        "z": 0,
-        "moonOf": 2
-      }
-    ],
-    "waypoints": [
-      {
-        "x": 26,
-        "z": -6,
-        "r": 4.5,
-        "type": "station"
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 34,
-        "z": -26
-      },
-      {
-        "radius": 2,
-        "orbit": {
-          "cx": -20,
-          "cz": 1,
-          "radius": 10.9,
-          "omega": 0.48,
-          "phase": 0.57
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": 18,
-        "z": 18,
-        "fuel": 1.5
-      },
-      {
-        "x": 20,
-        "z": 9,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.11,
-      0.35
-    ],
-    "fuelRequired": true,
-    "name": "Neptune Deep",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -10,
-      "z": 50
-    },
-    "goal": {
-      "x": -4,
-      "z": -51,
-      "r": 5.2
-    },
-    "maxLaunch": 48,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2779,
-        "radius": 9.2,
-        "color": 0xffd166,
-        "x": -3,
-        "z": 3,
-        "type": "sun"
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1178,
-        "radius": 6.1,
-        "color": 0xd9a066,
-        "x": -8,
-        "z": -21
+        "x": 30,
+        "z": -43,
+        "moonOf": 6
       },
       {
         "name": "Saturn",
-        "mass": 1459,
-        "radius": 5.8,
+        "mass": 1250,
+        "radius": 5.7,
         "color": 0xe3c896,
-        "x": 23,
-        "z": 31
-      },
-      {
-        "name": "Europa",
-        "mass": 248,
-        "radius": 2.1,
-        "color": 0xd8d8d8,
-        "x": -18,
-        "z": -31,
-        "moonOf": 1
-      }
-    ],
-    "waypoints": [
-      {
-        "x": 18,
-        "z": -2,
-        "r": 4.5,
-        "type": "station"
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": -3,
-          "z1": 26,
-          "x2": 1,
-          "z2": 45,
-          "period": 7.4,
-          "phase": 0.23
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": 33,
-        "z": 39,
-        "fuel": 1.5
-      },
-      {
-        "x": 11,
-        "z": 18,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.1,
-      0.31
-    ],
-    "fuelRequired": true,
-    "name": "Kuiper Edge",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
-    "difficulty": 3
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -4,
-      "z": 50
-    },
-    "goal": {
-      "x": 19,
-      "z": -51,
-      "r": 5.1
-    },
-    "maxLaunch": 49,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2923,
-        "radius": 11.5,
-        "color": 0xffd166,
-        "x": 3,
-        "z": -4,
-        "type": "sun"
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1537,
-        "radius": 6,
-        "color": 0xd9a066,
-        "x": -2,
-        "z": 23
-      },
-      {
-        "name": "Saturn",
-        "mass": 1513,
-        "radius": 5.2,
-        "color": 0xe3c896,
-        "x": -22,
-        "z": 30
-      },
-      {
-        "name": "Europa",
-        "mass": 235,
-        "radius": 1.6,
-        "color": 0xd8d8d8,
-        "x": 11,
-        "z": 30,
-        "moonOf": 1
+        "x": 6,
+        "z": 85
       },
       {
         "name": "Titan",
-        "mass": 170,
-        "radius": 2,
+        "mass": 79,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": -27,
-        "z": 16,
-        "moonOf": 2
+        "x": -2,
+        "z": 89,
+        "moonOf": 10
+      },
+      {
+        "name": "Rhea",
+        "mass": 84,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 7,
+        "z": 74,
+        "moonOf": 10
       }
     ],
+    "homeIdx": 3,
+    "targetIdx": 10,
     "waypoints": [
       {
-        "x": 31,
-        "z": 4,
+        "x": 37,
+        "z": 72,
         "r": 4.5,
         "type": "station"
       }
     ],
     "hazards": [
       {
-        "radius": 2,
-        "x": -4,
-        "z": -30
-      },
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": -20,
-          "z1": -13,
-          "x2": -38,
-          "z2": -12,
-          "period": 4.6,
-          "phase": 0.04
+        "radius": 1.2,
+        "comet": {
+          "cx": 4,
+          "cz": 1,
+          "a": 67.6,
+          "b": 24.3,
+          "rot": 0,
+          "omega": -0.085,
+          "phase": 4.31
         }
       }
     ],
     "pickups": [
       {
-        "x": 27,
-        "z": 36,
-        "fuel": 1.5
-      },
-      {
-        "x": -30,
-        "z": -3,
+        "x": 19,
+        "z": 63,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.09,
-      0.18
+      0.2,
+      0.1
     ],
     "fuelRequired": true,
-    "name": "Grand Cruise",
-    "hint": "Gas giants ahead: huge wells, huge slingshots.",
+    "name": "Saturn Swing",
+    "hint": "Saturn now. Jupiter is still out there, bending everything.",
     "difficulty": 3
   },
   {
-    "extent": 70,
+    "extent": 98,
     "ship": {
-      "x": -12,
-      "z": 50
+      "x": 59,
+      "z": 6
     },
     "goal": {
-      "x": 7,
-      "z": -51,
-      "r": 4.9
-    },
-    "maxLaunch": 46,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2746,
-        "radius": 10,
-        "color": 0xff9e6b,
-        "x": -9,
-        "z": -2,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 417,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -4,
-        "z": 17
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1109,
-        "radius": 6.1,
-        "color": 0xd9a066,
-        "x": 31,
-        "z": 22
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 2.3,
-        "x": 31,
-        "z": -3
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.5,
-        "x": -25,
-        "z": -21
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -9,
-        "z": -32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": 10,
-        "z": 31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.5,
-        "x": 1,
-        "z": 37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 23,
-        "z": 2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -16,
-        "z": -28
-      }
-    ],
-    "name": "Into the Belt",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -14,
-      "z": 50
-    },
-    "goal": {
-      "x": 4,
-      "z": -51,
-      "r": 4.9
-    },
-    "maxLaunch": 45,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2472,
-        "radius": 10.1,
-        "color": 0xffb703,
-        "x": 3,
-        "z": -2,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 351,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 13,
-        "z": -19
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1131,
-        "radius": 5.5,
-        "color": 0xd9a066,
-        "x": 50,
-        "z": 8
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -30,
-        "z": 20
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 30,
-        "z": 1
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.5,
-        "x": 29,
-        "z": -15
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": -27,
-        "z": 1
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.5,
-        "x": -18,
-        "z": 19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 23,
-        "z": 27
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 3,
-        "z": -27
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -35,
-        "z": 1
-      }
-    ],
-    "name": "Rock Hopping",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -18,
-      "z": 50
-    },
-    "goal": {
-      "x": 15,
-      "z": -51,
-      "r": 5
-    },
-    "maxLaunch": 46,
-    "fuel": 4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2578,
-        "radius": 11.1,
-        "color": 0xffd166,
-        "x": 5,
-        "z": -6,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 339,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 25,
-        "z": -1
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1623,
-        "radius": 5.8,
-        "color": 0xd9a066,
-        "x": -39,
-        "z": 6
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": -1,
-        "z": -35
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.5,
-        "x": 23,
-        "z": 29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 38,
-        "z": 0
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": 29,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 31,
-        "z": -17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.5,
-        "x": -7,
-        "z": -31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -9,
-        "z": -44
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 29,
-        "z": 6
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": 40,
-        "z": 11
-      }
-    ],
-    "name": "Ceres Approach",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": 8,
-      "z": 50
-    },
-    "goal": {
-      "x": -1,
-      "z": -51,
-      "r": 4.9
-    },
-    "maxLaunch": 44,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2789,
-        "radius": 11.2,
-        "color": 0xffb703,
-        "x": 8,
-        "z": -3,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 375,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 23,
-        "z": 10
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1324,
-        "radius": 6.4,
-        "color": 0xd9a066,
-        "x": 53,
-        "z": -23
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -25,
-        "z": 6,
-        "r": 4.5,
-        "type": "cargo"
-      },
-      {
-        "x": 30,
-        "z": -14,
-        "r": 4.5,
-        "type": "dropoff"
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": -7,
-        "z": 21
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 49,
-        "z": -11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 37,
-        "z": -29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": -20,
-        "z": -11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 2,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 38,
-        "z": 19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 16,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": 17,
-        "z": 23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": 27,
-        "z": -25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": -23,
-        "z": 16
-      }
-    ],
-    "pickups": [
-      {
-        "x": 18,
-        "z": 16,
-        "fuel": 1.5
-      },
-      {
-        "x": -3,
-        "z": -14,
-        "fuel": 1.5
-      },
-      {
-        "x": -10,
-        "z": 29,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.11,
-      0.11,
-      0.55
-    ],
-    "fuelRequired": true,
-    "name": "First Haul",
-    "hint": "Grab the cargo 📦 and haul it to the dropoff 📥 — and the fuel cells are NOT optional.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -16,
-      "z": 50
-    },
-    "goal": {
-      "x": -5,
-      "z": -51,
-      "r": 4.9
-    },
-    "maxLaunch": 44,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2968,
-        "radius": 10.7,
-        "color": 0xffb703,
-        "x": 4,
-        "z": -8,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 411,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -16,
-        "z": -8
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1206,
-        "radius": 6.3,
-        "color": 0xd9a066,
-        "x": -43,
-        "z": 8
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -3,
-        "z": 12,
-        "r": 4.5,
-        "type": "cargo"
-      },
-      {
-        "x": -31,
-        "z": -22,
-        "r": 4.5,
-        "type": "dropoff"
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": 37,
-        "z": -20
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.3,
-        "x": 24,
-        "z": -43
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -27,
-        "z": -3
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -19,
-        "z": 18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -23,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": 32,
-        "z": -9
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": 1,
-        "z": -38
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -30,
-        "z": 5
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": 25,
-        "z": -22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -3,
-        "z": 22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": -12,
-        "z": 21
-      }
-    ],
-    "pickups": [
-      {
-        "x": -12,
-        "z": 32,
-        "fuel": 1.5
-      },
-      {
-        "x": -17,
-        "z": 0,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.11,
-      0.22,
-      0.37
-    ],
-    "fuelRequired": true,
-    "name": "Cargo Convoy",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -8,
-      "z": 50
-    },
-    "goal": {
-      "x": -24,
-      "z": -51,
-      "r": 5
-    },
-    "maxLaunch": 42,
-    "fuel": 1.5,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2628,
-        "radius": 9.8,
-        "color": 0xffd166,
-        "x": -7,
-        "z": -6,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 341,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": -24,
-        "z": -16
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1613,
-        "radius": 5.9,
-        "color": 0xd9a066,
-        "x": 40,
-        "z": 9
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -43,
-        "z": 10,
-        "r": 4.5,
-        "type": "cargo"
-      },
-      {
-        "x": -38,
-        "z": -26,
-        "r": 4.5,
-        "type": "dropoff"
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 7,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": 21,
-        "z": -4
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": -33,
-        "z": 24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": -36,
-        "z": -5
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 21,
-        "z": -29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -32,
-        "z": -35
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": -14,
-        "z": -39
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": -6,
-        "z": -32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -33,
-        "z": 6
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -11,
-        "z": 25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -43,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": -28,
-        "z": -26
-      },
-      {
-        "radius": 2,
-        "orbit": {
-          "cx": -9,
-          "cz": -11,
-          "radius": 19.8,
-          "omega": 0.64,
-          "phase": 4.95
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": -30,
-        "z": 35,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.12,
-      0.4,
-      0.12
-    ],
-    "fuelRequired": true,
-    "name": "Rubble Field",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -22,
-      "z": 50
-    },
-    "goal": {
-      "x": 21,
-      "z": -51,
-      "r": 5
-    },
-    "maxLaunch": 44,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2662,
-        "radius": 9.7,
-        "color": 0xffb703,
-        "x": 6,
-        "z": -4,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 395,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 2,
-        "z": -22
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1340,
-        "radius": 5.6,
-        "color": 0xd9a066,
-        "x": -28,
-        "z": 25
-      }
-    ],
-    "waypoints": [
-      {
-        "x": 8,
-        "z": 17,
-        "r": 4.5,
-        "type": "cargo"
-      },
-      {
-        "x": -17,
-        "z": -23,
-        "r": 4.5,
-        "type": "dropoff"
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 2.5,
-        "x": 23,
-        "z": 15
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 26,
-        "z": 27
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 32,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": 17,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": 34,
-        "z": 20
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -24,
-        "z": 2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.5,
-        "x": -26,
-        "z": 13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -11,
-        "z": -33
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": -2,
-        "z": -28
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": -34,
-        "z": -12
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 42,
-        "z": 3
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": 27,
-        "z": -36
-      },
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": -15,
-          "z1": 13,
-          "x2": -5,
-          "z2": 37,
-          "period": 5.4,
-          "phase": 0.11
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": -9,
-        "z": -1,
-        "fuel": 1.5
-      },
-      {
-        "x": -15,
-        "z": 6,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.11,
-      0.11,
-      0.37
-    ],
-    "fuelRequired": true,
-    "name": "Dodging Stones",
-    "hint": "Patrol lanes cross the belt. Time your launch around their arrows.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -8,
-      "z": 50
-    },
-    "goal": {
-      "x": 3,
-      "z": -51,
-      "r": 5
-    },
-    "maxLaunch": 46,
-    "fuel": 1.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2549,
-        "radius": 9.1,
-        "color": 0xff9e6b,
-        "x": 3,
-        "z": -1,
-        "type": "sun"
-      },
-      {
-        "name": "Mars",
-        "mass": 363,
-        "radius": 2.6,
-        "color": 0xd1603d,
-        "x": 19,
-        "z": -12
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1214,
-        "radius": 5.6,
-        "color": 0xd9a066,
-        "x": -40,
-        "z": 7
-      }
-    ],
-    "waypoints": [
-      {
-        "x": 1,
-        "z": 19,
-        "r": 4.5,
-        "type": "cargo"
-      },
-      {
-        "x": 0,
-        "z": -28,
-        "r": 4.5,
-        "type": "dropoff"
-      }
-    ],
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 36,
-        "z": -11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": 24,
-        "z": 21
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 36,
-        "z": 0
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": 15,
-        "z": -25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": -21,
-        "z": -30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": 28,
-        "z": -24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": 0,
-        "z": -40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
-        "x": -4,
-        "z": 30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.5,
-        "x": 28,
-        "z": -13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.3,
-        "x": -14,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": -31,
-        "z": -13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 35,
-        "z": 18
-      },
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": 24,
-          "z1": 12,
-          "x2": 47,
-          "z2": 7,
-          "period": 4.5,
-          "phase": 0.17
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": 21,
-        "z": 5,
-        "fuel": 1.5
-      },
-      {
-        "x": -2,
-        "z": 37,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.1,
-      0.1,
-      0.2
-    ],
-    "fuelRequired": true,
-    "name": "Vesta Run",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
-    "difficulty": 4
-  },
-  {
-    "extent": 70,
-    "ship": {
-      "x": -18,
-      "z": 50
-    },
-    "goal": {
-      "x": -22,
-      "z": -51,
-      "r": 5.1
+      "x": -86,
+      "z": -58,
+      "r": 4.8
     },
     "maxLaunch": 47,
     "fuel": 1.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2582,
-        "radius": 11.2,
-        "color": 0xffd166,
-        "x": -8,
-        "z": -1,
+        "mass": 3015,
+        "radius": 11.3,
+        "color": 0xffb703,
+        "x": 6,
+        "z": -5,
         "type": "sun"
       },
       {
-        "name": "Mars",
-        "mass": 305,
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 2,
+        "z": -26
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -5,
+        "z": 25
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
         "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 48,
+        "z": 4
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 54,
+        "z": 0,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": 13,
-        "z": 3
+        "x": -42,
+        "z": 14
       },
       {
         "name": "Jupiter",
-        "mass": 1295,
-        "radius": 6.2,
+        "mass": 1500,
+        "radius": 6.5,
         "color": 0xd9a066,
-        "x": -38,
-        "z": 36
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -31,
-        "z": 2,
-        "r": 4.5,
-        "type": "cargo"
+        "x": -61,
+        "z": 7
       },
       {
-        "x": -43,
-        "z": -21,
+        "name": "Io",
+        "mass": 102,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -65,
+        "z": 16,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 64,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -69,
+        "z": -2,
+        "moonOf": 6
+      },
+      {
+        "name": "Saturn",
+        "mass": 1250,
+        "radius": 5.7,
+        "color": 0xe3c896,
+        "x": -70,
+        "z": -49
+      },
+      {
+        "name": "Titan",
+        "mass": 107,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -62,
+        "z": -53,
+        "moonOf": 9
+      },
+      {
+        "name": "Rhea",
+        "mass": 71,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -73,
+        "z": -38,
+        "moonOf": 9
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 9,
+    "waypoints": [
+      {
+        "x": -46,
+        "z": -26,
         "r": 4.5,
-        "type": "dropoff"
+        "type": "station"
       }
     ],
     "hazards": [
       {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 9,
-        "z": 32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": 23,
-        "z": -24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": -32,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.4,
-        "x": 27,
-        "z": 11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": 20,
-        "z": 24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": 24,
-        "z": -12
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.1,
-        "x": -42,
-        "z": -7
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.9,
-        "x": -31,
-        "z": 13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.8,
-        "x": -35,
-        "z": -11
-      },
-      {
-        "kind": "asteroid",
         "radius": 2,
-        "x": -15,
-        "z": -31
+        "x": -26,
+        "z": 16
       },
       {
-        "kind": "asteroid",
-        "radius": 1.6,
-        "x": -29,
-        "z": -27
-      },
-      {
-        "kind": "asteroid",
-        "radius": 1.7,
-        "x": 5,
-        "z": 26
-      },
-      {
-        "radius": 2,
-        "patrol": {
-          "x1": 3,
-          "z1": -22,
-          "x2": 11,
-          "z2": -8,
-          "period": 6.7,
-          "phase": 0.13
+        "radius": 1.2,
+        "comet": {
+          "cx": 6,
+          "cz": -5,
+          "a": 49.3,
+          "b": 28.6,
+          "rot": 2.39,
+          "omega": 0.058,
+          "phase": 1.2
         }
       }
     ],
     "pickups": [
       {
-        "x": -23,
-        "z": 36,
+        "x": 15,
+        "z": 22,
+        "fuel": 1.5
+      },
+      {
+        "x": 19,
+        "z": -34,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
       0.1,
+      0.1
+    ],
+    "fuelRequired": false,
+    "name": "Titan Station",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 98,
+    "ship": {
+      "x": -51,
+      "z": 22
+    },
+    "goal": {
+      "x": 9,
+      "z": 100,
+      "r": 4.9
+    },
+    "maxLaunch": 47,
+    "fuel": 1.6,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2797,
+        "radius": 10.3,
+        "color": 0xff9e6b,
+        "x": -6,
+        "z": 1,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 14,
+        "z": 5
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -16,
+        "z": -27
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -42,
+        "z": 18
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -37,
+        "z": 13,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -34,
+        "z": -39
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 46,
+        "z": -36
+      },
+      {
+        "name": "Io",
+        "mass": 76,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 38,
+        "z": -30,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 86,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 46,
+        "z": -48,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 85,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 59,
+        "z": -30,
+        "moonOf": 6
+      },
+      {
+        "name": "Saturn",
+        "mass": 1250,
+        "radius": 5.7,
+        "color": 0xe3c896,
+        "x": 6,
+        "z": 82
+      },
+      {
+        "name": "Titan",
+        "mass": 103,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 2,
+        "z": 90,
+        "moonOf": 10
+      },
+      {
+        "name": "Rhea",
+        "mass": 103,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 1,
+        "z": 72,
+        "moonOf": 10
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 10,
+    "waypoints": [
+      {
+        "x": -7,
+        "z": 61,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -23,
+        "z": 14
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -6,
+          "cz": 1,
+          "a": 49.2,
+          "b": 28.9,
+          "rot": 0.54,
+          "omega": -0.049,
+          "phase": 3.29
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -35,
+        "z": 39,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.2,
+      0.1
+    ],
+    "fuelRequired": false,
+    "name": "Ring Runner",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 98,
+    "ship": {
+      "x": 40,
+      "z": 37
+    },
+    "goal": {
+      "x": -10,
+      "z": -104,
+      "r": 4.9
+    },
+    "maxLaunch": 47,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 3027,
+        "radius": 10.2,
+        "color": 0xffd166,
+        "x": 6,
+        "z": -1,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 19,
+        "z": 14
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 36,
+        "z": 1
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 33,
+        "z": 29
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 26,
+        "z": 27,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -25,
+        "z": 39
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -1,
+        "z": 66
+      },
+      {
+        "name": "Io",
+        "mass": 77,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -8,
+        "z": 59,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 90,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 10,
+        "z": 61,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 110,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -7,
+        "z": 79,
+        "moonOf": 6
+      },
+      {
+        "name": "Saturn",
+        "mass": 1250,
+        "radius": 5.7,
+        "color": 0xe3c896,
+        "x": -7,
+        "z": -87
+      },
+      {
+        "name": "Titan",
+        "mass": 94,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 1,
+        "z": -83,
+        "moonOf": 10
+      },
+      {
+        "name": "Rhea",
+        "mass": 110,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -17,
+        "z": -82,
+        "moonOf": 10
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 10,
+    "waypoints": [
+      {
+        "x": 38,
+        "z": -32,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 6,
+          "cz": -1,
+          "a": 51.3,
+          "b": 22.5,
+          "rot": 0.14,
+          "omega": 0.043,
+          "phase": 2.16
+        }
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -4,
+          "z1": 19,
+          "x2": -10,
+          "z2": 4,
+          "period": 7,
+          "phase": 0.54
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 47,
+        "z": 5,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
       0.2,
       0.1
     ],
     "fuelRequired": true,
-    "name": "Dense Cluster",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
+    "name": "Enceladus Deep",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 98,
+    "ship": {
+      "x": 54,
+      "z": -8
+    },
+    "goal": {
+      "x": -70,
+      "z": 68,
+      "r": 5.3
+    },
+    "maxLaunch": 46,
+    "fuel": 1.6,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2980,
+        "radius": 10.8,
+        "color": 0xff9e6b,
+        "x": 3,
+        "z": -4,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -17,
+        "z": -9
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 29,
+        "z": -20
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 44,
+        "z": -7
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 47,
+        "z": -1,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 52,
+        "z": 12
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 12,
+        "z": 62
+      },
+      {
+        "name": "Io",
+        "mass": 80,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 19,
+        "z": 55,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 83,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": 17,
+        "z": 73,
+        "moonOf": 6
+      },
+      {
+        "name": "Saturn",
+        "mass": 1250,
+        "radius": 5.7,
+        "color": 0xe3c896,
+        "x": -58,
+        "z": 56
+      },
+      {
+        "name": "Titan",
+        "mass": 119,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -62,
+        "z": 48,
+        "moonOf": 9
+      },
+      {
+        "name": "Rhea",
+        "mass": 85,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -47,
+        "z": 55,
+        "moonOf": 9
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 9,
+    "waypoints": [
+      {
+        "x": -51,
+        "z": 19,
+        "r": 4.5,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 2,
+        "z": -34
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 3,
+          "cz": -4,
+          "a": 56.1,
+          "b": 26.1,
+          "rot": 1.51,
+          "omega": 0.043,
+          "phase": 3.01
+        }
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 47,
+          "z1": 37,
+          "x2": 36,
+          "z2": 12,
+          "period": 5.5,
+          "phase": 0.28
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 6,
+        "z": 11,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.7,
+      0.1
+    ],
+    "fuelRequired": true,
+    "name": "Grand Cruise",
+    "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
+    "difficulty": 3
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 15,
+      "z": -48
+    },
+    "goal": {
+      "x": -23,
+      "z": -87,
+      "r": 5.1
+    },
+    "maxLaunch": 48,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2804,
+        "radius": 10,
+        "color": 0xffd166,
+        "x": -2,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -3,
+        "z": 19
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -29,
+        "z": -11
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 11,
+        "z": -37
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 8,
+        "z": -30,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 35,
+        "z": -33
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -19,
+        "z": -70
+      },
+      {
+        "name": "Io",
+        "mass": 75,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -15,
+        "z": -61,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 66,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -31,
+        "z": -69,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -36,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 17,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -27,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -17,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -60,
+        "z": 2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -22,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 51,
+        "z": -27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -53,
+        "z": 27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -61,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 44,
+        "z": -36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 7,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 42,
+        "z": 35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 54,
+        "z": 14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -49,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 5,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -64,
+        "z": -3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -18,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -49,
+        "z": -41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -45,
+        "z": 36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -6,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -18,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -37,
+        "z": -49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 36,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 14,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 52,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -58,
+        "z": -11
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -55,
+        "z": 30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -12,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 55,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -13,
+        "z": 56
+      }
+    ],
+    "name": "Into the Belt",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
     "difficulty": 4
   },
   {
-    "extent": 70,
+    "extent": 92,
     "ship": {
-      "x": -20,
-      "z": 50
+      "x": 54,
+      "z": -5
     },
     "goal": {
-      "x": -4,
-      "z": -51,
+      "x": -84,
+      "z": -34,
+      "r": 5
+    },
+    "maxLaunch": 45,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2859,
+        "radius": 10.9,
+        "color": 0xffd166,
+        "x": 4,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -15,
+        "z": 3
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 23,
+        "z": 21
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 44,
+        "z": -5
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 37,
+        "z": -2,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 40,
+        "z": -40
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -67,
+        "z": -28
+      },
+      {
+        "name": "Io",
+        "mass": 109,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -76,
+        "z": -24,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 119,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -68,
+        "z": -40,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 91,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": -55,
+        "z": -20,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 62,
+        "z": -5
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -12,
+        "z": -63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 48,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -9,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 68,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 32,
+        "z": 49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 65,
+        "z": 13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -39,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 62,
+        "z": -22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 18,
+        "z": 62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -49,
+        "z": 34
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -48,
+        "z": 26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 36,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 56,
+        "z": 27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -19,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -34,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -5,
+        "z": -66
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -41,
+        "z": -47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 59,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -39,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -35,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -52,
+        "z": 18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -53,
+        "z": 3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -59,
+        "z": -7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 61,
+        "z": -11
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -55,
+        "z": -6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 47,
+        "z": -45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 51,
+        "z": 32
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -4,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 43,
+        "z": -51
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 60,
+        "z": -35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -49,
+        "z": 21
+      }
+    ],
+    "name": "Rock Hopping",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 18,
+      "z": -52
+    },
+    "goal": {
+      "x": -85,
+      "z": -6,
+      "r": 5.2
+    },
+    "maxLaunch": 45,
+    "fuel": 4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2692,
+        "radius": 10.2,
+        "color": 0xff9e6b,
+        "x": 4,
+        "z": -4,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 15,
+        "z": 12
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 34,
+        "z": -3
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 15,
+        "z": -42
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 19,
+        "z": -36,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -41,
+        "z": 15
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -68,
+        "z": -6
+      },
+      {
+        "name": "Io",
+        "mass": 87,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -77,
+        "z": -10,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 101,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -57,
+        "z": -11,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 88,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -65,
+        "z": 8,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -19,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 61,
+        "z": -5
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 61,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 51,
+        "z": 35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -53,
+        "z": 20
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 57,
+        "z": 29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 21,
+        "z": -62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -24,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 16,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 33,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 54,
+        "z": 20
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 34,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 64,
+        "z": -2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 46,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 58,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -40,
+        "z": -42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 39,
+        "z": 43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -19,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 39,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -33,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -27,
+        "z": -51
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -53,
+        "z": 1
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 6,
+        "z": -66
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -53,
+        "z": 15
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 13,
+        "z": -65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 27,
+        "z": -61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 46,
+        "z": 33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 14,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 60,
+        "z": 17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -34,
+        "z": 41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 34,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 3,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -31,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -3,
+        "z": 52
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 4,
+          "cz": -4,
+          "a": 57.9,
+          "b": 18.6,
+          "rot": 0.76,
+          "omega": 0.052,
+          "phase": 4.03
+        }
+      }
+    ],
+    "name": "Ceres Approach",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 46,
+      "z": 28
+    },
+    "goal": {
+      "x": 68,
+      "z": -59,
       "r": 4.9
     },
     "maxLaunch": 43,
@@ -3233,40 +3925,102 @@ export const LEVELS = [
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2926,
-        "radius": 9.2,
-        "color": 0xff9e6b,
-        "x": 8,
-        "z": -1,
+        "mass": 2617,
+        "radius": 10.8,
+        "color": 0xffd166,
+        "x": 2,
+        "z": 1,
         "type": "sun"
       },
       {
-        "name": "Mars",
-        "mass": 331,
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -17,
+        "z": -4
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -28,
+        "z": 2
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
         "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 37,
+        "z": 22
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 36,
+        "z": 29,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
         "color": 0xd1603d,
-        "x": -9,
-        "z": 6
+        "x": -47,
+        "z": -11
       },
       {
         "name": "Jupiter",
-        "mass": 1629,
-        "radius": 6.1,
+        "mass": 1500,
+        "radius": 6.5,
         "color": 0xd9a066,
-        "x": -30,
-        "z": 29
+        "x": 56,
+        "z": -48
+      },
+      {
+        "name": "Io",
+        "mass": 94,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 65,
+        "z": -52,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 117,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 54,
+        "z": -36,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 61,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": 42,
+        "z": -50,
+        "moonOf": 6
       }
     ],
+    "homeIdx": 3,
+    "targetIdx": 6,
     "waypoints": [
       {
-        "x": -42,
-        "z": 3,
+        "x": 70,
+        "z": 10,
         "r": 4.5,
         "type": "cargo"
       },
       {
-        "x": -4,
-        "z": -20,
+        "x": 22,
+        "z": -39,
         "r": 4.5,
         "type": "dropoff"
       }
@@ -3274,108 +4028,2749 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 2,
-        "x": 33,
-        "z": 19
+        "radius": 0.9,
+        "x": -25,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 41,
+        "z": 49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -58,
+        "z": -10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -53,
+        "z": -19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 29,
+        "z": -52
       },
       {
         "kind": "asteroid",
         "radius": 1.6,
-        "x": -16,
-        "z": 3
+        "x": 59,
+        "z": 29
       },
       {
         "kind": "asteroid",
-        "radius": 1.7,
-        "x": -15,
-        "z": -25
+        "radius": 1,
+        "x": -43,
+        "z": 41
       },
       {
         "kind": "asteroid",
-        "radius": 1.9,
-        "x": 11,
-        "z": -27
+        "radius": 0.9,
+        "x": -58,
+        "z": -1
       },
       {
         "kind": "asteroid",
-        "radius": 2,
-        "x": -25,
-        "z": 11
+        "radius": 1.4,
+        "x": 21,
+        "z": -54
       },
       {
         "kind": "asteroid",
-        "radius": 2,
-        "x": -18,
+        "radius": 1,
+        "x": 25,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 24,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 15,
+        "z": 62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -6,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 43,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -44,
+        "z": -40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -17,
+        "z": 61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 55,
+        "z": 21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 0,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -55,
+        "z": -14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 54,
+        "z": 37
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 5,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -45,
+        "z": 35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -36,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -59,
         "z": -18
       },
       {
         "kind": "asteroid",
-        "radius": 2.3,
-        "x": 36,
-        "z": -5
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2,
-        "x": 12,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 2.2,
+        "radius": 1.1,
         "x": 6,
-        "z": 23
+        "z": 60
       },
       {
         "kind": "asteroid",
-        "radius": 2.3,
-        "x": -1,
-        "z": -32
+        "radius": 0.9,
+        "x": 30,
+        "z": -56
       },
       {
         "kind": "asteroid",
-        "radius": 2.2,
-        "x": -19,
-        "z": -31
+        "radius": 0.8,
+        "x": -44,
+        "z": -33
       },
       {
         "kind": "asteroid",
-        "radius": 2.1,
-        "x": 43,
-        "z": 5
+        "radius": 1.5,
+        "x": 1,
+        "z": -57
       },
       {
-        "radius": 2,
-        "patrol": {
-          "x1": 34,
-          "z1": -26,
-          "x2": 27,
-          "z2": -40,
-          "period": 6.4,
-          "phase": 0.84
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 34,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -24,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 21,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -14,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 25,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 51,
+        "z": 41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -37,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -47,
+        "z": 38
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 2,
+          "cz": 1,
+          "a": 54.2,
+          "b": 24.5,
+          "rot": 1.38,
+          "omega": 0.081,
+          "phase": 4.7
         }
       }
     ],
     "pickups": [
       {
-        "x": -28,
-        "z": -10,
+        "x": 57,
+        "z": -5,
         "fuel": 1.5
       },
       {
-        "x": -40,
-        "z": 37,
+        "x": 62,
+        "z": 22,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
       0.12,
       0.12,
-      0.23
+      0.12
+    ],
+    "fuelRequired": false,
+    "name": "First Haul",
+    "hint": "Haul the cargo 📦 through the belt to the dropoff 📥 — fuel cells are NOT optional.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": -53,
+      "z": 7
+    },
+    "goal": {
+      "x": -44,
+      "z": -84,
+      "r": 5.1
+    },
+    "maxLaunch": 48,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2996,
+        "radius": 10.3,
+        "color": 0xff9e6b,
+        "x": -4,
+        "z": -2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 9,
+        "z": 13
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 26,
+        "z": -5
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -43,
+        "z": 5
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -37,
+        "z": 9,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -30,
+        "z": -43
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -36,
+        "z": -67
+      },
+      {
+        "name": "Io",
+        "mass": 82,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -29,
+        "z": -74,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 65,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": -33,
+        "z": -56,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 63,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -50,
+        "z": -64,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": -58,
+        "z": -28,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -15,
+        "z": -55,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 21,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 25,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 49,
+        "z": 16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -65,
+        "z": 10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 15,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 1,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -28,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 21,
+        "z": -51
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -58,
+        "z": 14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -9,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -61,
+        "z": 8
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -34,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 48,
+        "z": -37
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -63,
+        "z": -16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 1,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 10,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 53,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 54,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -15,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 54,
+        "z": 16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -40,
+        "z": -45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 31,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -37,
+        "z": 49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 35,
+        "z": -47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -50,
+        "z": -42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 6,
+        "z": -61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -54,
+        "z": 35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -14,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -46,
+        "z": 32
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 53,
+        "z": -4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 58,
+        "z": -8
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 30,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -21,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -57,
+        "z": -16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 11,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 37,
+        "z": 47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -10,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -1,
+        "z": -61
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -4,
+          "cz": -2,
+          "a": 58.3,
+          "b": 23.4,
+          "rot": 1.95,
+          "omega": 0.053,
+          "phase": 2.76
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -66,
+        "z": -9,
+        "fuel": 1.5
+      },
+      {
+        "x": -29,
+        "z": -37,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "fuelRequired": false,
+    "name": "Cargo Convoy",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 39,
+      "z": -40
+    },
+    "goal": {
+      "x": -83,
+      "z": 35,
+      "r": 4.9
+    },
+    "maxLaunch": 43,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2804,
+        "radius": 10.6,
+        "color": 0xffd166,
+        "x": 2,
+        "z": -2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -4,
+        "z": -21
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 27,
+        "z": 16
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 31,
+        "z": -32
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 28,
+        "z": -38,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -16,
+        "z": 47
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -67,
+        "z": 28
+      },
+      {
+        "name": "Io",
+        "mass": 118,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -73,
+        "z": 36,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 119,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -72,
+        "z": 17,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 111,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": -54,
+        "z": 34,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": 14,
+        "z": -20,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -29,
+        "z": 29,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 10,
+        "z": -66
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 3,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -25,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -23,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -57,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 30,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 52,
+        "z": -41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 39,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 40,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 55,
+        "z": 31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -29,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 31,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -32,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 0,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 38,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 10,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 59,
+        "z": 13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 35,
+        "z": 49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -26,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 42,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 57,
+        "z": -24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 18,
+        "z": -63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -50,
+        "z": 39
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -33,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -57,
+        "z": 19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -63,
+        "z": -7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -40,
+        "z": 45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 8,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 35,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -20,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -50,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -53,
+        "z": -25
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -61,
+        "z": 14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 52,
+        "z": 33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -45,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -5,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 33,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -62,
+        "z": 8
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -59,
+        "z": -12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 14,
+        "z": 62
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 2,
+          "cz": -2,
+          "a": 48.9,
+          "b": 30.6,
+          "rot": 0.67,
+          "omega": 0.073,
+          "phase": 5.89
+        }
+      },
+      {
+        "radius": 2,
+        "orbit": {
+          "cx": 26,
+          "cz": 18,
+          "radius": 11.4,
+          "omega": -0.61,
+          "phase": 1.92
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -22,
+        "z": -16,
+        "fuel": 1.5
+      },
+      {
+        "x": 11,
+        "z": 11,
+        "fuel": 1.5
+      },
+      {
+        "x": 35,
+        "z": -26,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.12,
+      0.23,
+      0.12
+    ],
+    "fuelRequired": false,
+    "name": "Rubble Wall",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": -8,
+      "z": -50
+    },
+    "goal": {
+      "x": -11,
+      "z": 90,
+      "r": 5.1
+    },
+    "maxLaunch": 42,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2659,
+        "radius": 11.3,
+        "color": 0xffd166,
+        "x": -5,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -24,
+        "z": 5
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 4,
+        "z": -28
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -7,
+        "z": -39
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -14,
+        "z": -40,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 29,
+        "z": 34
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -10,
+        "z": 71
+      },
+      {
+        "name": "Io",
+        "mass": 72,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -16,
+        "z": 63,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 63,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 2,
+        "z": 71,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": 18,
+        "z": -7,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 8,
+        "z": 48,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 51,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 52,
+        "z": 13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 37,
+        "z": 45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -22,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -1,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 23,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 9,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 25,
+        "z": 47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -65,
+        "z": -14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 47,
+        "z": 18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -60,
+        "z": -12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -62,
+        "z": 12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -65,
+        "z": 9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 21,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 38,
+        "z": -39
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -44,
+        "z": -39
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 40,
+        "z": 41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -32,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -25,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 37,
+        "z": 36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -31,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 54,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 45,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 44,
+        "z": 28
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -38,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -19,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 52,
+        "z": -6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -61,
+        "z": 21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -10,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -47,
+        "z": 41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 50,
+        "z": -23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 49,
+        "z": 26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 48,
+        "z": 14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -41,
+        "z": -47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -33,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -28,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -7,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 36,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -28,
+        "z": -49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 50,
+        "z": -2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -61,
+        "z": -1
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 3,
+        "z": 59
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -5,
+          "cz": 0,
+          "a": 65.7,
+          "b": 27,
+          "rot": 2.45,
+          "omega": 0.053,
+          "phase": 1.63
+        }
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -34,
+          "z1": -14,
+          "x2": -26,
+          "z2": -36,
+          "period": 8,
+          "phase": 0.17
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 15,
+        "z": -37,
+        "fuel": 1.5
+      },
+      {
+        "x": 16,
+        "z": 12,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.12,
+      0.24,
+      0.12
+    ],
+    "fuelRequired": true,
+    "name": "The Passage",
+    "hint": "Patrols and comets cross the passages. Time your launch around their arrows.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 43,
+      "z": 25
+    },
+    "goal": {
+      "x": -10,
+      "z": -92,
+      "r": 5.2
+    },
+    "maxLaunch": 46,
+    "fuel": 1.6,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2783,
+        "radius": 11.2,
+        "color": 0xffb703,
+        "x": 4,
+        "z": -3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": 21,
+        "z": -12
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 33,
+        "z": -5
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 35,
+        "z": 19
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 31,
+        "z": 13,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -44,
+        "z": -12
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -7,
+        "z": -74
+      },
+      {
+        "name": "Io",
+        "mass": 109,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 0,
+        "z": -67,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 67,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -19,
+        "z": -73,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": 50,
+        "z": -27,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 40,
+        "z": -57,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 4,
+        "z": 55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 55,
+        "z": 29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -13,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": 38,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -47,
+        "z": 21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 7,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -53,
+        "z": 19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -37,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 61,
+        "z": 2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -6,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 50,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -40,
+        "z": -45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -49,
+        "z": 12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 14,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -52,
+        "z": -11
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 46,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 11,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 60,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 2,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 30,
+        "z": -52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -45,
+        "z": -42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 59,
+        "z": 26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 7,
+        "z": -65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -1,
+        "z": -61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -22,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -11,
+        "z": 51
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -58,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -43,
+        "z": -35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -30,
+        "z": 47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 40,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -13,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -54,
+        "z": 10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 58,
+        "z": 6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -31,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -24,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -14,
+        "z": -63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -4,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -22,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -49,
+        "z": -18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 55,
+        "z": -39
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 24,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 1,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -28,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -44,
+        "z": 34
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 4,
+          "cz": -3,
+          "a": 65.7,
+          "b": 25.9,
+          "rot": 0.8,
+          "omega": 0.083,
+          "phase": 3.25
+        }
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -25,
+          "z1": 32,
+          "x2": -38,
+          "z2": 7,
+          "period": 7.9,
+          "phase": 0.99
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 43,
+        "z": -38,
+        "fuel": 1.5
+      },
+      {
+        "x": 50,
+        "z": 5,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.2,
+      0.1,
+      0.1
+    ],
+    "fuelRequired": true,
+    "name": "Vesta Run",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 12,
+      "z": -51
+    },
+    "goal": {
+      "x": 25,
+      "z": 85,
+      "r": 5.2
+    },
+    "maxLaunch": 42,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2831,
+        "radius": 10.3,
+        "color": 0xffb703,
+        "x": 4,
+        "z": -2,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -13,
+        "z": 6
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -25,
+        "z": 3
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 10,
+        "z": -41
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 6,
+        "z": -47,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 45,
+        "z": 24
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": 21,
+        "z": 68
+      },
+      {
+        "name": "Io",
+        "mass": 66,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 12,
+        "z": 72,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 106,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 19,
+        "z": 56,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 112,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 33,
+        "z": 75,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": 47,
+        "z": -12,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": 47,
+        "z": 36,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -10,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -49,
+        "z": -19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 59,
+        "z": 16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 33,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 49,
+        "z": -41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 36,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 63,
+        "z": 17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 52,
+        "z": 27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -32,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -54,
+        "z": -4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 61,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 13,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 22,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 56,
+        "z": 19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 17,
+        "z": 51
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -16,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 1,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 63,
+        "z": 8
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -55,
+        "z": 16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 52,
+        "z": -36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -49,
+        "z": -27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 62,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 60,
+        "z": -16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -21,
+        "z": -53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -15,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -46,
+        "z": -36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 25,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 24,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -51,
+        "z": -10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 31,
+        "z": 47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -49,
+        "z": 28
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 59,
+        "z": 9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -8,
+        "z": -63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 39,
+        "z": -47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -39,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 43,
+        "z": 43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 12,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -54,
+        "z": 10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 59,
+        "z": -4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 66,
+        "z": 3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -22,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -32,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": -50,
+        "z": 6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 60,
+        "z": -23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": -12,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -37,
+        "z": -41
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 4,
+          "cz": -2,
+          "a": 59.1,
+          "b": 26.3,
+          "rot": 2.73,
+          "omega": -0.088,
+          "phase": 4.98
+        }
+      },
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": 22,
+          "z1": -25,
+          "x2": 33,
+          "z2": -1,
+          "period": 6.1,
+          "phase": 0.05
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": 32,
+        "z": -39,
+        "fuel": 1.5
+      },
+      {
+        "x": 52,
+        "z": 12,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.24,
+      0.12,
+      0.12
+    ],
+    "fuelRequired": true,
+    "name": "Dense Cluster",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 92,
+    "ship": {
+      "x": 14,
+      "z": 47
+    },
+    "goal": {
+      "x": -46,
+      "z": -76,
+      "r": 5
+    },
+    "maxLaunch": 46,
+    "fuel": 1.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2610,
+        "radius": 10.5,
+        "color": 0xff9e6b,
+        "x": 3,
+        "z": 0,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "x": -12,
+        "z": -13
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -13,
+        "z": -24
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 12,
+        "z": 37
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 11,
+        "z": 30,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 21,
+        "z": -44
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -36,
+        "z": -61
+      },
+      {
+        "name": "Io",
+        "mass": 112,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -28,
+        "z": -55,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 65,
+        "radius": 1.3,
+        "color": 0xd8d8d8,
+        "x": -46,
+        "z": -54,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "waypoints": [
+      {
+        "x": -30,
+        "z": 9,
+        "r": 4.5,
+        "type": "cargo"
+      },
+      {
+        "x": -3,
+        "z": -47,
+        "r": 4.5,
+        "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -11,
+        "z": -62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 7,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 61,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 53,
+        "z": 32
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 61,
+        "z": -1
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 57,
+        "z": -25
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -54,
+        "z": 4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 21,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 54,
+        "z": 23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 15,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 55,
+        "z": -34
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -51,
+        "z": 21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 34,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -26,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 29,
+        "z": -55
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -14,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": -53,
+        "z": -24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -49,
+        "z": 34
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -32,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.3,
+        "x": 42,
+        "z": -45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 50,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 9,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -22,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": -2,
+        "z": 61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 44,
+        "z": 38
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 27,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -24,
+        "z": -56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -60,
+        "z": 6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": -13,
+        "z": 52
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -2,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -48,
+        "z": 28
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -49,
+        "z": -27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1,
+        "x": 48,
+        "z": 31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.6,
+        "x": -42,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 32,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.5,
+        "x": 32,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -36,
+        "z": 38
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -28,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.4,
+        "x": 24,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -56,
+        "z": 15
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 61,
+        "z": 24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": 41,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.8,
+        "x": 45,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.1,
+        "x": -53,
+        "z": 29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": -31,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": 60,
+        "z": -21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.9,
+        "x": 62,
+        "z": 18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 1.2,
+        "x": -43,
+        "z": -29
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": 3,
+          "cz": 0,
+          "a": 51.1,
+          "b": 28.8,
+          "rot": 0.78,
+          "omega": 0.084,
+          "phase": 0.48
+        }
+      },
+      {
+        "radius": 2,
+        "orbit": {
+          "cx": 27,
+          "cz": -15,
+          "radius": 10.2,
+          "omega": 0.45,
+          "phase": 1.31
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -26,
+        "z": -23,
+        "fuel": 1.5
+      },
+      {
+        "x": -8,
+        "z": 34,
+        "fuel": 1.5
+      },
+      {
+        "x": -17,
+        "z": 42,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.1,
+      0.1,
+      0.1
     ],
     "fuelRequired": true,
     "name": "Belt Baron",
-    "hint": "The belt: thread the rocks between Mars and Jupiter.",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
     "difficulty": 4
   },
   {
@@ -3465,63 +6860,63 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 76,
+    "extent": 75,
     "ship": {
-      "x": -19,
-      "z": 55
+      "x": -28,
+      "z": 54
     },
     "goal": {
-      "x": 30,
+      "x": 20,
       "z": -55,
-      "r": 4.6
+      "r": 4.5
     },
-    "maxLaunch": 39,
+    "maxLaunch": 41,
     "fuel": 5,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 2804,
-        "radius": 9.8,
+        "name": "Tsuki",
+        "mass": 3555,
+        "radius": 11.6,
         "color": 0xffd166,
-        "x": -6,
+        "x": 4,
         "z": -2,
         "type": "sun"
       },
       {
-        "name": "Zephyr",
-        "mass": 1126,
-        "radius": 5,
-        "color": 0xffc8dd,
+        "name": "Frost",
+        "mass": 283,
+        "radius": 2.3,
+        "color": 0xffd166,
         "orbit": {
-          "cx": -6,
+          "cx": 4,
           "cz": -2,
-          "radius": 21.7,
-          "omega": 0.52,
-          "phase": 1.78
+          "radius": 22.4,
+          "omega": -0.24,
+          "phase": 2.27
         }
       },
       {
-        "name": "Lumen",
-        "mass": 534,
-        "radius": 3.2,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": -6,
-          "cz": -2,
-          "radius": 37.7,
-          "omega": -0.28,
-          "phase": 3.88
-        }
-      },
-      {
-        "name": "Gulp",
-        "mass": 4320,
+        "name": "Dune",
+        "mass": 433,
         "radius": 3,
-        "horizon": 5.6,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": 4,
+          "cz": -2,
+          "radius": 36.4,
+          "omega": 0.3,
+          "phase": 3.72
+        }
+      },
+      {
+        "name": "Hush",
+        "mass": 4766,
+        "radius": 3,
+        "horizon": 6.3,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": 20,
-        "z": 49
+        "x": 56,
+        "z": -17
       }
     ],
     "name": "Star System",
@@ -3529,63 +6924,53 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 75,
+    "extent": 71,
     "ship": {
-      "x": 10,
-      "z": 54
+      "x": -4,
+      "z": 51
     },
     "goal": {
-      "x": 8,
-      "z": -55,
-      "r": 4.3
+      "x": 1,
+      "z": -52,
+      "r": 4.6
     },
-    "maxLaunch": 46,
+    "maxLaunch": 40,
     "fuel": 5,
     "bodies": [
       {
-        "name": "Tsuki",
-        "mass": 3017,
-        "radius": 11.4,
-        "color": 0xffb703,
-        "x": -8,
-        "z": -2,
+        "name": "Rana",
+        "mass": 2934,
+        "radius": 10.9,
+        "color": 0xff9e6b,
+        "x": 3,
+        "z": 0,
         "type": "sun"
       },
       {
-        "name": "Dune",
-        "mass": 1325,
-        "radius": 5.6,
-        "color": 0xc8b6ff,
+        "name": "Lyra",
+        "mass": 494,
+        "radius": 2.6,
+        "color": 0x7ae582,
         "orbit": {
-          "cx": -8,
-          "cz": -2,
-          "radius": 24.5,
-          "omega": 0.35,
-          "phase": 5.01
+          "cx": 3,
+          "cz": 0,
+          "radius": 21.2,
+          "omega": -0.31,
+          "phase": 4.75
         }
       },
       {
-        "name": "Atlas",
-        "mass": 664,
-        "radius": 2.9,
-        "color": 0xf4a261,
-        "orbit": {
-          "cx": -8,
-          "cz": -2,
-          "radius": 40.5,
-          "omega": -0.4,
-          "phase": 2.13
-        }
-      },
-      {
-        "name": "Void",
-        "mass": 4470,
+        "name": "Koa",
+        "mass": 434,
         "radius": 3,
-        "horizon": 6,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": -52,
-        "z": -39
+        "color": 0xff8fa3,
+        "orbit": {
+          "cx": 3,
+          "cz": 0,
+          "radius": 35.2,
+          "omega": -0.31,
+          "phase": 3.86
+        }
       }
     ],
     "name": "Dark Passage",
@@ -3593,63 +6978,61 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 75,
+    "extent": 72,
     "ship": {
-      "x": 9,
-      "z": 54
+      "x": 3,
+      "z": 52
     },
     "goal": {
-      "x": 26,
-      "z": -55,
-      "r": 4.2
+      "x": -9,
+      "z": -53,
+      "r": 4.4
     },
     "maxLaunch": 45,
     "fuel": 5,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 3206,
-        "radius": 10.8,
+        "name": "Rana",
+        "mass": 3323,
+        "radius": 11.7,
         "color": 0xffb703,
-        "x": -8,
-        "z": -8,
+        "x": 4,
+        "z": 1,
         "type": "sun"
       },
       {
-        "name": "Iris",
-        "mass": 1371,
-        "radius": 5.1,
-        "color": 0xffd166,
+        "name": "Opal",
+        "mass": 348,
+        "radius": 2.2,
+        "color": 0xf4a261,
         "orbit": {
-          "cx": -8,
-          "cz": -8,
-          "radius": 23.1,
-          "omega": 0.3,
-          "phase": 6.27
+          "cx": 4,
+          "cz": 1,
+          "radius": 21.2,
+          "omega": -0.42,
+          "phase": 0.98
         }
       },
       {
-        "name": "Pip",
-        "mass": 503,
-        "radius": 2.8,
-        "color": 0x95d5b2,
+        "name": "Lyra",
+        "mass": 1230,
+        "radius": 5.3,
+        "color": 0xf4a261,
         "orbit": {
-          "cx": -8,
-          "cz": -8,
-          "radius": 39.1,
-          "omega": 0.52,
-          "phase": 5.01
+          "cx": 4,
+          "cz": 1,
+          "radius": 35.2,
+          "omega": -0.43,
+          "phase": 6.05
         }
       },
       {
-        "name": "Maw",
-        "mass": 3678,
-        "radius": 3,
-        "horizon": 6.2,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": 43,
-        "z": -28
+        "name": "Vex",
+        "mass": -591,
+        "radius": 4.2,
+        "color": 0xc77dff,
+        "x": 59,
+        "z": 8
       }
     ],
     "name": "Planetfall",
@@ -3657,65 +7040,73 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 74,
+    "extent": 76,
     "ship": {
-      "x": -13,
-      "z": 53
+      "x": 15,
+      "z": 55
     },
     "goal": {
-      "x": -33,
-      "z": -54,
-      "r": 4.3
+      "x": 29,
+      "z": -55,
+      "r": 4.6
     },
-    "maxLaunch": 41,
+    "maxLaunch": 44,
     "fuel": 1.4,
     "bodies": [
       {
-        "name": "Rana",
-        "mass": 2637,
-        "radius": 9.8,
-        "color": 0xffd166,
-        "x": -8,
-        "z": -4,
+        "name": "Kestrel",
+        "mass": 3278,
+        "radius": 11.3,
+        "color": 0xffb703,
+        "x": -3,
+        "z": -2,
         "type": "sun"
       },
       {
-        "name": "Atlas",
-        "mass": 303,
-        "radius": 3.7,
+        "name": "Opal",
+        "mass": 550,
+        "radius": 2.8,
         "color": 0xffc8dd,
         "orbit": {
-          "cx": -8,
-          "cz": -4,
-          "radius": 21.4,
-          "omega": 0.31,
-          "phase": 0.63
+          "cx": -3,
+          "cz": -2,
+          "radius": 22.3,
+          "omega": -0.34,
+          "phase": 2.46
         }
       },
       {
-        "name": "Quartz",
-        "mass": 1543,
-        "radius": 5.5,
+        "name": "Atlas",
+        "mass": 362,
+        "radius": 2.4,
         "color": 0x90e0ef,
         "orbit": {
-          "cx": -8,
-          "cz": -4,
-          "radius": 37.4,
-          "omega": 0.48,
-          "phase": 0.82
+          "cx": -3,
+          "cz": -2,
+          "radius": 36.3,
+          "omega": 0.29,
+          "phase": 5.72
         }
+      },
+      {
+        "name": "Nulla",
+        "mass": -820,
+        "radius": 3.5,
+        "color": 0xc77dff,
+        "x": -28,
+        "z": 44
       }
     ],
     "waypoints": [
       {
-        "x": -45,
-        "z": 31,
+        "x": 50,
+        "z": 26,
         "r": 3.6,
         "type": "cargo"
       },
       {
-        "x": -56,
-        "z": -20,
+        "x": 43,
+        "z": -13,
         "r": 3.6,
         "type": "dropoff"
       }
@@ -3724,31 +7115,26 @@ export const LEVELS = [
       {
         "radius": 2,
         "patrol": {
-          "x1": 44,
-          "z1": -27,
-          "x2": 23,
-          "z2": -44,
-          "period": 7.3,
-          "phase": 0.03
+          "x1": 38,
+          "z1": 14,
+          "x2": 62,
+          "z2": -8,
+          "period": 5.4,
+          "phase": 0.96
         }
       }
     ],
     "pickups": [
       {
-        "x": -31,
-        "z": 48,
-        "fuel": 1.5
-      },
-      {
-        "x": -59,
-        "z": 2,
+        "x": 33,
+        "z": 43,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.13,
-      0.13,
-      0.13
+      0.11,
+      0.11,
+      0.11
     ],
     "fuelRequired": true,
     "name": "The Gauntlet",
@@ -3758,88 +7144,93 @@ export const LEVELS = [
   {
     "extent": 73,
     "ship": {
-      "x": -17,
+      "x": 23,
       "z": 53
     },
     "goal": {
-      "x": -25,
+      "x": 6,
       "z": -53,
       "r": 4.2
     },
-    "maxLaunch": 44,
+    "maxLaunch": 41,
     "fuel": 1.4,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 3621,
-        "radius": 9.7,
+        "name": "Helios",
+        "mass": 3059,
+        "radius": 11.6,
         "color": 0xffd166,
-        "x": -5,
+        "x": 4,
         "z": 1,
         "type": "sun"
       },
       {
-        "name": "Lyra",
-        "mass": 594,
-        "radius": 2.9,
-        "color": 0xc8b6ff,
+        "name": "Willow",
+        "mass": 479,
+        "radius": 2.8,
+        "color": 0xffc8dd,
         "orbit": {
-          "cx": -5,
+          "cx": 4,
           "cz": 1,
-          "radius": 23.8,
-          "omega": -0.31,
-          "phase": 1.9
+          "radius": 21.8,
+          "omega": -0.5,
+          "phase": 3.37
         }
       },
       {
-        "name": "Vesta",
-        "mass": 498,
-        "radius": 2.5,
-        "color": 0xffd166,
+        "name": "Quartz",
+        "mass": 395,
+        "radius": 3,
+        "color": 0xffc8dd,
         "orbit": {
-          "cx": -5,
+          "cx": 4,
           "cz": 1,
-          "radius": 39.8,
-          "omega": 0.47,
-          "phase": 1.66
+          "radius": 35.8,
+          "omega": 0.35,
+          "phase": 1.49
         }
+      },
+      {
+        "name": "Gulp",
+        "mass": 3748,
+        "radius": 3,
+        "horizon": 5.6,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": -31,
+        "z": -38
       }
     ],
     "waypoints": [
       {
-        "x": -49,
-        "z": 24,
+        "x": 48,
+        "z": 14,
         "r": 3.6,
         "type": "cargo"
       },
       {
-        "x": -52,
-        "z": -28,
+        "x": 40,
+        "z": -31,
         "r": 3.6,
         "type": "dropoff"
       }
     ],
     "pickups": [
       {
-        "x": -33,
-        "z": 46,
+        "x": 40,
+        "z": 35,
         "fuel": 1.5
       },
       {
-        "x": -52,
-        "z": -3,
-        "fuel": 1.5
-      },
-      {
-        "x": -62,
-        "z": 1,
+        "x": 50,
+        "z": -9,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.11,
-      0.11,
-      0.11
+      0.13,
+      0.13,
+      0.13
     ],
     "fuelRequired": true,
     "name": "Singularity",
@@ -3849,83 +7240,83 @@ export const LEVELS = [
   {
     "extent": 72,
     "ship": {
-      "x": 29,
+      "x": -4,
       "z": 52
     },
     "goal": {
-      "x": -6,
+      "x": -20,
       "z": -53,
       "r": 4.5
     },
-    "maxLaunch": 43,
-    "fuel": 1.5,
+    "maxLaunch": 44,
+    "fuel": 1.4,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 3059,
-        "radius": 10.5,
-        "color": 0xffd166,
-        "x": -5,
-        "z": 2,
+        "name": "Rana",
+        "mass": 2716,
+        "radius": 10.8,
+        "color": 0xff9e6b,
+        "x": -4,
+        "z": -3,
         "type": "sun"
       },
       {
-        "name": "Onyx",
-        "mass": 563,
-        "radius": 3.7,
-        "color": 0xc8b6ff,
+        "name": "Opal",
+        "mass": 344,
+        "radius": 2.1,
+        "color": 0x95d5b2,
         "orbit": {
-          "cx": -5,
-          "cz": 2,
-          "radius": 22.1,
-          "omega": -0.45,
-          "phase": 1.08
+          "cx": -4,
+          "cz": -3,
+          "radius": 19.7,
+          "omega": -0.23,
+          "phase": 5.16
         }
       },
       {
-        "name": "Jasper",
-        "mass": 421,
-        "radius": 2.7,
-        "color": 0x8ecae6,
+        "name": "Atlas",
+        "mass": 250,
+        "radius": 3,
+        "color": 0xff8fa3,
         "orbit": {
-          "cx": -5,
-          "cz": 2,
-          "radius": 38.1,
-          "omega": 0.46,
-          "phase": 1.04
+          "cx": -4,
+          "cz": -3,
+          "radius": 33.7,
+          "omega": -0.34,
+          "phase": 3.6
         }
       }
     ],
     "waypoints": [
       {
-        "x": 47,
-        "z": 12,
+        "x": -36,
+        "z": 28,
         "r": 3.6,
         "type": "cargo"
       },
       {
-        "x": 32,
-        "z": -28,
+        "x": -45,
+        "z": -24,
         "r": 3.6,
         "type": "dropoff"
       }
     ],
     "pickups": [
       {
-        "x": 38,
-        "z": 34,
+        "x": -20,
+        "z": 38,
         "fuel": 1.5
       },
       {
-        "x": 40,
-        "z": -9,
+        "x": -47,
+        "z": 9,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.12,
-      0.12,
-      0.12
+      0.11,
+      0.11,
+      0.11
     ],
     "fuelRequired": true,
     "name": "Far Shore",
@@ -3933,93 +7324,123 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 73,
+    "extent": 72,
     "ship": {
-      "x": 4,
-      "z": 53
+      "x": -27,
+      "z": 52
     },
     "goal": {
-      "x": 18,
+      "x": 1,
       "z": -53,
-      "r": 4.5
+      "r": 4.4
     },
     "maxLaunch": 42,
-    "fuel": 1.5,
+    "fuel": 1.4,
     "bodies": [
       {
-        "name": "Helios",
-        "mass": 3584,
-        "radius": 10.2,
+        "name": "Kestrel",
+        "mass": 3492,
+        "radius": 10.7,
         "color": 0xffb703,
-        "x": -7,
-        "z": 2,
+        "x": 3,
+        "z": -1,
         "type": "sun"
       },
       {
-        "name": "Jasper",
-        "mass": 667,
-        "radius": 3.1,
-        "color": 0x90e0ef,
+        "name": "Onyx",
+        "mass": 456,
+        "radius": 2.8,
+        "color": 0x95d5b2,
         "orbit": {
-          "cx": -7,
-          "cz": 2,
-          "radius": 22.4,
-          "omega": -0.43,
-          "phase": 4.96
+          "cx": 3,
+          "cz": -1,
+          "radius": 21.2,
+          "omega": 0.28,
+          "phase": 5.44
         }
       },
       {
-        "name": "Nova",
-        "mass": 685,
-        "radius": 2.7,
-        "color": 0xffc8dd,
+        "name": "Dune",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0x95d5b2,
         "orbit": {
-          "cx": -7,
-          "cz": 2,
-          "radius": 38.4,
-          "omega": -0.36,
-          "phase": 3.34
+          "cx": 3,
+          "cz": -1,
+          "radius": 35.2,
+          "omega": -0.25,
+          "phase": 2.72
         }
+      },
+      {
+        "name": "Gulp",
+        "mass": 3619,
+        "radius": 3,
+        "horizon": 5.5,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": -28,
+        "z": -39
       },
       {
         "name": "Nulla",
-        "mass": -592,
-        "radius": 3.7,
+        "mass": -842,
+        "radius": 4.2,
         "color": 0xc77dff,
-        "x": -55,
-        "z": -29
+        "x": 40,
+        "z": -39
       }
     ],
     "waypoints": [
       {
-        "x": 35,
-        "z": 24,
+        "x": -43,
+        "z": 28,
         "r": 3.6,
         "type": "cargo"
       },
       {
-        "x": 39,
-        "z": -14,
+        "x": -35,
+        "z": -25,
         "r": 3.6,
         "type": "dropoff"
       }
     ],
-    "pickups": [
+    "hazards": [
       {
-        "x": 22,
-        "z": 41,
-        "fuel": 1.5
+        "radius": 1.2,
+        "comet": {
+          "cx": 3,
+          "cz": -1,
+          "a": 48.8,
+          "b": 14.7,
+          "rot": 3.13,
+          "omega": 0.043,
+          "phase": 4.52
+        }
       },
       {
-        "x": 38,
-        "z": 7,
+        "radius": 2,
+        "patrol": {
+          "x1": 39,
+          "z1": -27,
+          "x2": 59,
+          "z2": -11,
+          "period": 5.5,
+          "phase": 0.24
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -36,
+        "z": 41,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
       0.12,
       0.12,
-      0.12
+      0.4
     ],
     "fuelRequired": true,
     "name": "Last Light",
@@ -4029,88 +7450,114 @@ export const LEVELS = [
   {
     "extent": 74,
     "ship": {
-      "x": -21,
+      "x": -26,
       "z": 53
     },
     "goal": {
       "x": -28,
       "z": -54,
-      "r": 4.3
+      "r": 4.5
     },
     "maxLaunch": 45,
     "fuel": 1.4,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 2801,
-        "radius": 10.2,
-        "color": 0xffd166,
-        "x": -4,
-        "z": -4,
+        "name": "Vera",
+        "mass": 3790,
+        "radius": 11.2,
+        "color": 0xffb703,
+        "x": 3,
+        "z": -1,
         "type": "sun"
       },
       {
-        "name": "Nova",
-        "mass": 1499,
-        "radius": 5.4,
-        "color": 0x8ecae6,
-        "orbit": {
-          "cx": -4,
-          "cz": -4,
-          "radius": 24.7,
-          "omega": 0.25,
-          "phase": 0.69
-        }
-      },
-      {
-        "name": "Koa",
-        "mass": 618,
-        "radius": 2.9,
+        "name": "Dune",
+        "mass": 373,
+        "radius": 2.5,
         "color": 0xc8b6ff,
         "orbit": {
-          "cx": -4,
-          "cz": -4,
-          "radius": 40.7,
-          "omega": -0.38,
-          "phase": 5.79
+          "cx": 3,
+          "cz": -1,
+          "radius": 20.1,
+          "omega": -0.31,
+          "phase": 2.97
         }
       },
       {
-        "name": "Abyss",
-        "mass": 4632,
+        "name": "Iris",
+        "mass": 499,
+        "radius": 2.2,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": 3,
+          "cz": -1,
+          "radius": 34.1,
+          "omega": 0.47,
+          "phase": 2.08
+        }
+      },
+      {
+        "name": "Gulp",
+        "mass": 4553,
         "radius": 3,
-        "horizon": 5.6,
+        "horizon": 6.2,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": -40,
-        "z": 37
+        "x": -43,
+        "z": 27
+      },
+      {
+        "name": "Antara",
+        "mass": -675,
+        "radius": 3.7,
+        "color": 0xc77dff,
+        "x": -19,
+        "z": 44
       }
     ],
     "waypoints": [
       {
-        "x": -52,
-        "z": 14,
+        "x": -54,
+        "z": 20,
         "r": 3.6,
         "type": "cargo"
       },
       {
-        "x": -56,
-        "z": -24,
+        "x": -51,
+        "z": -20,
         "r": 3.6,
         "type": "dropoff"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "patrol": {
+          "x1": -38,
+          "z1": -23,
+          "x2": -47,
+          "z2": -35,
+          "period": 6.8,
+          "phase": 0.67
+        }
       }
     ],
     "pickups": [
       {
         "x": -55,
-        "z": -4,
+        "z": 0,
+        "fuel": 1.5
+      },
+      {
+        "x": -46,
+        "z": 42,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
       0.11,
-      0.35,
-      0.11
+      0.73,
+      0.21
     ],
     "fuelRequired": true,
     "name": "GravityLoop",

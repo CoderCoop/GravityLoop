@@ -40,7 +40,7 @@ const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 // ---------------------------------------------------------------------------
 function isDynamic(level) {
   return level.bodies.some(b => b.orbit) ||
-    (level.hazards || []).some(h => h.orbit || h.patrol);
+    (level.hazards || []).some(h => h.orbit || h.patrol || h.comet);
 }
 
 function solveLeg(level, stage) {
@@ -158,9 +158,10 @@ function levelGeometryOk(level, padClear, goalClear) {
     const a = annulus(level, i);
     const moving = !!bi.orbit;
     if (Math.hypot(a.x, a.z) + a.maxR + bi.radius > E * 0.95) return false;
-    const isHome = level.homeIdx === i, isTarget = level.targetIdx === i;
-    const padM = isHome ? 5 : moving ? Math.min(padClear, 10) : padClear;
-    const goalM = isTarget ? 4 : moving ? Math.min(goalClear, 8) : goalClear;
+    const isHome = level.homeIdx === i || bi.moonOf === level.homeIdx;
+    const isTarget = level.targetIdx === i || bi.moonOf === level.targetIdx;
+    const padM = isHome ? 3 : moving ? Math.min(padClear, 10) : padClear;
+    const goalM = isTarget ? 3 : moving ? Math.min(goalClear, 8) : goalClear;
     if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return false;
     if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return false;
     for (const wp of level.waypoints || []) {
@@ -170,8 +171,9 @@ function levelGeometryOk(level, padClear, goalClear) {
       const bj = level.bodies[j];
       const oi = bi.orbit, oj = bj.orbit;
       if ((oj && oj.parent === i) || (oi && oi.parent === j)) continue;
-      if (bi.moonOf === j || bj.moonOf === i) {
-        if (dist(a.x, a.z, annulus(level, j).x, annulus(level, j).z) < bi.radius + bj.radius + 2.5) return false;
+      if (bi.moonOf === j || bj.moonOf === i ||
+          (bi.moonOf != null && bi.moonOf === bj.moonOf)) {
+        if (dist(a.x, a.z, annulus(level, j).x, annulus(level, j).z) < bi.radius + bj.radius + 2) return false;
         continue;
       }
       if (oi && oj && oi.parent == null && oj.parent == null &&
@@ -192,6 +194,16 @@ function levelGeometryOk(level, padClear, goalClear) {
 }
 
 function hazardPoints(h) {
+  if (h.comet) {
+    const c = h.comet, out = [];
+    for (let k = 0; k < 12; k++) {
+      const th = (k / 12) * Math.PI * 2;
+      const px = Math.cos(th) * c.a, pz = Math.sin(th) * c.b;
+      const cos = Math.cos(c.rot || 0), sin = Math.sin(c.rot || 0);
+      out.push({ x: c.cx + px * cos - pz * sin, z: c.cz + px * sin + pz * cos });
+    }
+    return out;
+  }
   if (h.orbit) return null;
   if (h.patrol) {
     const p = h.patrol, out = [];
@@ -394,7 +406,9 @@ function tuneFuelEconomy(rng, level, res) {
 }
 
 // ---------------------------------------------------------------------------
-// Bodies: realistic size tiers
+// Bodies: realistic size tiers. The Sun dwarfs gas giants, which dwarf rocky
+// planets, which dwarf moons — and every Sol level carries the complete
+// planetary inventory inward of its theme.
 // ---------------------------------------------------------------------------
 const SUN_COLORS = [0xffd166, 0xffb703, 0xff9e6b];
 const ALIEN_NAMES = ['Vesta', 'Lyra', 'Atlas', 'Rhea', 'Iris', 'Quartz', 'Echo', 'Opal', 'Dune', 'Frost',
@@ -417,161 +431,235 @@ function namer(rng) {
 const ringPos = (c, R, a) => ({ x: Math.round(c.x + Math.cos(a) * R), z: Math.round(c.z + Math.sin(a) * R) });
 const unit = (dx, dz) => { const d = Math.max(Math.hypot(dx, dz), 1e-9); return { x: dx / d, z: dz / d }; };
 
-function mkSun(rng, lv, name2, mLo = 2200, mHi = 3200) {
+// Sol-system catalog (sizes roughly tiered like the real thing)
+const CAT = {
+  mercury: { name: 'Mercury', r: 1.5, m: 120, c: 0xb5a642 },
+  venus: { name: 'Venus', r: 2.5, m: 380, c: 0xe8c07d },
+  earth: { name: 'Earth', r: 2.6, m: 420, c: 0x4d9de0 },
+  moon: { name: 'Moon', r: 1.0, m: 60, c: 0xd8d8d8 },
+  mars: { name: 'Mars', r: 1.9, m: 220, c: 0xd1603d },
+  jupiter: { name: 'Jupiter', r: 6.5, m: 1500, c: 0xd9a066 },
+  saturn: { name: 'Saturn', r: 5.7, m: 1250, c: 0xe3c896 },
+};
+const JUP_MOONS = ['Io', 'Europa', 'Ganymede'];
+const SAT_MOONS = ['Titan', 'Rhea', 'Enceladus'];
+
+function pushBody(lv, spec, x, z, extra = {}) {
+  lv.bodies.push({ name: spec.name, mass: spec.m, radius: spec.r, color: spec.c, x: Math.round(x), z: Math.round(z), ...extra });
+  return lv.bodies.length - 1;
+}
+
+// Static moon parked beside its parent (a snapshot of its orbit).
+function pushMoonOf(rng, lv, parentIdx, spec, gap = null, ang = null) {
+  const p = lv.bodies[parentIdx];
+  const a = ang != null ? ang : rand(rng, 0, 6.28);
+  const d = p.radius + (gap != null ? gap : rand(rng, 3.2, 4.6));
+  return pushBody(lv, spec, p.x + Math.cos(a) * d, p.z + Math.sin(a) * d, { moonOf: parentIdx });
+}
+
+function mkSun(rng, lv, name2, mLo, mHi, rLo = 11, rHi = 13) {
   const E = lv.extent;
   const body = {
     name: name2, mass: Math.round(rand(rng, mLo, mHi)),
-    radius: +rand(rng, 9, 11.5).toFixed(1), color: pick(rng, SUN_COLORS),
-    x: Math.round(sign(rng) * rand(rng, 0.02, 0.14) * E),
-    z: Math.round(rand(rng, -0.12, 0.04) * E),
+    radius: +rand(rng, rLo, rHi).toFixed(1), color: pick(rng, SUN_COLORS),
+    x: Math.round(sign(rng) * rand(rng, 0.02, 0.06) * E),
+    z: Math.round(rand(rng, -0.05, 0.03) * E),
     type: 'sun',
   };
   lv.bodies.push(body);
   return body;
 }
 
-function mkPlanet(lv, name2, R, ang, sun, size) {
-  const p = ringPos(sun, R, ang);
-  const body = { name: name2, mass: size.m, radius: size.r, color: size.c, x: p.x, z: p.z };
-  lv.bodies.push(body);
-  return lv.bodies.length - 1;
+// The complete Sol inventory inward of `through`, with random ring angles.
+// Returns { idx: {mercury, venus, earth, moon, mars, jupiter, saturn}, rings }.
+function buildSol(rng, lv, through, earthAng) {
+  const sun = lv.bodies[0];
+  const idx = {}, rings = {};
+  let R = sun.radius + rand(rng, 8, 10);
+  rings.mercury = R;
+  idx.mercury = pushBody(lv, CAT.mercury, ...Object.values(ringPos(sun, R, rand(rng, 0, 6.28))));
+  R += rand(rng, 9, 11);
+  rings.venus = R;
+  idx.venus = pushBody(lv, CAT.venus, ...Object.values(ringPos(sun, R, rand(rng, 0, 6.28))));
+  R += rand(rng, 9, 11);
+  rings.earth = R;
+  const ep = ringPos(sun, R, earthAng != null ? earthAng : rand(rng, 0, 6.28));
+  idx.earth = pushBody(lv, CAT.earth, ep.x, ep.z);
+  idx.moon = pushMoonOf(rng, lv, idx.earth, CAT.moon, rand(rng, 3.6, 5));
+  if (through === 'earth') return { idx, rings, sun };
+  R += rand(rng, 9, 11);
+  rings.mars = R;
+  idx.mars = pushBody(lv, CAT.mars, ...Object.values(ringPos(sun, R, rand(rng, 0, 6.28))));
+  if (through === 'mars') return { idx, rings, sun };
+  R += through === 'beltjupiter' ? rand(rng, 22, 25) : rand(rng, 14.5, 16.5);
+  rings.jupiter = R;
+  idx.jupiter = pushBody(lv, CAT.jupiter, ...Object.values(ringPos(sun, R, rand(rng, 0, 6.28))));
+  const nJm = 2 + (rng() < 0.5 ? 1 : 0);
+  const jBase = rand(rng, 0, 6.28);
+  for (let i = 0; i < nJm; i++) {
+    pushMoonOf(rng, lv, idx.jupiter, { name: JUP_MOONS[i], r: +rand(rng, 1, 1.3).toFixed(1), m: Math.round(rand(rng, 60, 120)), c: 0xd8d8d8 }, 3 + i * 2.4, jBase + i * rand(rng, 1.8, 2.3));
+  }
+  if (through === 'jupiter' || through === 'beltjupiter') return { idx, rings, sun };
+  R += rand(rng, 18.5, 20.5);
+  rings.saturn = R;
+  idx.saturn = pushBody(lv, CAT.saturn, ...Object.values(ringPos(sun, R, rand(rng, 0, 6.28))));
+  const sBase = rand(rng, 0, 6.28);
+  for (let i = 0; i < 2; i++) {
+    pushMoonOf(rng, lv, idx.saturn, { name: SAT_MOONS[i], r: +rand(rng, 1, 1.3).toFixed(1), m: Math.round(rand(rng, 60, 120)), c: 0xd8d8d8 }, 2.8 + i * 2.4, sBase + i * rand(rng, 1.9, 2.4));
+  }
+  return { idx, rings, sun };
 }
 
-// planet size presets (rough real-world tiering)
-const rocky = (rng, c) => ({ r: +rand(rng, 2.4, 3.8).toFixed(1), m: Math.round(rand(rng, 300, 700)), c });
-const small = (rng, c) => ({ r: +rand(rng, 1.5, 2.2).toFixed(1), m: Math.round(rand(rng, 90, 250)), c });
-const gas = (rng, c) => ({ r: +rand(rng, 5.5, 6.5).toFixed(1), m: Math.round(rand(rng, 1100, 1700)), c });
-const iceGiant = (rng, c) => ({ r: +rand(rng, 4.4, 5).toFixed(1), m: Math.round(rand(rng, 800, 1100)), c });
-
-// place the launch pad just off a home body, and the goal just past a target
-function padByBody(lv, body, sun, gap) {
-  const u = unit(body.x - sun.x, body.z - sun.z);
+// pad just off a body (radially outward from the sun unless dir given)
+function padByBody(lv, body, from, gap) {
+  const u = unit(body.x - from.x, body.z - from.z);
   lv.ship = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)) };
 }
-function goalByBody(lv, body, sun, gap, r) {
-  const u = unit(body.x - sun.x, body.z - sun.z);
+function goalByBody(lv, body, from, gap, r) {
+  const u = unit(body.x - from.x, body.z - from.z);
   lv.goal = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)), r };
 }
 
+// Comet: lethal, massless, slow LARGE elliptical orbit around the sun.
+function addComet(rng, lv) {
+  const E = lv.extent, sun = lv.bodies[0];
+  for (let tries = 0; tries < 30; tries++) {
+    const h = {
+      radius: 1.2,
+      comet: {
+        cx: sun.x, cz: sun.z,
+        a: +(rand(rng, 0.5, 0.72) * E).toFixed(1),
+        b: +(rand(rng, 0.2, 0.34) * E).toFixed(1),
+        rot: +rand(rng, 0, 3.14).toFixed(2),
+        omega: +(sign(rng) * rand(rng, 0.04, 0.09)).toFixed(3),
+        phase: +rand(rng, 0, 6.28).toFixed(2),
+      },
+    };
+    const pts = hazardPoints(h);
+    const ok = pts.every(p => Math.hypot(p.x, p.z) <= E * 0.93 && bodyClearance(lv, p.x, p.z) >= h.radius + 2) &&
+      pts.every(p => keyPoints(lv).every(kp => dist(p.x, p.z, kp.x, kp.z) >= 9));
+    if (ok) { (lv.hazards = lv.hazards || []).push(h); return; }
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Set 1 — Earthrise: launch from Earth to the Moon, Venus, Mars. Static.
+// Set 1 — Earthrise: full inner inventory; launch from Earth. Static.
 // ---------------------------------------------------------------------------
 function sampleEarthrise(rng, slot) {
-  const E = 62;
+  const E = 66;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 6 }, maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2000, 2600);
-  const angPad = Math.atan2(0.72 * E - sun.z, rand(rng, -0.3, 0.3) * E - sun.x) + rand(rng, -0.25, 0.25);
-  const Re = sun.radius + rand(rng, 13, 17);
-  const earthIdx = mkPlanet(lv, 'Earth', Re, angPad, sun, { r: 3.4, m: Math.round(rand(rng, 480, 620)), c: 0x4d9de0 });
-  const earth = lv.bodies[earthIdx];
-  padByBody(lv, earth, sun, rand(rng, 8, 10));
-  lv.homeIdx = earthIdx;
-
+  const sol = buildSol(rng, lv, slot < 6 ? 'earth' : 'mars', rand(rng, 0, 6.28));
+  const earth = lv.bodies[sol.idx.earth];
+  lv.homeIdx = sol.idx.earth;
   let targetIdx;
   if (slot < 3) {
-    const angM = angPad + sign(rng) * rand(rng, 0.55, 0.95);
-    targetIdx = mkPlanet(lv, 'Moon', Re + rand(rng, 11, 15), angM, sun, small(rng, 0xd8d8d8));
-  } else if (slot < 6) {
-    const angT = Math.atan2(-0.73 * E - sun.z, rand(rng, -0.35, 0.35) * E - sun.x) + rand(rng, -0.2, 0.2);
-    targetIdx = mkPlanet(lv, 'Venus', Re + rand(rng, 14, 19), angT, sun, { r: 3.2, m: Math.round(rand(rng, 430, 560)), c: 0xe8c07d });
+    // to the Moon: pad on the FAR side of Earth, so home gravity is in play
+    const moon = lv.bodies[sol.idx.moon];
+    const mu = unit(moon.x - earth.x, moon.z - earth.z);
+    lv.ship = { x: Math.round(earth.x - mu.x * (earth.radius + rand(rng, 7, 9))), z: Math.round(earth.z - mu.z * (earth.radius + rand(rng, 7, 9))) };
+    targetIdx = sol.idx.moon;
+    lv.goal = { x: Math.round(moon.x + mu.x * (moon.radius + rand(rng, 8, 10))), z: Math.round(moon.z + mu.z * (moon.radius + rand(rng, 8, 10))), r: +(6.4 - slot * 0.15).toFixed(1) };
   } else {
-    const angT = Math.atan2(-0.73 * E - sun.z, rand(rng, -0.35, 0.35) * E - sun.x) + rand(rng, -0.2, 0.2);
-    targetIdx = mkPlanet(lv, 'Mars', Re + rand(rng, 15, 20), angT, sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
-    if (rng() < 0.6) mkPlanet(lv, 'Mercury', sun.radius + rand(rng, 6.5, 8.5), rand(rng, 0, 6.28), sun, small(rng, 0xb5a642));
+    padByBody(lv, earth, sun, rand(rng, 7, 9));
+    targetIdx = slot < 6 ? sol.idx.venus : sol.idx.mars;
+    goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +(6.2 - slot * 0.12).toFixed(1));
   }
-  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +(6.4 - slot * 0.12).toFixed(1));
   lv.targetIdx = targetIdx;
-  return levelGeometryOk(lv, 16, 14) ? lv : null;
+  return levelGeometryOk(lv, 15, 13) ? lv : null;
 }
 
 // ---------------------------------------------------------------------------
-// Set 2 — Inner System: Mercury..Mars around a heavy Sun. Static + wrecks.
+// Set 2 — Inner System: everything through Mars, wrecks, first comet. Static.
 // ---------------------------------------------------------------------------
 function sampleInner(rng, slot) {
-  const E = 66;
+  const E = 70;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 5.2 }, maxLaunch: Math.round(rand(rng, 46, 50)), fuel: 3, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2400, 3000);
-  const Rmer = sun.radius + rand(rng, 6.5, 8.5);
-  const Rven = Rmer + rand(rng, 9, 12);
-  const Rear = Rven + rand(rng, 9, 12);
-  const Rmar = Rear + rand(rng, 9, 12);
-  const angs = [0, 1, 2, 3].map(() => rand(rng, 0, 6.28));
-  const mer = mkPlanet(lv, 'Mercury', Rmer, angs[0], sun, small(rng, 0xb5a642));
-  const ven = mkPlanet(lv, 'Venus', Rven, angs[1], sun, { r: 3.2, m: Math.round(rand(rng, 430, 560)), c: 0xe8c07d });
-  const ear = mkPlanet(lv, 'Earth', Rear, angs[2], sun, { r: 3.4, m: Math.round(rand(rng, 480, 620)), c: 0x4d9de0 });
-  const mar = mkPlanet(lv, 'Mars', Rmar, angs[3], sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
-  padByBody(lv, lv.bodies[ear], sun, rand(rng, 8, 10));
-  lv.homeIdx = ear;
-  const targetIdx = slot < 3 ? ven : slot < 6 ? mer : mar;
+  const sol = buildSol(rng, lv, 'mars', rand(rng, 0, 6.28));
+  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
+  lv.homeIdx = sol.idx.earth;
+  const targetIdx = slot < 3 ? sol.idx.venus : slot < 6 ? sol.idx.mercury : sol.idx.mars;
   goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +rand(rng, 4.9, 5.5).toFixed(1));
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 16, 14)) return null;
-  if (slot >= 2) for (let i = 0; i < 1 + (slot >= 4 ? 1 : 0); i++) addDerelict(rng, lv);
-  if (slot >= 6) addPatrol(rng, lv);
-  return lv;
-}
-
-// ---------------------------------------------------------------------------
-// Set 3 — Outer Planets: gas giants with moons; station routes. Static.
-// ---------------------------------------------------------------------------
-function sampleOuter(rng, slot) {
-  const E = 70;
-  const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.35, 0.35) * E), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.4, 0.4) * E), z: Math.round(-0.73 * E), r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2600, 3400);
-  const Rj = sun.radius + rand(rng, 12, 16);
-  const Rs = Rj + rand(rng, 13, 17);
-  const jup = mkPlanet(lv, 'Jupiter', Rj, rand(rng, 0, 6.28), sun, gas(rng, 0xd9a066));
-  const sat = mkPlanet(lv, 'Saturn', Rs, rand(rng, 0, 6.28), sun, { ...gas(rng, 0xe3c896), r: +rand(rng, 5.2, 5.8).toFixed(1) });
-  if (slot >= 4 && Rs + 14 < E * 0.62) {
-    mkPlanet(lv, pick(rng, ['Uranus', 'Neptune']), Rs + rand(rng, 12, 15), rand(rng, 0, 6.28), sun, iceGiant(rng, pick(rng, [0x9ad1d4, 0x5b7fde])));
-  }
-  // moons hug their giants (static snapshots of their orbits)
-  const moonNames = [['Io', 'Europa', 'Ganymede'], ['Titan', 'Rhea', 'Enceladus']];
-  [jup, sat].forEach((pi, k) => {
-    if (rng() < 0.6) {
-      const parent = lv.bodies[pi];
-      const ang = rand(rng, 0, 6.28);
-      const d = parent.radius + rand(rng, 7, 10);
-      const idx = mkPlanet(lv, pick(rng, moonNames[k]), 0, 0, { x: parent.x + Math.cos(ang) * d, z: parent.z + Math.sin(ang) * d, radius: 0 }, small(rng, 0xd8d8d8));
-      lv.bodies[idx].moonOf = pi;
-    }
-  });
-  if (!levelGeometryOk(lv, 15, 12)) return null;
-  if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
-  if (slot >= 2 && rng() < 0.6) addDerelict(rng, lv);
+  if (!levelGeometryOk(lv, 15, 13)) return null;
+  if (slot >= 2) for (let i = 0; i < 1 + (slot >= 5 ? 1 : 0); i++) addDerelict(rng, lv);
+  if (slot >= 4) addComet(rng, lv);
   if (slot >= 7) addPatrol(rng, lv);
   return lv;
 }
 
 // ---------------------------------------------------------------------------
-// Set 4 — Asteroid Belt: rock fields between Mars and Jupiter; cargo hauls.
+// Set 3 — Outer Planets: full inventory through Jupiter/Saturn. Static.
+// ---------------------------------------------------------------------------
+function sampleOuter(rng, slot) {
+  const through = slot < 5 ? 'jupiter' : 'saturn';
+  const E = through === 'jupiter' ? 84 : 98;
+  const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2600, 3200, 10, 11.5);
+  const sol = buildSol(rng, lv, through, rand(rng, 0, 6.28));
+  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
+  lv.homeIdx = sol.idx.earth;
+  const targetIdx = through === 'jupiter' ? sol.idx.jupiter : sol.idx.saturn;
+  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 10, 13), lv.goal.r);
+  lv.targetIdx = targetIdx;
+  if (!levelGeometryOk(lv, 15, 12)) return null;
+  if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
+  if (slot >= 2 && rng() < 0.6) addDerelict(rng, lv);
+  if (slot >= 3) addComet(rng, lv);
+  if (slot >= 8) addPatrol(rng, lv);
+  return lv;
+}
+
+// ---------------------------------------------------------------------------
+// Set 4 — Asteroid Belt: a dense rock wall between Mars and Jupiter with
+// 1-2 narrow passages. Full inventory through Jupiter.
 // ---------------------------------------------------------------------------
 function sampleBelt(rng, slot) {
-  const E = 70;
-  const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.35, 0.35) * E), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.4, 0.4) * E), z: Math.round(-0.73 * E), r: +rand(rng, 4.8, 5.2).toFixed(1) }, maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2400, 3000);
-  mkPlanet(lv, 'Mars', sun.radius + rand(rng, 8, 11), rand(rng, 0, 6.28), sun, { r: 2.6, m: Math.round(rand(rng, 300, 420)), c: 0xd1603d });
-  mkPlanet(lv, 'Jupiter', sun.radius + rand(rng, 34, 40), rand(rng, 0, 6.28), sun, gas(rng, 0xd9a066));
+  const E = 92;
+  const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.8, 5.2).toFixed(1) }, maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
+  const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 10, 11.5);
+  const sol = buildSol(rng, lv, 'beltjupiter', rand(rng, 0, 6.28));
+  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
+  lv.homeIdx = sol.idx.earth;
+  lv.targetIdx = sol.idx.jupiter;
+  goalByBody(lv, lv.bodies[sol.idx.jupiter], sun, rand(rng, 10, 13), lv.goal.r);
   if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
   } else if (slot >= 1 && rng() < 0.5) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   }
-  // the belt itself: static rocks in an annulus between the two planets
-  const nRocks = 7 + Math.min(slot, 5);
+  // the belt wall: an annulus of rocks between Mars and Jupiter, with
+  // narrow angular passages left open
+  const bandLo = sol.rings.mars + 6, bandHi = sol.rings.jupiter - 9;
+  const nGaps = slot < 5 ? 2 : 1;
+  const gaps = [];
+  for (let gi = 0; gi < nGaps; gi++) gaps.push({ a: rand(rng, 0, 6.28), w: rand(rng, 0.3, 0.45) });
+  const inGap = ang => gaps.some(gp => {
+    const d = Math.abs(((ang - gp.a + Math.PI) % (2 * Math.PI)) - Math.PI);
+    return d < gp.w / 2;
+  });
+  const nRocks = 30 + slot * 2;
   let placed = 0;
   lv.hazards = lv.hazards || [];
-  for (let i = 0; i < nRocks * 6 && placed < nRocks; i++) {
-    const R = sun.radius + rand(rng, 15, 31);
+  for (let i = 0; i < nRocks * 8 && placed < nRocks; i++) {
     const ang = rand(rng, 0, 6.28);
+    if (inGap(ang)) continue;
+    const R = rand(rng, bandLo, bandHi);
     const h = {
-      kind: 'asteroid', radius: +rand(rng, 1.5, 2.5).toFixed(1),
+      kind: 'asteroid', radius: +rand(rng, 0.8, 1.6).toFixed(1),
       x: Math.round(sun.x + Math.cos(ang) * R), z: Math.round(sun.z + Math.sin(ang) * R),
     };
-    if (hazardOk(lv, h, 10)) { lv.hazards.push(h); placed++; }
+    if (Math.hypot(h.x, h.z) > E * 0.93) continue;
+    if (bodyClearance(lv, h.x, h.z) < h.radius + 2) continue;
+    if (!keyPoints(lv).every(kp => dist(h.x, h.z, kp.x, kp.z) >= 8)) continue;
+    if (!lv.hazards.every(o => o.kind !== 'asteroid' || dist(h.x, h.z, o.x, o.z) >= h.radius + o.radius + 1.2)) continue;
+    lv.hazards.push(h);
+    placed++;
   }
-  if (placed < 5) return null;
+  if (placed < nRocks * 0.6) return null;
+  if (slot >= 2) addComet(rng, lv);
   if (slot >= 5) addPatrol(rng, lv);
   return lv;
 }
@@ -583,19 +671,22 @@ function sampleAlien(rng, slot) {
   const E = Math.round(rand(rng, 68, 76));
   const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.45, 0.45) * E * 0.9), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.5, 0.5) * E * 0.9), z: Math.round(-0.73 * E), r: +rand(rng, 4.2, 4.6).toFixed(1) }, maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
   const name = namer(rng);
-  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800);
+  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12);
   const planetIdxs = [];
-  let orbR = sun.radius + rand(rng, 11, 15);
+  let orbR = sun.radius + rand(rng, 8, 11);
   const nPl = 3 + (rng() < 0.4 ? 1 : 0);
   for (let i = 0; i < nPl; i++) {
     if (orbR > E * 0.62) break;
-    const size = rng() < 0.4 ? { ...gas(rng, pick(rng, PLANET_COLORS)), r: +rand(rng, 5, 6).toFixed(1) } : rocky(rng, pick(rng, PLANET_COLORS));
+    const isGas = rng() < 0.4;
     planetIdxs.push(lv.bodies.length);
     lv.bodies.push({
-      name: name(ALIEN_NAMES), mass: size.m, radius: size.r, color: size.c,
+      name: name(ALIEN_NAMES),
+      mass: isGas ? Math.round(rand(rng, 1000, 1500)) : Math.round(rand(rng, 250, 550)),
+      radius: isGas ? +rand(rng, 5, 6).toFixed(1) : +rand(rng, 2, 3.2).toFixed(1),
+      color: pick(rng, PLANET_COLORS),
       orbit: { cx: sun.x, cz: sun.z, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
-    orbR += Math.max(16, rand(rng, 0.16, 0.2) * E);
+    orbR += Math.max(14, rand(rng, 0.15, 0.19) * E);
   }
   if (!planetIdxs.length) return null;
   let moons = 0;
@@ -603,9 +694,9 @@ function sampleAlien(rng, slot) {
     if (moons >= 2 || rng() >= 0.45) continue;
     const parent = lv.bodies[pIdx];
     lv.bodies.push({
-      name: name(ALIEN_NAMES), mass: Math.round(rand(rng, 80, 220)),
-      radius: +rand(rng, 1.4, 2).toFixed(1), color: 0xe2e2e2,
-      orbit: { parent: pIdx, radius: +(parent.radius + rand(rng, 5.5, 8)).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+      name: name(ALIEN_NAMES), mass: Math.round(rand(rng, 50, 130)),
+      radius: +rand(rng, 1, 1.5).toFixed(1), color: 0xe2e2e2,
+      orbit: { parent: pIdx, radius: +(parent.radius + rand(rng, 3.5, 5.5)).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
     moons++;
   }
@@ -634,6 +725,7 @@ function sampleAlien(rng, slot) {
   } else if (slot >= 2 && rng() < 0.7) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4, type: 'station' }])) return null;
   }
+  if (slot >= 1 && rng() < 0.5) addComet(rng, lv);
   if (slot >= 3) addPatrol(rng, lv);
   return lv;
 }
@@ -650,11 +742,11 @@ const SETS = [
   {
     name: 'Earthrise', difficulty: 1, sample: sampleEarthrise, band: [1.1, 2.7],
     originals: [],
-    hint: 'You launch from Earth. Every well between here and the target bends your shot.',
+    hint: 'You launch from Earth — the whole inner system is out there bending your shot.',
     slotHints: {
-      0: 'Welcome aboard! Drag back from your ship to launch from Earth to the Moon.',
-      3: 'Venus this time — swing around Sol and mind its huge well.',
-      6: 'All the way to Mars. Use the Sun\'s well; don\'t fall in.',
+      0: 'Welcome aboard! Drag back from your ship to launch from Earth to the lunar station.',
+      3: 'Venus this time — swing past Sol\'s huge well without falling in.',
+      6: 'All the way to Mars station. Plot carefully.',
     },
     names: ['Earthrise', 'To the Moon', 'Lunar Loop', 'Venus Bound', 'Morning Star', 'Transit of Venus', 'Halfway to Mars', 'Red Planet', 'Dusty Landing', 'Escape Velocity'],
   },
@@ -664,27 +756,30 @@ const SETS = [
     hint: 'The inner system: tight, hot orbits around a heavy Sun.',
     slotHints: {
       2: 'Derelict ships drift in the lanes — one touch and it\'s over.',
-      3: 'Mercury dive: skim Sol\'s well without falling in.',
-      6: 'That ship is on patrol. Watch its route arrow before you launch.',
+      3: 'Mercury station: skim Sol\'s well without falling in.',
+      4: 'A comet crosses these lanes on a long ellipse. Watch its arrow.',
     },
-    names: ['Inner Ring', 'Crossing Venus', 'Sunward', 'Mercury Dive', 'Perihelion', 'Solar Wind', 'Retrograde', 'Hot Lap', 'Twin Transfer', 'Inner Mastery'],
+    names: ['Inner Ring', 'Crossing Venus', 'Sunward', 'Mercury Dive', 'Comet Crossing', 'Solar Wind', 'Retrograde', 'Hot Lap', 'Twin Transfer', 'Inner Mastery'],
   },
   {
     name: 'Outer Planets', difficulty: 3, sample: sampleOuter, band: [0.4, 1.35],
     originals: [],
-    hint: 'Gas giants ahead: huge wells, huge slingshots.',
-    slotHints: { 4: 'Dock at the station 🛰 first. Stops never refuel — grab cells on the way.' },
-    names: ['Jovian Leap', 'Eye of Jupiter', 'Ring Runner', 'Saturn Swing', 'Titan Stop', 'Ice Giants', 'Sideways Uranus', 'Neptune Deep', 'Kuiper Edge', 'Grand Cruise'],
+    hint: 'Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.',
+    slotHints: {
+      4: 'Dock at the waystation 🛰 first. Stops never refuel — grab cells on the way.',
+      5: 'Saturn now. Jupiter is still out there, bending everything.',
+    },
+    names: ['Jovian Leap', 'Eye of Jupiter', 'Io Flyby', 'Europa Run', 'Callisto Stop', 'Saturn Swing', 'Titan Station', 'Ring Runner', 'Enceladus Deep', 'Grand Cruise'],
   },
   {
     name: 'Asteroid Belt', difficulty: 4, sample: sampleBelt, band: [0.25, 1.1], timing: 6,
     originals: [],
-    hint: 'The belt: thread the rocks between Mars and Jupiter.',
+    hint: 'A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.',
     slotHints: {
-      3: 'Grab the cargo 📦 and haul it to the dropoff 📥 — and the fuel cells are NOT optional.',
-      6: 'Patrol lanes cross the belt. Time your launch around their arrows.',
+      3: 'Haul the cargo 📦 through the belt to the dropoff 📥 — fuel cells are NOT optional.',
+      6: 'Patrols and comets cross the passages. Time your launch around their arrows.',
     },
-    names: ['Into the Belt', 'Rock Hopping', 'Ceres Approach', 'First Haul', 'Cargo Convoy', 'Rubble Field', 'Dodging Stones', 'Vesta Run', 'Dense Cluster', 'Belt Baron'],
+    names: ['Into the Belt', 'Rock Hopping', 'Ceres Approach', 'First Haul', 'Cargo Convoy', 'Rubble Wall', 'The Passage', 'Vesta Run', 'Dense Cluster', 'Belt Baron'],
   },
   {
     name: 'New Star Systems', difficulty: 5, sample: sampleAlien, band: [0.08, 0.9], timing: 3,
@@ -697,7 +792,6 @@ const SETS = [
     names: ['Event Horizon', 'Grand Tour', 'Star System', 'Dark Passage', 'Planetfall', 'The Gauntlet', 'Singularity', 'Far Shore', 'Last Light', 'GravityLoop'],
   },
 ];
-
 // ---------------------------------------------------------------------------
 // Generate
 // ---------------------------------------------------------------------------
