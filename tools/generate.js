@@ -785,21 +785,50 @@ function sampleBelt(rng, slot) {
   return lv;
 }
 
+
+// Cargo tours in moving systems: stops sit on a service ring just outside the
+// outermost orbit, spread around the sun (the LONG way from pad to goal), so
+// every leg arcs across the system instead of hopping along the map edge —
+// edge hops were tanking route interest on 3-leg alien levels.
+function addTourWaypoints(rng, lv, outerR, specs) {
+  const sun = lv.bodies[0];
+  const azS = Math.atan2(lv.ship.z - sun.z, lv.ship.x - sun.x);
+  const azG = Math.atan2(lv.goal.z - sun.z, lv.goal.x - sun.x);
+  let sweep = azG - azS;
+  while (sweep > Math.PI) sweep -= 2 * Math.PI;
+  while (sweep < -Math.PI) sweep += 2 * Math.PI;
+  if (Math.abs(sweep) < Math.PI * 0.9) sweep -= Math.sign(sweep || 1) * 2 * Math.PI;
+  const wps = [];
+  for (let k = 0; k < specs.length; k++) {
+    const spec = specs[k];
+    let placed = false;
+    for (let tries = 0; tries < 60 && !placed; tries++) {
+      const az = azS + sweep * ((k + 1) / (specs.length + 1)) + rand(rng, -0.25, 0.25);
+      const R = outerR + rand(rng, 9, 14);
+      const x = Math.round(sun.x + Math.cos(az) * R);
+      const z = Math.round(sun.z + Math.sin(az) * R);
+      if (Math.hypot(x, z) > lv.extent * 0.85) continue;
+      const cand = { x, z, r: spec.r, type: spec.type };
+      const test = { ...lv, waypoints: [...wps, cand] };
+      if (levelGeometryOk(test, 14, 11)) { wps.push(cand); placed = true; }
+    }
+    if (!placed) return false;
+  }
+  lv.waypoints = wps;
+  return true;
+}
 // ---------------------------------------------------------------------------
 // Set 5 — New Star Systems: alien suns, moving orbits, exotic objects.
 // ---------------------------------------------------------------------------
 function sampleAlien(rng, slot) {
-  // cargo slots (>=5) get a denser, tighter system: sparse alien maps let
-  // waypoint hops cross empty space, tanking route interest
-  const cargoSlot = slot >= 5;
-  const E = Math.round(cargoSlot ? rand(rng, 66, 72) : rand(rng, 72, 80));
+  const E = Math.round(rand(rng, 72, 80));
   const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.45, 0.45) * E * 0.9), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.5, 0.5) * E * 0.9), z: Math.round(-0.73 * E), r: +rand(rng, 4.2, 4.6).toFixed(1) }, maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
   const name = namer(rng);
-  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12, cargoSlot ? [0.10, 0.18] : [0.16, 0.28]);
+  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12, [0.16, 0.28]);
   const sunOff = Math.hypot(sun.x, sun.z);
   const planetIdxs = [];
   let orbR = sun.radius + rand(rng, 8, 11);
-  const nPl = cargoSlot ? 4 + (rng() < 0.5 ? 1 : 0) : 3 + (rng() < 0.4 ? 1 : 0);
+  const nPl = 3 + (rng() < 0.4 ? 1 : 0);
   for (let i = 0; i < nPl; i++) {
     if (orbR > E * 0.93 - sunOff - 7) break;
     const isGas = rng() < 0.4;
@@ -811,7 +840,7 @@ function sampleAlien(rng, slot) {
       color: pick(rng, PLANET_COLORS),
       orbit: { cx: sun.x, cz: sun.z, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
-    orbR += cargoSlot ? Math.max(11, rand(rng, 0.12, 0.15) * E) : Math.max(14, rand(rng, 0.15, 0.19) * E);
+    orbR += Math.max(14, rand(rng, 0.15, 0.19) * E);
   }
   if (!planetIdxs.length) return null;
   let moons = 0;
@@ -847,7 +876,7 @@ function sampleAlien(rng, slot) {
   }
   if (!levelGeometryOk(lv, 14, 11)) return null;
   if (slot >= 5) {
-    if (!addWaypoints(rng, lv, [{ t: 0.3, r: 3.6, type: 'cargo' }, { t: 0.7, r: 3.6, type: 'dropoff' }])) return null;
+    if (!addTourWaypoints(rng, lv, outer, [{ r: 3.6, type: 'cargo' }, { r: 3.6, type: 'dropoff' }])) return null;
   } else if (slot >= 2 && rng() < 0.7) {
     if (!addWaypoints(rng, lv, [{ t: 0.5, r: 4, type: 'station' }])) return null;
   }
