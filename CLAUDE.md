@@ -48,6 +48,15 @@ to `main`, wait for BOTH CI checks to pass, then merge. GitHub Pages
 redeploys from `main` automatically (the live game is
 https://codercoop.github.io/GravityLoop/).
 
+## Long-running work: keep the user posted
+
+For anything that runs more than a few minutes (level generation, CI, big
+test runs): tell the user what is running, how far along it is, and the
+expected completion time — and post a progress update roughly every
+15 minutes (a monitor heartbeat on the job's log works well). Report
+failures, container restarts, and completions immediately, each with a
+revised ETA for the overall task.
+
 ## Environment gotchas
 
 - Serve the game from the **repo root** (`python3 -m http.server 8123`).
