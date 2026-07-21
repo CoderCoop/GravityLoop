@@ -789,14 +789,17 @@ function sampleBelt(rng, slot) {
 // Set 5 — New Star Systems: alien suns, moving orbits, exotic objects.
 // ---------------------------------------------------------------------------
 function sampleAlien(rng, slot) {
-  const E = Math.round(rand(rng, 72, 80));
+  // cargo slots (>=5) get a denser, tighter system: sparse alien maps let
+  // waypoint hops cross empty space, tanking route interest
+  const cargoSlot = slot >= 5;
+  const E = Math.round(cargoSlot ? rand(rng, 66, 72) : rand(rng, 72, 80));
   const lv = { extent: E, ship: { x: Math.round(rand(rng, -0.45, 0.45) * E * 0.9), z: Math.round(0.72 * E) }, goal: { x: Math.round(rand(rng, -0.5, 0.5) * E * 0.9), z: Math.round(-0.73 * E), r: +rand(rng, 4.2, 4.6).toFixed(1) }, maxLaunch: Math.round(rand(rng, 38, 46)), fuel: 5, bodies: [] };
   const name = namer(rng);
-  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12, [0.16, 0.28]);
+  const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12, cargoSlot ? [0.10, 0.18] : [0.16, 0.28]);
   const sunOff = Math.hypot(sun.x, sun.z);
   const planetIdxs = [];
   let orbR = sun.radius + rand(rng, 8, 11);
-  const nPl = 3 + (rng() < 0.4 ? 1 : 0);
+  const nPl = cargoSlot ? 4 + (rng() < 0.5 ? 1 : 0) : 3 + (rng() < 0.4 ? 1 : 0);
   for (let i = 0; i < nPl; i++) {
     if (orbR > E * 0.93 - sunOff - 7) break;
     const isGas = rng() < 0.4;
@@ -808,7 +811,7 @@ function sampleAlien(rng, slot) {
       color: pick(rng, PLANET_COLORS),
       orbit: { cx: sun.x, cz: sun.z, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
-    orbR += Math.max(14, rand(rng, 0.15, 0.19) * E);
+    orbR += cargoSlot ? Math.max(11, rand(rng, 0.12, 0.15) * E) : Math.max(14, rand(rng, 0.15, 0.19) * E);
   }
   if (!planetIdxs.length) return null;
   let moons = 0;
