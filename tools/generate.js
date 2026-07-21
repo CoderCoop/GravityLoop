@@ -960,52 +960,75 @@ const ONLY = (() => {
   return a ? new Set(a.split('=')[1].split(',').map(Number)) : null;
 })();
 
-const allLevels = [];
-for (let s = 0; s < SETS.length; s++) {
-  if (ONLY && !ONLY.has(s + 1)) continue;
+// One slot's full search. Deterministic in (s, slot) alone, so slots can run
+// in ANY order — including in parallel worker processes (--emit-slot).
+function genSlot(s, slot) {
   const set = SETS[s];
-  const slots = new Array(10).fill(null);
-  for (const o of set.originals) {
-    const r = evaluate(set, false, o.level);
-    slots[o.slot] = o.level;
-    console.log(`[set ${s + 1}] slot ${o.slot} original  ${o.level.name.padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%`);
+  const original = set.originals.find(o => o.slot === slot);
+  if (original) {
+    const r = evaluate(set, false, original.level);
+    console.log(`[set ${s + 1}] slot ${slot} original  ${original.level.name.padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%`);
+    original.level.difficulty = set.difficulty;
+    return original.level;
   }
-  for (let slot = 0; slot < 10; slot++) {
-    if (slots[slot]) continue;
-    const needsTiming = set.timing != null && slot >= set.timing;
-    let best = null;
-    let found = null;
-    let geoOk = 0, solvable = 0;
-    for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-      const rng = mulberry32(5e6 + s * 100003 + slot * 1009 + attempt);
-      const lv = set.sample(rng, slot);
-      if (!lv) continue;
-      geoOk++;
-      const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
-      if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
-      solvable++;
-      if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng };
-      if (r.dist === 0) { found = { level: lv, res: r, rng }; break; }
+  const needsTiming = set.timing != null && slot >= set.timing;
+  let best = null;
+  let found = null;
+  let geoOk = 0, solvable = 0;
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    const rng = mulberry32(5e6 + s * 100003 + slot * 1009 + attempt);
+    const lv = set.sample(rng, slot);
+    if (!lv) continue;
+    geoOk++;
+    const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
+    if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
+    solvable++;
+    if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng };
+    if (r.dist === 0) { found = { level: lv, res: r, rng }; break; }
+  }
+  const chosen = found || best;
+  if (!chosen) throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
+  tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
+  chosen.level.name = set.names[slot];
+  chosen.level.hint = set.slotHints[slot] || set.hint;
+  chosen.level.difficulty = set.difficulty;
+  const r = chosen.res;
+  console.log(
+    `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
+    ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
+    `${r.interest != null ? ` interest ${r.interest.toFixed(2)}` : ''}` +
+    `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
+    `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
+    `${found ? '' : '  (closest to band)'}`
+  );
+  return chosen.level;
+}
+
+// --emit-slot=S:SLOT --out=FILE   worker mode: search one slot, write JSON
+// --assemble=DIR                  read DIR/s<S>-<SLOT>.json for all 50 slots
+//                                 and write src/levels.js
+// (see tools/genpar.sh, which fans workers across cores)
+const EMIT = process.argv.find(x => x.startsWith('--emit-slot='));
+const ASSEMBLE = process.argv.find(x => x.startsWith('--assemble='));
+const allLevels = [];
+if (EMIT) {
+  const [s, slot] = EMIT.split('=')[1].split(':').map(Number);
+  const outFile = (process.argv.find(x => x.startsWith('--out=')) || '').split('=')[1];
+  if (!outFile) throw new Error('--emit-slot requires --out=FILE');
+  const lv = genSlot(s, slot);
+  fs.writeFileSync(outFile, JSON.stringify(lv));
+  process.exit(0);
+} else if (ASSEMBLE) {
+  const dir = ASSEMBLE.split('=')[1];
+  for (let s = 0; s < SETS.length; s++) {
+    for (let slot = 0; slot < 10; slot++) {
+      allLevels.push(JSON.parse(fs.readFileSync(path.join(dir, `s${s}-${slot}.json`))));
     }
-    const chosen = found || best;
-    if (!chosen) throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
-    tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
-    chosen.level.name = set.names[slot];
-    chosen.level.hint = set.slotHints[slot] || set.hint;
-    slots[slot] = chosen.level;
-    const r = chosen.res;
-    console.log(
-      `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
-      ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
-      `${r.interest != null ? ` interest ${r.interest.toFixed(2)}` : ''}` +
-      `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
-      `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
-      `${found ? '' : '  (closest to band)'}`
-    );
   }
-  for (const lv of slots) {
-    lv.difficulty = set.difficulty;
-    allLevels.push(lv);
+} else {
+  for (let s = 0; s < SETS.length; s++) {
+    if (ONLY && !ONLY.has(s + 1)) continue;
+    for (let slot = 0; slot < 10; slot++) allLevels.push(genSlot(s, slot));
   }
 }
 
