@@ -24,7 +24,7 @@ for (let li = 0; li < LEVELS.length; li++) {
   if (only != null && li !== only) continue;
   const level = LEVELS[li];
   const dynamic = level.bodies.some(b => b.orbit) ||
-    (level.hazards || []).some(h => h.orbit || h.patrol);
+    (level.hazards || []).some(h => h.orbit || h.patrol || h.comet);
   const times = dynamic ? range(0, 9, T_STEP) : [0];
   const angles = range(0, 360 - ANG_STEP, ANG_STEP);
   const speeds = range(10, level.maxLaunch, SP_STEP);

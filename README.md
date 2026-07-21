@@ -56,14 +56,24 @@ The campaign starts at home and works outward. Bodies use realistic size
 tiers (suns dwarf gas giants, which dwarf rocky planets and moons), and
 every moving object shows an arrow with its current direction of travel:
 
-1. **Earthrise** ★ — launch from Earth to the Moon, then Venus and Mars
-2. **Inner System** ★★ — Mercury to Mars around a heavy Sun; derelicts and
-   patrols drift in the lanes
-3. **Outer Planets** ★★★ — Jupiter, Saturn and their moons; station routes
-4. **Asteroid Belt** ★★★★ — thread the rocks; cargo hauls (📦 → 📥, cargo
-   halves your thrusters) and patrol lanes
+Every target is a space station, and every Sol level carries the complete
+planetary inventory inward of its theme (Earth always brings its Moon and
+the inner planets; Jupiter levels include everything from Mercury out).
+Comets cross many levels on slow elliptical orbits — massless, lethal,
+tail streaming away from the Sun:
+
+1. **Earthrise** ★ — launch from Earth to the lunar station, then Venus, Mars
+2. **Inner System** ★★ — the full inner system around a heavy Sun; wrecks,
+   patrols and a first comet
+3. **Outer Planets** ★★★ — to Jupiter and Saturn (moons included, plus the
+   whole inner system behind you); station routes
+4. **Asteroid Belt** ★★★★ — a WALL of rock rings the Sun between Mars and
+   Jupiter with narrow passages; cargo hauls (📦 → 📥) thread it
 5. **New Star Systems** ★★★★★ — alien suns with moving orbits, antimatter
    stars, black holes, weak engines and launch windows
+
+Each leg starts with the camera over your ship, rotated so the target
+station sits up-screen.
 
 Sets 1–4 are static snapshots of their systems; set 5's systems move — and
 while you aim, time freezes, so the prediction line is exactly the flight

@@ -367,8 +367,21 @@ function buildHazards() {
   hazardVisuals = [];
   for (const hazard of (level.hazards || [])) {
     const group = new THREE.Group();
-    const moving = !!(hazard.orbit || hazard.patrol);
-    if (hazard.kind === 'asteroid') {
+    const moving = !!(hazard.orbit || hazard.patrol || hazard.comet);
+    if (hazard.comet) {
+      const ice = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(hazard.radius, 1),
+        new THREE.MeshBasicMaterial({ color: 0xdfefff }),
+      );
+      const tail = new THREE.Mesh(
+        new THREE.ConeGeometry(hazard.radius * 0.9, hazard.radius * 7, 8, 1, true),
+        new THREE.MeshBasicMaterial({ color: 0x9fd9ff, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      tail.rotation.x = Math.PI / 2;                 // point along local -z
+      tail.position.z = hazard.radius * 3.8;
+      tail.name = 'tail';
+      group.add(ice, tail, makeGlow(0xbfe8ff, hazard.radius * 5, 0.7));
+    } else if (hazard.kind === 'asteroid') {
       const rock = new THREE.Mesh(
         new THREE.IcosahedronGeometry(hazard.radius, 1),
         new THREE.MeshBasicMaterial({ map: tx.planetTexture(0x8a7f72, tx.hashStr(`ast${hazard.x},${hazard.z}`), 'rocky') }),
@@ -477,6 +490,8 @@ let goalRingMat, goalBeacon, goalGlow;
 function buildGoal() {
   if (goalGroup) scene.remove(goalGroup);
   goalGroup = new THREE.Group();
+  // the target is always a space station: hub + solar panels inside a gold
+  // docking ring
   const ring = new THREE.Mesh(
     new THREE.TorusGeometry(level.goal.r, 0.4, 10, 48),
     new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }),
@@ -484,13 +499,26 @@ function buildGoal() {
   ring.rotation.x = Math.PI / 2;
   ring.name = 'pulse';
   goalRingMat = ring.material;
+  const station = new THREE.Group();
+  station.name = 'station';
+  const hub = new THREE.Mesh(new THREE.OctahedronGeometry(1.7), new THREE.MeshBasicMaterial({ color: 0xffe9b8 }));
+  const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 6.4, 8), new THREE.MeshBasicMaterial({ color: 0xd8c48a }));
+  spine.rotation.z = Math.PI / 2;
+  const panelMat = new THREE.MeshBasicMaterial({ color: 0x3a7bd5, side: THREE.DoubleSide });
+  for (const s of [-1, 1]) {
+    const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.3), panelMat);
+    panel.position.x = s * 3;
+    station.add(panel);
+  }
+  station.add(hub, spine);
+  station.position.y = 1.6;
   goalBeacon = new THREE.Mesh(
     new THREE.CylinderGeometry(level.goal.r * 0.45, level.goal.r * 0.7, 46, 16, 1, true),
     new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.07, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   goalBeacon.position.y = 23;
   goalGlow = makeGlow(0xffd166, level.goal.r * 4);
-  goalGroup.add(ring, goalBeacon, goalGlow);
+  goalGroup.add(ring, station, goalBeacon, goalGlow);
   scene.add(goalGroup);
 }
 
@@ -624,7 +652,6 @@ function loadLevel(i) {
   stage = 0;
   pickupsDone = new Set();
   legStartFuel = level.fuel;
-  resetCamera();
   buildTerrain();
   buildBodies();
   buildHazards();
@@ -657,6 +684,7 @@ function resetLeg() {
   state = 'ready';
   const start = legStart(level, stage);
   ship = { x: start.x, z: start.z, vx: 0, vz: 0 };
+  resetCamera();
   fuel = legStartFuel;   // stops never refuel — you fly the leg with what you docked with
   carrying = derivedCarrying();
   cargoBox.visible = carrying;
@@ -680,7 +708,6 @@ function resetLevel() {
   stage = 0;
   pickupsDone = new Set();
   legStartFuel = level.fuel;
-  resetCamera();
   resetLeg();
 }
 
@@ -758,6 +785,7 @@ function failOOB() {
 function crashMessage(st) {
   if (st.type === 'hazard') {
     const h = level.hazards[st.hazard];
+    if (h.comet) return '☄️ Struck by a comet!';
     if (h.kind === 'asteroid') return '💥 Smashed into an asteroid!';
     const moving = !!(h.orbit || h.patrol);
     return moving ? '💥 Collided with a patrol ship!' : '💥 Collided with a derelict ship!';
@@ -801,10 +829,21 @@ function clampPan() {
   camPan.x = Math.min(Math.max(camPan.x, -lim), lim);
   camPan.z = Math.min(Math.max(camPan.z, -lim), lim);
 }
+// Frame each leg's start: view centered over the ship, rotated so the active
+// target sits up-screen, zoomed so both are visible.
 function resetCamera() {
   camZoom = 1;
   camYaw = 0;
   camPan = { x: 0, z: 0 };
+  if (!level) return;
+  const tgt = activeTarget(level, stage);
+  const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
+  const D = Math.hypot(dx, dz);
+  if (D > 1) camYaw = Math.atan2(-dx, -dz);
+  const midX = ship.x * 0.6 + tgt.x * 0.4, midZ = ship.z * 0.6 + tgt.z * 0.4;
+  camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
+  camZoom = Math.min(Math.max(0.55, D / (level.extent * 1.5) + 0.35), 1);
+  clampPan();
 }
 function onWheel(e) {
   e.preventDefault();
@@ -1138,6 +1177,11 @@ function frame(now) {
     hv.prev = { x: p.x, z: p.z };
     if (hv.arrow) updateMotionArrow(hv.arrow, hazardsAt, i, y + hv.hazard.radius + 2.5);
     if (hv.hazard.kind === 'asteroid') hv.group.rotation.y += dt * 0.3;
+    if (hv.hazard.comet && level.bodies.length) {
+      // tail streams away from the sun
+      const sun = positions[0];
+      hv.group.rotation.y = Math.atan2(p.x - sun.x, p.z - sun.z);
+    }
   }
 
   // pickups
@@ -1166,6 +1210,8 @@ function frame(now) {
   goalGroup.position.set(level.goal.x, gy + 0.5, level.goal.z);
   const gring = goalGroup.getObjectByName('pulse');
   if (gring && stage >= (level.waypoints || []).length) gring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
+  const gstation = goalGroup.getObjectByName('station');
+  if (gstation) gstation.rotation.y += dt * 0.5;
   padGroup.position.set(level.ship.x, heightAt(level, level.ship.x, level.ship.z, positions) + 0.4, level.ship.z);
 
   // ship

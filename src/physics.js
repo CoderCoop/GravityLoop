@@ -40,13 +40,20 @@ export function bodiesAt(level, t) {
 }
 
 // Positions of hazard ships at sim time t. Hazards are massless obstacles:
-// static derelicts, circular patrols ({orbit: {cx, cz, radius, omega, phase}}),
-// or ping-pong patrols ({patrol: {x1, z1, x2, z2, period, phase}}).
+// static derelicts/asteroids, circular patrols ({orbit}), ping-pong patrols
+// ({patrol}), or comets on slow elliptical orbits
+// ({comet: {cx, cz, a, b, rot, omega, phase}}).
 export function hazardsAt(level, t) {
   if (!level.hazards) return EMPTY;
   const out = [];
   for (const h of level.hazards) {
-    if (h.orbit) {
+    if (h.comet) {
+      const c = h.comet;
+      const th = (c.phase || 0) + c.omega * t;
+      const px = Math.cos(th) * c.a, pz = Math.sin(th) * c.b;
+      const cos = Math.cos(c.rot || 0), sin = Math.sin(c.rot || 0);
+      out.push({ x: c.cx + px * cos - pz * sin, z: c.cz + px * sin + pz * cos });
+    } else if (h.orbit) {
       const o = h.orbit;
       const a = (o.phase || 0) + o.omega * t;
       out.push({ x: (o.cx || 0) + Math.cos(a) * o.radius, z: (o.cz || 0) + Math.sin(a) * o.radius });
