@@ -79,10 +79,20 @@ Sets 1–4 are static snapshots of their systems; set 5's systems move — and
 while you aim, time freezes, so the prediction line is exactly the flight
 you get.
 
-Stops never refuel. On multi-leg routes the tank is deliberately smaller
-than the route costs at typical launch power — and fuel cells sit at the
-apex of the CURVIEST winning routes, so you must deliberately fly the
-detour to refuel. Docking too dry triggers a warning; R restarts.
+Levels use all the space they have: on the early sets the Sun sits at the
+far edge of the map so the Earth–Moon neighborhood — where the flying
+happens — owns the open half (the Earth→Moon hop alone spans ~19 units);
+on the later sets launch and target swing to opposite sides of an
+off-center Sun so routes arc across the whole system. The generator also
+scores **route interest** — candidates whose winning routes sweep past
+more bodies and bend harder beat ones that cross empty space — because
+the terrain a route crosses is what makes each level distinct.
+
+Stops never refuel. On multi-leg routes the fuel cell sits far OFF the
+easiest winning route — at the point of maximum separation from it — and
+the tank covers the detour launch but sits below what the route costs at
+typical launch power: fly the cheap line and you run dry. Docking too dry
+triggers a warning; R restarts.
 
 The game is an installable PWA ("Gravity Loop" on your home screen) with
 an offline cache.
@@ -93,7 +103,8 @@ is winnable inside the set's difficulty band (the 8 original handcrafted
 levels are folded into their matching sets):
 
 ```bash
-node tools/generate.js       # regenerate src/levels.js (deterministic)
+node tools/generate.js       # regenerate src/levels.js (deterministic, hours)
+tools/genpar.sh              # same result across all CPU cores, resumable
 node tools/solve.js --fast   # verify all 50 levels are winnable (CI grid)
 node tools/solve.js 14       # fine-grid stats for a single level (0-indexed)
 npm run test:ui              # HUD-overflow layout test at phone/tablet/desktop
@@ -101,7 +112,15 @@ npm run test:ui              # HUD-overflow layout test at phone/tablet/desktop
                              # see CHROMIUM_PATH in tools/ui-test.mjs)
 ```
 
-Both checks run in CI on every pull request.
+The slot searches are independent and deterministic, so they parallelize:
+`tools/genpar.sh` fans them across local cores, and the **"Generate
+levels"** workflow (Actions → run on a branch) fans ~90 slot/shard jobs
+across GitHub runners — full regeneration in tens of minutes — then
+commits the assembled `src/levels.js` back to the branch. Heavy slots
+split their attempt search into shards whose merge provably reproduces
+the serial pick.
+
+Both verification checks run in CI on every pull request.
 
 ## Tech
 
