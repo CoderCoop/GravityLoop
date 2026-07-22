@@ -443,15 +443,21 @@ function tuneFuelEconomy(rng, level, res) {
   const median = arr => [...arr].sort((a, b) => a - b)[Math.floor(arr.length / 2)];
   const costs = res.winners.map(w => w.map(x => launchFuelCost(x.sp, level.maxLaunch)));
   level.legMinCosts = costs.map(c => +(c.length ? Math.min(...c) : 0.4).toFixed(2));
-  const minTotal = level.legMinCosts.reduce((a, b) => a + b, 0);
   const med = costs.map(c => (c.length ? median(c) : 0.8));
   const medTotal = med.reduce((a, b) => a + b, 0);
-  if ((level.pickups || []).length && detourCost0 != null) {
-    level.fuel = +Math.max(detourCost0 + 0.35, Math.min(minTotal - 0.05, detourCost0 + 0.7)).toFixed(2);
+  if ((level.pickups || []).length) {
+    // gate against TYPICAL play (median winner costs), not the absolute
+    // cheapest grid solution — near-free slow-lob routes exist on almost
+    // every level, so hard-minimum gating is unattainable. The tank covers
+    // the detour launch that flies over the cell (plus a thrust reserve)
+    // but sits below the median route total: ordinary launches run dry
+    // without the cell.
+    const base = detourCost0 != null ? detourCost0 : med[0];
+    level.fuel = +Math.max(base + 0.25, Math.min(medTotal - 0.2, base + 0.6)).toFixed(2);
   } else {
     level.fuel = +Math.min(5, medTotal + 1.2).toFixed(1);
   }
-  level.fuelRequired = level.fuel < minTotal;
+  level.fuelRequired = level.fuel < medTotal - 1e-9;
 }
 
 // ---------------------------------------------------------------------------
