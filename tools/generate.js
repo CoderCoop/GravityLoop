@@ -962,20 +962,23 @@ const ONLY = (() => {
 
 // One slot's full search. Deterministic in (s, slot) alone, so slots can run
 // in ANY order — including in parallel worker processes (--emit-slot).
-function genSlot(s, slot) {
+// With shardN > 1 only attempts shardK, shardK+shardN, ... are searched; the
+// returned metadata lets --merge-slot reproduce the serial selection exactly
+// (first dist-0 by attempt index, else lowest dist with earliest attempt).
+function genSlot(s, slot, shardK = 0, shardN = 1) {
   const set = SETS[s];
   const original = set.originals.find(o => o.slot === slot);
   if (original) {
     const r = evaluate(set, false, original.level);
     console.log(`[set ${s + 1}] slot ${slot} original  ${original.level.name.padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%`);
     original.level.difficulty = set.difficulty;
-    return original.level;
+    return { level: original.level, found: true, attempt: -1, dist: 0 };
   }
   const needsTiming = set.timing != null && slot >= set.timing;
   let best = null;
   let found = null;
   let geoOk = 0, solvable = 0;
-  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+  for (let attempt = shardK; attempt < ATTEMPTS; attempt += shardN) {
     const rng = mulberry32(5e6 + s * 100003 + slot * 1009 + attempt);
     const lv = set.sample(rng, slot);
     if (!lv) continue;
@@ -983,11 +986,14 @@ function genSlot(s, slot) {
     const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
     if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
     solvable++;
-    if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng };
-    if (r.dist === 0) { found = { level: lv, res: r, rng }; break; }
+    if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng, attempt };
+    if (r.dist === 0) { found = { level: lv, res: r, rng, attempt }; break; }
   }
   const chosen = found || best;
-  if (!chosen) throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
+  if (!chosen) {
+    if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
+    throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
+  }
   tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
   chosen.level.name = set.names[slot];
   chosen.level.hint = set.slotHints[slot] || set.hint;
@@ -1001,7 +1007,7 @@ function genSlot(s, slot) {
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
     `${found ? '' : '  (closest to band)'}`
   );
-  return chosen.level;
+  return { level: chosen.level, found: !!found, attempt: chosen.attempt, dist: chosen.res.dist };
 }
 
 // --emit-slot=S:SLOT --out=FILE   worker mode: search one slot, write JSON
@@ -1009,14 +1015,44 @@ function genSlot(s, slot) {
 //                                 and write src/levels.js
 // (see tools/genpar.sh, which fans workers across cores)
 const EMIT = process.argv.find(x => x.startsWith('--emit-slot='));
+const SHARD = process.argv.find(x => x.startsWith('--shard='));
+const MERGE = process.argv.find(x => x.startsWith('--merge-slot='));
 const ASSEMBLE = process.argv.find(x => x.startsWith('--assemble='));
 const allLevels = [];
 if (EMIT) {
   const [s, slot] = EMIT.split('=')[1].split(':').map(Number);
   const outFile = (process.argv.find(x => x.startsWith('--out=')) || '').split('=')[1];
   if (!outFile) throw new Error('--emit-slot requires --out=FILE');
-  const lv = genSlot(s, slot);
-  fs.writeFileSync(outFile, JSON.stringify(lv));
+  if (SHARD) {
+    const [k, n] = SHARD.split('=')[1].split(':').map(Number);
+    const r = genSlot(s, slot, k, n);
+    fs.writeFileSync(outFile, JSON.stringify(r));
+  } else {
+    fs.writeFileSync(outFile, JSON.stringify(genSlot(s, slot).level));
+  }
+  process.exit(0);
+} else if (MERGE) {
+  // combine shard outputs into a plain slot JSON, replicating the serial
+  // selection rule: earliest-attempt dist-0 winner, else lowest dist
+  // (earliest attempt on ties)
+  const [s, slot] = MERGE.split('=')[1].split(':').map(Number);
+  const dir = (process.argv.find(x => x.startsWith('--dir=')) || '').split('=')[1];
+  const nShards = Number((process.argv.find(x => x.startsWith('--shards=')) || '').split('=')[1]);
+  if (!dir || !nShards) throw new Error('--merge-slot requires --dir=DIR --shards=N');
+  const shards = [];
+  for (let k = 0; k < nShards; k++) {
+    shards.push(JSON.parse(fs.readFileSync(path.join(dir, `s${s}-${slot}.shard${k}.json`))));
+  }
+  const cands = shards.filter(x => x.level);
+  if (!cands.length) throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate in any shard`);
+  const founds = cands.filter(x => x.found);
+  const pickBy = arr => arr.reduce((a, b) =>
+    (b.dist < a.dist || (b.dist === a.dist && b.attempt < a.attempt)) ? b : a);
+  const winner = founds.length
+    ? founds.reduce((a, b) => (b.attempt < a.attempt ? b : a))
+    : pickBy(cands);
+  fs.writeFileSync(path.join(dir, `s${s}-${slot}.json`), JSON.stringify(winner.level));
+  console.log(`[set ${s + 1}] slot ${slot} merged ${winner.level.name.padEnd(18)} attempt ${winner.attempt} dist ${winner.dist.toFixed(3)}${winner.found ? '' : '  (closest to band)'}`);
   process.exit(0);
 } else if (ASSEMBLE) {
   const dir = ASSEMBLE.split('=')[1];
@@ -1028,7 +1064,7 @@ if (EMIT) {
 } else {
   for (let s = 0; s < SETS.length; s++) {
     if (ONLY && !ONLY.has(s + 1)) continue;
-    for (let slot = 0; slot < 10; slot++) allLevels.push(genSlot(s, slot));
+    for (let slot = 0; slot < 10; slot++) allLevels.push(genSlot(s, slot).level);
   }
 }
 
