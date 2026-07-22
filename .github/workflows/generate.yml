@@ -88,5 +88,6 @@ jobs:
             echo "levels.js unchanged"
           else
             git commit -m "Regenerate levels (CI matrix)"
-            git push
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
