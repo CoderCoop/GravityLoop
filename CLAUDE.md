@@ -55,7 +55,8 @@ test runs): tell the user what is running, how far along it is, and the
 expected completion time — and post a progress update roughly every
 15 minutes (a monitor heartbeat on the job's log works well). Report
 failures, container restarts, and completions immediately, each with a
-revised ETA for the overall task.
+revised ETA for the overall task. Report
+times and ETAs in US Eastern time (the user's timezone).
 
 ## Environment gotchas
 
