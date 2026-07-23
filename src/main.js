@@ -30,7 +30,7 @@ let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
 let shipGroup, engineSprite, cargoBox, trailLine, trailPts = [];
-let predictLine, predictMarker, aimArrow;
+let predictLine, predictDots, predictMarker, aimArrow;
 let aimAnchor, aimHandle, aimBand;
 let goalGroup, padGroup;
 let fxList = [];
@@ -47,6 +47,8 @@ let stage = 0, carrying = false;
 let pickupsDone = new Set(), pickupsTemp = new Set();
 let dockAnim = null;          // { fromX, fromZ, toX, toZ, t, index }
 let aim = null;
+let aimSmooth = null;          // low-pass filtered touch aim (kills hand tremor)
+let aimHist = [];              // recent smoothed aims for release rollback
 let launchVel = { x: 0, z: 0 };
 let pointers = new Map();     // active pointerId -> {x, y}
 let aimPointerId = null;
@@ -584,9 +586,19 @@ function buildPredict() {
     color: 0x9bd5ff, transparent: true, opacity: 0.9,
     blending: THREE.AdditiveBlending, depthWrite: false,
   }));
+  predictLine.material.opacity = 0.45;
   predictLine.frustumCulled = false;
   predictLine.visible = false;
   scene.add(predictLine);
+  // chunky dots along the same geometry: the trajectory reads clearly even
+  // on bright terrain and small phone screens
+  predictDots = new THREE.Points(g, new THREE.PointsMaterial({
+    color: 0xffffff, size: 6, sizeAttenuation: false, transparent: true,
+    opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  predictDots.frustumCulled = false;
+  predictDots.visible = false;
+  scene.add(predictDots);
   predictMarker = new THREE.Mesh(
     new THREE.SphereGeometry(1, 10, 8),
     new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9 }),
@@ -636,6 +648,7 @@ function buildPredict() {
 
 function hideAimUI() {
   predictLine.visible = false;
+  predictDots.visible = false;
   predictMarker.visible = false;
   aimArrow.visible = false;
   aimAnchor.visible = false;
@@ -843,14 +856,15 @@ function resetCamera() {
   const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
   const D = Math.hypot(dx, dz);
   if (D > 1) camYaw = Math.atan2(-dx, -dz);
-  const midX = ship.x * 0.6 + tgt.x * 0.4, midZ = ship.z * 0.6 + tgt.z * 0.4;
+  const midX = ship.x * 0.55 + tgt.x * 0.45, midZ = ship.z * 0.55 + tgt.z * 0.45;
   camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
-  camZoom = Math.min(Math.max(0.55, D / (level.extent * 1.5) + 0.35), 1);
+  // frame the ship->target hop snugly (distance floor keeps tiny hops sane)
+  camZoom = Math.min(Math.max((D * 0.8) / level.extent, 19 / level.extent), 1);
   clampPan();
 }
 function onWheel(e) {
   e.preventDefault();
-  camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.45), 1.8);
+  camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.28), 1.8);
 }
 
 function levelPanelOpen() {
@@ -879,6 +893,8 @@ function onPointerDown(e) {
   const p = pointerToWorld(e);
   if (!p) return;
   aim = { sx: p.x, sz: p.z };
+  aimSmooth = null;
+  aimHist.length = 0;
   aimPointerId = e.pointerId;
   state = 'aiming';
   updateAim(e);
@@ -888,7 +904,7 @@ function onPointerMove(e) {
   if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (gesture && pointers.size === 2) {
     const s = gestureShape();
-    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / s.d), 0.45), 1.8);
+    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / s.d), 0.28), 1.8);
     camYaw = gesture.yaw0 + (s.a - gesture.a0);
     // pan from absolute screen deltas since gesture start — never re-derived
     // through the (still-lerping) camera, so it cannot feed back and jump
@@ -913,6 +929,19 @@ function onPointerUp(e) {
   aimPointerId = null;
   if (state !== 'aiming') return;
   updateAim(e);
+  if (e.pointerType === 'touch' && aimHist.length) {
+    // launch from the aim ~80ms BEFORE the finger lifted — lift-off jitter
+    // is what yanks precise shots at the last instant
+    const cutoff = performance.now() - 80;
+    let h = aimHist[0];
+    for (const entry of aimHist) { if (entry.t <= cutoff) h = entry; else break; }
+    let vx = (aim.sx - h.x) * AIM_SCALE;
+    let vz = (aim.sz - h.z) * AIM_SCALE;
+    const cap = Math.min(level.maxLaunch, maxAffordableLaunch(fuel, level.maxLaunch));
+    const sp = Math.hypot(vx, vz);
+    if (sp > cap) { vx *= cap / sp; vz *= cap / sp; }
+    launchVel = { x: vx, z: vz };
+  }
   const v = Math.hypot(launchVel.x, launchVel.z);
   if (v >= MIN_LAUNCH) {
     launch(launchVel.x, launchVel.z);
@@ -930,8 +959,18 @@ function cancelAim() {
 }
 
 function updateAim(e) {
-  const p = pointerToWorld(e);
-  if (!p) return;
+  const raw = pointerToWorld(e);
+  if (!raw) return;
+  let p = raw;
+  if (e.pointerType === 'touch') {
+    // smooth touch input: fingers tremble, launches shouldn't
+    aimSmooth = aimSmooth
+      ? { x: aimSmooth.x + (raw.x - aimSmooth.x) * 0.3, z: aimSmooth.z + (raw.z - aimSmooth.z) * 0.3 }
+      : { x: raw.x, z: raw.z };
+    p = aimSmooth;
+    aimHist.push({ t: performance.now(), x: p.x, z: p.z });
+    while (aimHist.length && aimHist[0].t < performance.now() - 300) aimHist.shift();
+  }
   let vx = (aim.sx - p.x) * AIM_SCALE;
   let vz = (aim.sz - p.z) * AIM_SCALE;
   const cap = Math.min(level.maxLaunch, maxAffordableLaunch(fuel, level.maxLaunch));
@@ -986,7 +1025,7 @@ function lerpColor(a, b, t) {
 
 function updatePrediction() {
   const v = Math.hypot(launchVel.x, launchVel.z);
-  if (v < MIN_LAUNCH) { predictLine.visible = false; predictMarker.visible = false; return; }
+  if (v < MIN_LAUNCH) { predictLine.visible = false; predictDots.visible = false; predictMarker.visible = false; return; }
   const r = predict(level, ship.x, ship.z, launchVel.x, launchVel.z, simTime, PREDICT_T, stage);
   const dynamic = level.bodies.some(b => b.orbit);
   const nowPositions = bodiesAt(level, simTime);
@@ -1005,7 +1044,7 @@ function updatePrediction() {
   const bad = r.outcome === 'crash' || r.outcome === 'hazard';
   const color = good ? 0x7cff6b : bad ? 0xff5d5d : r.outcome === 'oob' ? 0x8a8fa3 : 0x9bd5ff;
   predictLine.material.color.setHex(color);
-  predictLine.visible = true;
+  predictLine.visible = true; predictDots.visible = true;
   if (good || bad) {
     const last = r.points[r.points.length - 1];
     const positions = dynamic ? bodiesAt(level, simTime + last.t) : nowPositions;
