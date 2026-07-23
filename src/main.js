@@ -11,7 +11,8 @@ import * as tx from './textures.js';
 // ---------------------------------------------------------------------------
 // Constants & state
 // ---------------------------------------------------------------------------
-const GRID_N = 81;            // terrain vertices per side
+const GRID_STATIC = 161;      // terrain vertices per side (static levels)
+const GRID_DYNAMIC = 111;     // moving levels re-deform the grid every frame
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
 const MIN_LAUNCH = 6;
 const THRUST_ACCEL = 16;
@@ -192,7 +193,8 @@ function makeGlow(color, scale, opacity = 0.85) {
 // ---------------------------------------------------------------------------
 function buildTerrain() {
   if (terrain) { scene.remove(terrain.lines); terrain.lines.geometry.dispose(); }
-  const N = GRID_N, E = level.extent, span = 2 * E;
+  const dyn = level.bodies.some(b => b.orbit);
+  const N = dyn ? GRID_DYNAMIC : GRID_STATIC, E = level.extent, span = 2 * E;
   const gridX = new Float32Array(N * N), gridZ = new Float32Array(N * N);
   const pos = new Float32Array(N * N * 3), col = new Float32Array(N * N * 3);
   for (let j = 0; j < N; j++) {
@@ -543,6 +545,7 @@ function buildPad() {
 
 function buildShip() {
   shipGroup = new THREE.Group();
+  shipGroup.scale.setScalar(0.45);   // planets should dwarf the ship
   const cone = new THREE.Mesh(
     new THREE.ConeGeometry(1.1, 3.4, 12),
     new THREE.MeshBasicMaterial({ color: 0xf5fbff }),
