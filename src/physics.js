@@ -3,7 +3,7 @@
 // tools (solver, generator).
 
 export const G = 1;
-export const SHIP_R = 1.2;          // ship collision radius
+export const SHIP_R = 0.6;          // ship collision radius (matches shrunken visual)
 export const STEP = 1 / 120;        // fixed physics timestep (s)
 export const PREDICT_T = 30;        // seconds of trajectory prediction
 export const HEIGHT_K = 0.09;       // potential -> terrain height scale

@@ -901,7 +901,7 @@ const ORIGINALS = {
 
 const SETS = [
   {
-    name: 'Earthrise', difficulty: 1, sample: sampleEarthrise, band: [1.1, 2.7], interest: 2.2,
+    name: 'Earthrise', difficulty: 1, sample: sampleEarthrise, band: [0.55, 1.35], interest: 2.2,
     originals: [],
     hint: 'You launch from Earth — the whole inner system is out there bending your shot.',
     slotHints: {
@@ -912,7 +912,7 @@ const SETS = [
     names: ['Earthrise', 'To the Moon', 'Lunar Loop', 'Venus Bound', 'Morning Star', 'Transit of Venus', 'Halfway to Mars', 'Red Planet', 'Dusty Landing', 'Escape Velocity'],
   },
   {
-    name: 'Inner System', difficulty: 2, sample: sampleInner, band: [0.6, 1.8], interest: 3,
+    name: 'Inner System', difficulty: 2, sample: sampleInner, band: [0.3, 0.9], interest: 3,
     originals: [],
     hint: 'The inner system: tight, hot orbits around a heavy Sun.',
     slotHints: {
@@ -923,7 +923,7 @@ const SETS = [
     names: ['Inner Ring', 'Crossing Venus', 'Sunward', 'Mercury Dive', 'Comet Crossing', 'Solar Wind', 'Retrograde', 'Hot Lap', 'Twin Transfer', 'Inner Mastery'],
   },
   {
-    name: 'Outer Planets', difficulty: 3, sample: sampleOuter, band: [0.4, 1.35], interest: 3.2,
+    name: 'Outer Planets', difficulty: 3, sample: sampleOuter, band: [0.2, 0.68], interest: 3.2,
     originals: [],
     hint: 'Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.',
     slotHints: {
@@ -933,7 +933,7 @@ const SETS = [
     names: ['Jovian Leap', 'Eye of Jupiter', 'Io Flyby', 'Europa Run', 'Callisto Stop', 'Saturn Swing', 'Titan Station', 'Ring Runner', 'Enceladus Deep', 'Grand Cruise'],
   },
   {
-    name: 'Asteroid Belt', difficulty: 4, sample: sampleBelt, band: [0.25, 1.1], timing: 6, interest: 3,
+    name: 'Asteroid Belt', difficulty: 4, sample: sampleBelt, band: [0.13, 0.55], timing: 6, interest: 3,
     originals: [],
     hint: 'A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.',
     slotHints: {
@@ -943,7 +943,7 @@ const SETS = [
     names: ['Into the Belt', 'Rock Hopping', 'Ceres Approach', 'First Haul', 'Cargo Convoy', 'Rubble Wall', 'The Passage', 'Vesta Run', 'Dense Cluster', 'Belt Baron'],
   },
   {
-    name: 'New Star Systems', difficulty: 5, sample: sampleAlien, band: [0.08, 0.9], timing: 3, interest: 2.6,
+    name: 'New Star Systems', difficulty: 5, sample: sampleAlien, band: [0.04, 0.45], timing: 3, interest: 2.6,
     originals: [{ level: ORIGINALS.horizon, slot: 0 }, { level: ORIGINALS.grandtour, slot: 1 }],
     hint: 'Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.',
     slotHints: {
@@ -966,6 +966,15 @@ const ONLY = (() => {
   return a ? new Set(a.split('=')[1].split(',').map(Number)) : null;
 })();
 
+// Goals are precise targets, not hoops: shrink every goal and dock ring.
+// Trajectories cross a disc with probability ~r, so difficulty bands in
+// SETS are calibrated for the shrunken radii.
+const GOAL_SCALE = 0.42;
+function scaleGoals(lv) {
+  lv.goal.r = +Math.max(1.6, lv.goal.r * GOAL_SCALE).toFixed(2);
+  for (const w of lv.waypoints || []) w.r = +Math.max(1.6, w.r * GOAL_SCALE).toFixed(2);
+}
+
 // One slot's full search. Deterministic in (s, slot) alone, so slots can run
 // in ANY order — including in parallel worker processes (--emit-slot).
 // With shardN > 1 only attempts shardK, shardK+shardN, ... are searched; the
@@ -975,6 +984,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   const set = SETS[s];
   const original = set.originals.find(o => o.slot === slot);
   if (original) {
+    scaleGoals(original.level);
     const r = evaluate(set, false, original.level);
     console.log(`[set ${s + 1}] slot ${slot} original  ${original.level.name.padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%`);
     original.level.difficulty = set.difficulty;
@@ -988,6 +998,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     const rng = mulberry32(5e6 + s * 100003 + slot * 1009 + attempt);
     const lv = set.sample(rng, slot);
     if (!lv) continue;
+    scaleGoals(lv);
     geoOk++;
     const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
     if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
