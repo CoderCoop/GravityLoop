@@ -14,6 +14,9 @@ import * as tx from './textures.js';
 const GRID_STATIC = 161;      // terrain vertices per side (static levels)
 const GRID_DYNAMIC = 111;     // moving levels re-deform the grid every frame
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
+const FINE_GAIN = 0.25;       // aim response when the pointer creeps
+const FINE_V_LO = 80;         // px/s — at or below, full fine gain
+const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
 const MIN_LAUNCH = 6;
 const THRUST_ACCEL = 16;
 const CARGO_THRUST_FACTOR = 0.55;
@@ -48,6 +51,9 @@ let pickupsDone = new Set(), pickupsTemp = new Set();
 let dockAnim = null;          // { fromX, fromZ, toX, toZ, t, index }
 let aim = null;
 let aimSmooth = null;          // low-pass filtered touch aim (kills hand tremor)
+let aimFine = null;            // gain-remapped aim point (slow drags move it finer)
+let aimFinePrev = null;        // last pointer sample for the speed estimate
+let fineActive = false;
 let aimHist = [];              // recent smoothed aims for release rollback
 let launchVel = { x: 0, z: 0 };
 let pointers = new Map();     // active pointerId -> {x, y}
@@ -666,6 +672,7 @@ function hideAimUI() {
   aimAnchor.visible = false;
   aimHandle.visible = false;
   aimBand.visible = false;
+  document.getElementById('fine-chip').hidden = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -907,6 +914,8 @@ function onPointerDown(e) {
   if (!p) return;
   aim = { sx: p.x, sz: p.z };
   aimSmooth = null;
+  aimFine = null;
+  aimFinePrev = null;
   aimHist.length = 0;
   aimPointerId = e.pointerId;
   state = 'aiming';
@@ -971,6 +980,32 @@ function cancelAim() {
   updateFuelBar();
 }
 
+// Adaptive fine aim: when the pointer creeps, its motion reaches the handle
+// at FINE_GAIN scale so the last tenths of a degree are dialable; fast flicks
+// stay 1:1 and pull the handle back onto the finger so offset never piles up.
+function fineAim(e, p) {
+  const now = performance.now();
+  if (!aimFinePrev) {
+    aimFine = { x: p.x, z: p.z };
+    aimFinePrev = { sx: e.clientX, sy: e.clientY, wx: p.x, wz: p.z, t: now, v: FINE_V_HI };
+    fineActive = false;
+    return aimFine;
+  }
+  const dt = Math.max(now - aimFinePrev.t, 1);
+  const pxs = (Math.hypot(e.clientX - aimFinePrev.sx, e.clientY - aimFinePrev.sy) / dt) * 1000;
+  const v = aimFinePrev.v + (pxs - aimFinePrev.v) * 0.35;
+  const t = Math.min(Math.max((v - FINE_V_LO) / (FINE_V_HI - FINE_V_LO), 0), 1);
+  const gain = FINE_GAIN + (1 - FINE_GAIN) * t;
+  aimFine.x += (p.x - aimFinePrev.wx) * gain;
+  aimFine.z += (p.z - aimFinePrev.wz) * gain;
+  const k = t * t * 0.3;
+  aimFine.x += (p.x - aimFine.x) * k;
+  aimFine.z += (p.z - aimFine.z) * k;
+  aimFinePrev = { sx: e.clientX, sy: e.clientY, wx: p.x, wz: p.z, t: now, v };
+  fineActive = gain < 0.5;
+  return aimFine;
+}
+
 function updateAim(e) {
   const raw = pointerToWorld(e);
   if (!raw) return;
@@ -981,6 +1016,9 @@ function updateAim(e) {
       ? { x: aimSmooth.x + (raw.x - aimSmooth.x) * 0.3, z: aimSmooth.z + (raw.z - aimSmooth.z) * 0.3 }
       : { x: raw.x, z: raw.z };
     p = aimSmooth;
+  }
+  p = fineAim(e, p);
+  if (e.pointerType === 'touch') {
     aimHist.push({ t: performance.now(), x: p.x, z: p.z });
     while (aimHist.length && aimHist[0].t < performance.now() - 300) aimHist.shift();
   }
@@ -998,7 +1036,19 @@ function updateAim(e) {
   showPower(power, launchFuelCost(speed, level.maxLaunch));
   updateAimArrow(power);
   updateAimTouchUI(p, power);
+  updateFineChip(p);
   updatePrediction();
+}
+
+const _proj = new THREE.Vector3();
+function updateFineChip(p) {
+  const chip = document.getElementById('fine-chip');
+  if (!fineActive) { chip.hidden = true; return; }
+  _proj.set(p.x, shipY() + 0.5, p.z).project(camera);
+  const r = renderer.domElement.getBoundingClientRect();
+  chip.style.left = `${r.left + ((_proj.x + 1) / 2) * r.width}px`;
+  chip.style.top = `${r.top + ((1 - _proj.y) / 2) * r.height}px`;
+  chip.hidden = false;
 }
 
 function updateAimTouchUI(p, power) {
@@ -1535,6 +1585,7 @@ window.GL = {
   load: i => loadLevel(i),
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
+  aim: () => ({ fine: fineActive, v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
 };
 
 init();

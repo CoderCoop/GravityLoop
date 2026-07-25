@@ -176,6 +176,22 @@ html, body {
 .level-dot.current { background: rgba(60, 130, 255, 0.45); border-color: #7ad7ff; }
 .level-dot.locked { opacity: 0.45; cursor: default; font-size: 12px; }
 
+/* ---------------------------------------------------- fine-aim chip */
+#fine-chip {
+  position: fixed;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate(-50%, -190%);
+  background: rgba(10, 8, 30, 0.88);
+  border: 1.5px solid #66e0ff;
+  color: #e8f6ff;
+  border-radius: 9px;
+  padding: 3px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 /* --------------------------------------------------------------- toast */
 #toast {
   position: fixed;
