@@ -43,6 +43,27 @@ function isDynamic(level) {
     (level.hazards || []).some(h => h.orbit || h.patrol || h.comet);
 }
 
+// Total heading change along a trajectory: ~0 for a straight shot, ~pi for
+// a strong slingshot curve, ~2pi for a full loop around a body.
+function pathTurning(pts) {
+  let turn = 0, pang = 0, have = false;
+  let px = pts[0].x, pz = pts[0].z;
+  for (let i = 4; i < pts.length; i += 4) {
+    const dx = pts[i].x - px, dz = pts[i].z - pz;
+    if (dx * dx + dz * dz < 1e-6) continue;
+    const a = Math.atan2(dz, dx);
+    if (have) {
+      let d = a - pang;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      turn += Math.abs(d);
+    }
+    pang = a; have = true;
+    px = pts[i].x; pz = pts[i].z;
+  }
+  return turn;
+}
+
 function solveLeg(level, stage) {
   const dynamic = isDynamic(level);
   const times = dynamic ? Array.from({ length: 11 }, (_, i) => i * 0.9) : [0];
@@ -50,6 +71,7 @@ function solveLeg(level, stage) {
   let wins = 0, total = 0;
   const byT0 = dynamic ? new Array(times.length).fill(0) : null;
   const winners = [];
+  const turns = [];
   for (let ti = 0; ti < times.length; ti++) {
     const t0 = times[ti];
     for (let ang = 0; ang < 360; ang += 3) {
@@ -61,12 +83,17 @@ function solveLeg(level, stage) {
         if (r.outcome === 'goal' || r.outcome === 'waypoint') {
           wins++;
           if (byT0) byT0[ti]++;
-          if (winners.length < 40) winners.push({ ang, sp, t0 });
+          const turn = pathTurning(r.points);
+          turns.push(turn);
+          if (winners.length < 40) winners.push({ ang, sp, t0, turn });
         }
       }
     }
   }
-  return { wins, rate: (wins / total) * 100, byT0, winners };
+  turns.sort((a, b) => a - b);
+  const minTurn = turns.length ? turns[0] : 0;
+  const medTurn = turns.length ? turns[Math.floor(turns.length / 2)] : 0;
+  return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn };
 }
 
 // Gravity-assist timing sensitivity: how much of the leg's wins concentrate
@@ -117,14 +144,24 @@ function evaluate(set, needsTiming, level, bestDist = Infinity) {
   const low = set.band[0], high = set.band[1] * (legs > 1 ? 2.2 : 1);
   const rates = [], winners = [];
   let dist2 = 0, minWins = Infinity, conc = 0;
+  let evalMinTurn = Infinity, evalMedTurn = Infinity;
   for (let s = 0; s < legs; s++) {
     const r = solveLeg(level, s);
     minWins = Math.min(minWins, r.wins);
     if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
     rates.push(r.rate);
     winners.push(r.winners);
+    evalMinTurn = Math.min(evalMinTurn, r.minTurn);
+    evalMedTurn = Math.min(evalMedTurn, r.medTurn);
     if (r.rate < low) dist2 += low - r.rate;
     else if (r.rate > high) dist2 += r.rate - high;
+    // gravity is the point: reject layouts where a straight shot can win —
+    // even the straightest winning route must bend by the set's floor, and
+    // the typical route should bend well past it
+    if (set.turnMin) {
+      if (r.minTurn < set.turnMin) dist2 += (set.turnMin - r.minTurn) * 3;
+      if (r.medTurn < set.turnMed) dist2 += (set.turnMed - r.medTurn) * 1.5;
+    }
     if (s === 0 && needsTiming) {
       conc = r.byT0 ? concentration(r.byT0) : 0;
       if (conc < 0.5) dist2 += (0.5 - conc) * 6;     // demand launch windows
@@ -141,7 +178,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity) {
     interest /= legs;
     if (interest < set.interest) dist2 += (set.interest - interest) * 1.2;
   }
-  return { minWins, rates, dist: dist2, conc, legs, winners, interest };
+  return { minWins, rates, dist: dist2, conc, legs, winners, interest, minTurn: evalMinTurn, medTurn: evalMedTurn };
 }
 
 // ---------------------------------------------------------------------------
@@ -337,7 +374,7 @@ function placePickupsOffRoute(rng, level, winnersByLeg) {
         const d = offDist(p.pts[i].x, p.pts[i].z);
         if (d > bestD) { bestD = d; bestPt = p.pts[i]; }
       }
-      if (bestPt) cands.push({ d: bestD, pt: bestPt, cost: launchFuelCost(p.w.sp, level.maxLaunch) });
+      if (bestPt) cands.push({ d: bestD * (1 + (p.w.turn || 0) / 3), pt: bestPt, cost: launchFuelCost(p.w.sp, level.maxLaunch) });
     }
     cands.sort((a, b) => b.d - a.d);
     placed: for (const c of cands.slice(0, 8)) {
@@ -438,7 +475,18 @@ function addWaypoints(rng, level, specs) {
 // so skipping the cell means running dry before the goal.
 // ---------------------------------------------------------------------------
 function tuneFuelEconomy(rng, level, res) {
-  if (res.legs <= 1) return;
+  if (res.legs <= 1) {
+    // single leg: the tank sits between the efficient slingshot cost and the
+    // brute-force cost — overpowering the curve is unaffordable, flying the
+    // gravity line is. Small reserve covers mid-flight thrusters.
+    const w = res.winners[0] || [];
+    if (!w.length) return;
+    const cs = w.map(x => launchFuelCost(x.sp, level.maxLaunch)).sort((a, b) => a - b);
+    const p25 = cs[Math.floor(cs.length * 0.25)];
+    level.fuel = +Math.max(cs[0] + 0.3, Math.min(p25 + 0.2, cs[0] + 0.8)).toFixed(2);
+    level.legMinCosts = [+cs[0].toFixed(2)];
+    return;
+  }
   const detourCost0 = placePickupsOffRoute(rng, level, res.winners);
   const median = arr => [...arr].sort((a, b) => a - b)[Math.floor(arr.length / 2)];
   const costs = res.winners.map(w => w.map(x => launchFuelCost(x.sp, level.maxLaunch)));
@@ -648,9 +696,11 @@ function sampleEarthrise(rng, slot) {
     targetIdx = sol.idx.moon;
     lv.goal = { x: Math.round(moon.x + mu.x * (moon.radius + rand(rng, 8, 10))), z: Math.round(moon.z + mu.z * (moon.radius + rand(rng, 8, 10))), r: +(6.4 - slot * 0.15).toFixed(1) };
   } else {
-    padByBody(lv, earth, sun, rand(rng, 7, 9));
     targetIdx = slot < 6 ? sol.idx.venus : sol.idx.mars;
-    goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +(6.2 - slot * 0.12).toFixed(1));
+    // pad tucked behind Earth (away from the target), goal tucked behind the
+    // target (away from Earth): every route must curve around both wells
+    padByBody(lv, earth, lv.bodies[targetIdx], rand(rng, 7, 9));
+    goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +(6.2 - slot * 0.12).toFixed(1));
   }
   lv.targetIdx = targetIdx;
   return levelGeometryOk(lv, 15, 13) ? lv : null;
@@ -676,10 +726,10 @@ function sampleInner(rng, slot) {
   const sol = buildSol(rng, lv, 'mars', {
     ang, earthRing: off + rand(rng, 0.10, 0.20) * E, moonGap: [6, 9],
   });
-  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
   lv.homeIdx = sol.idx.earth;
   const targetIdx = sol.idx[targetKey];
-  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 9, 11), +rand(rng, 4.9, 5.5).toFixed(1));
+  padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
+  goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +rand(rng, 4.9, 5.5).toFixed(1));
   lv.targetIdx = targetIdx;
   if (!levelGeometryOk(lv, 15, 13)) return null;
   if (slot >= 2) for (let i = 0; i < 1 + (slot >= 5 ? 1 : 0); i++) addDerelict(rng, lv);
@@ -712,10 +762,10 @@ function sampleOuter(rng, slot) {
     moonGap: [6, 9],
     moonAng: center + dA + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
   });
-  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
   lv.homeIdx = sol.idx.earth;
   const targetIdx = through === 'jupiter' ? sol.idx.jupiter : sol.idx.saturn;
-  goalByBody(lv, lv.bodies[targetIdx], sun, rand(rng, 10, 13), lv.goal.r);
+  padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
+  goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
   lv.targetIdx = targetIdx;
   if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
@@ -747,10 +797,10 @@ function sampleBelt(rng, slot) {
     moonGap: [6, 9],
     moonAng: center + dA + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
   });
-  padByBody(lv, lv.bodies[sol.idx.earth], sun, rand(rng, 7, 9));
   lv.homeIdx = sol.idx.earth;
   lv.targetIdx = sol.idx.jupiter;
-  goalByBody(lv, lv.bodies[sol.idx.jupiter], sun, rand(rng, 10, 13), lv.goal.r);
+  padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[sol.idx.jupiter], rand(rng, 7, 9));
+  goalByBody(lv, lv.bodies[sol.idx.jupiter], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
   if (!levelGeometryOk(lv, 15, 12)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
@@ -881,6 +931,18 @@ function sampleAlien(rng, slot) {
     });
   }
   if (!levelGeometryOk(lv, 14, 11)) return null;
+  // the straight ship->goal line must cross at least one planet's swept ring:
+  // direct shots die in a moving well, curves are mandatory
+  let blocked = false;
+  for (let k = 1; k <= 19 && !blocked; k++) {
+    const t = k / 20;
+    const x = lv.ship.x + (lv.goal.x - lv.ship.x) * t;
+    const z = lv.ship.z + (lv.goal.z - lv.ship.z) * t;
+    for (const pIdx of planetIdxs) {
+      if (pointToAnnulus(annulus(lv, pIdx), x, z) < lv.bodies[pIdx].radius + 1.5) { blocked = true; break; }
+    }
+  }
+  if (!blocked) return null;
   if (slot >= 5) {
     if (!addTourWaypoints(rng, lv, outer, [{ r: 3.6, type: 'cargo' }, { r: 3.6, type: 'dropoff' }])) return null;
   } else if (slot >= 2 && rng() < 0.7) {
@@ -956,8 +1018,21 @@ const SETS = [
 // ---------------------------------------------------------------------------
 // Generate
 // ---------------------------------------------------------------------------
+// Turning thresholds per set: [every winner must bend >=, median winner
+// should bend >=] in radians. GEN_TIER=A is moderate, B (default) demands
+// loops-and-curves hard, scaling with difficulty.
+const TIER = process.env.GEN_TIER || 'C';
+const TURNS = {
+  A: [[0.7, 1.2], [1.0, 1.5], [1.3, 1.8], [1.6, 2.2], [2.0, 2.8]],
+  B: [[1.0, 1.8], [1.5, 2.3], [2.0, 2.8], [2.5, 3.3], [3.2, 4.0]],
+  C: [[1.3, 2.2], [2.0, 2.9], [2.6, 3.5], [3.2, 4.2], [4.0, 5.0]],
+}[TIER];
+SETS.forEach((s, i) => { s.turnMin = TURNS[i][0]; s.turnMed = TURNS[i][1]; });
+// blockers + turn gates cut raw win rates: halve the band floors
+SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
+
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
-const ATTEMPTS = 500;
+const ATTEMPTS = +(process.env.GEN_ATTEMPTS || 800);   // extreme-turn candidates are rare
 
 // `--sets=1,2` generates only those sets and skips writing levels.js — a
 // dry run for tuning samplers without waiting for the full campaign.
@@ -1020,6 +1095,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}` : ''}` +
+    `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
     `${found ? '' : '  (closest to band)'}`

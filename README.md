@@ -83,16 +83,28 @@ Levels use all the space they have: on the early sets the Sun sits at the
 far edge of the map so the Earth–Moon neighborhood — where the flying
 happens — owns the open half (the Earth→Moon hop alone spans ~19 units);
 on the later sets launch and target swing to opposite sides of an
-off-center Sun so routes arc across the whole system. The generator also
-scores **route interest** — candidates whose winning routes sweep past
-more bodies and bend harder beat ones that cross empty space — because
-the terrain a route crosses is what makes each level distinct.
+off-center Sun so routes arc across the whole system.
 
-Stops never refuel. On multi-leg routes the fuel cell sits far OFF the
-easiest winning route — at the point of maximum separation from it — and
-the tank covers the detour launch but sits below what the route costs at
-typical launch power: fly the cheap line and you run dry. Docking too dry
-triggers a warning; R restarts.
+**No straight shots.** The generator measures how much every brute-force
+winning trajectory bends (total heading change along the flight) and each
+set sets a rising **turning target** for the straightest and the median
+winning route (~1.3 rad min on set 1 up to ~4.0 rad on set 5, medians to
+~5.0 rad — past a full loop around a planet); any shortfall is penalized
+in the search, so the curviest solvable candidates win each slot.
+Geometry backs this up: the launch pad spawns on the far side of your
+home planet from the target, the goal hides behind the target body away
+from you, and on alien systems the straight ship→goal line must pass
+through a planet's orbit. Getting anywhere means slinging around
+something.
+
+Fuel forces the issue everywhere. Single-leg levels get a tank sized just
+above the *cheapest* winning launch but below what most winning launches
+burn — the brute-force direct shots are unaffordable and only the
+gravity-efficient curves fit the budget. On multi-leg routes, stops never
+refuel: the fuel cell sits far OFF the easiest winning route — weighted
+toward the *curviest* detours — and the tank covers the detour launch but
+sits below the route's typical total cost: fly the cheap line and you run
+dry. Docking too dry triggers a warning; R restarts.
 
 The game is an installable PWA ("Gravity Loop" on your home screen) with
 an offline cache.

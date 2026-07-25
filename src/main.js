@@ -516,20 +516,32 @@ function buildGoal() {
   }
   station.add(hub, spine);
   station.position.y = 1.6;
+  if (goalBeacon) scene.remove(goalBeacon);
   goalBeacon = new THREE.Mesh(
     new THREE.CylinderGeometry(level.goal.r * 0.45, level.goal.r * 0.7, 46, 16, 1, true),
     new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.07, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   goalBeacon.position.y = 23;
+  scene.add(goalBeacon);   // scene-level: the beacon marks the ACTIVE target
   goalGlow = makeGlow(0xffd166, level.goal.r * 4);
-  goalGroup.add(ring, station, goalBeacon, goalGlow);
+  goalGroup.add(ring, station, goalGlow);
   scene.add(goalGroup);
+}
+
+// The light column always stands on whatever you must reach NEXT — a cargo
+// stop, a station, or the final goal.
+function updateBeacon() {
+  if (!goalBeacon || !level) return;
+  const tgt = activeTarget(level, stage);
+  goalBeacon.position.set(tgt.x, 23, tgt.z);
+  const s = Math.max(tgt.r, 1.8) / Math.max(level.goal.r, 0.001);
+  goalBeacon.scale.set(s, 1, s);
+  goalBeacon.material.color.setHex(tgt.kind === 'goal' ? 0xffd166 : 0x66e0ff);
 }
 
 function setGoalActive(active) {
   if (!goalRingMat) return;
   goalRingMat.opacity = active ? 0.95 : 0.25;
-  goalBeacon.visible = active;
   goalGlow.material.opacity = active ? 0.85 : 0.2;
 }
 
@@ -701,6 +713,7 @@ function resetLeg() {
   const start = legStart(level, stage);
   ship = { x: start.x, z: start.z, vx: 0, vz: 0 };
   resetCamera();
+  updateBeacon();
   fuel = legStartFuel;   // stops never refuel — you fly the leg with what you docked with
   carrying = derivedCarrying();
   cargoBox.visible = carrying;
@@ -1322,9 +1335,16 @@ function goalY(positions) {
 
 function updateCamera(dt) {
   const E = level.extent;
+  if (state === 'flying' && !gesture) {
+    // follow the ship: the tight framing would lose it in a frame or two
+    const k2 = Math.min(dt * 3, 1);
+    camPan.x += (ship.x - camPan.x) * k2;
+    camPan.z += (ship.z - camPan.z) * k2;
+    clampPan();
+  }
   const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
-  const followX = inFlight ? ship.x * 0.25 : ship.x * 0.3;
-  const followZ = inFlight ? ship.z * 0.15 : ship.z * 0.18;
+  const followX = state === 'flying' ? 0 : inFlight ? ship.x * 0.25 : ship.x * 0.3;
+  const followZ = state === 'flying' ? 0 : inFlight ? ship.z * 0.15 : ship.z * 0.18;
   const target = new THREE.Vector3(followX * 0.4 + camPan.x, -4, followZ * 0.4 + camPan.z);
   // offset from target, rotated about Y by the two-finger twist yaw
   const ox = followX * 0.6, oz = E * 1.52 * camZoom + followZ * 0.6;
