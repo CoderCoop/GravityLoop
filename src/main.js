@@ -1184,7 +1184,7 @@ const _dir = new THREE.Vector3();
 // vector, so show the vector itself — a full-power reference ring with
 // heading ticks (the aim arrow is the needle, its tip touching the ring at
 // 100%) plus an exact heading/power readout.
-const AIM_RING_R = window.TELE_R || 7;
+const AIM_RING_R = 7;
 function buildAimDial() {
   const g = new THREE.Group();
   const ring = new THREE.Mesh(
@@ -1212,7 +1212,6 @@ function buildAimDial() {
 
 const _tproj = new THREE.Vector3();
 function updateAimTelemetry(power) {
-  const mode = window.TELE || 'both';
   const speed = Math.hypot(launchVel.x, launchVel.z);
   const chip = document.getElementById('aim-readout');
   if (speed < MIN_LAUNCH) {
@@ -1221,10 +1220,9 @@ function updateAimTelemetry(power) {
     return;
   }
   if (aimDial) {
-    aimDial.visible = mode !== 'chip';
+    aimDial.visible = true;
     aimDial.position.set(ship.x, shipY() + 0.5, ship.z);
   }
-  if (mode === 'dial') { chip.hidden = true; return; }
   // screen-up is -z rotated by the camera yaw; report a compass heading so the
   // number means the same thing however the view is twisted
   let deg = (Math.atan2(launchVel.x, -launchVel.z) * 180) / Math.PI - (camYaw * 180) / Math.PI;
@@ -1770,6 +1768,14 @@ window.GL = {
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
   aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  debugSpots: () => {
+    const p = bodiesAt(level, simTime);
+    return {
+      t: simTime,
+      goal: { x: anchorX(level.goal, p), z: anchorZ(level.goal, p) },
+      pad: { x: anchorX(level.ship, p), z: anchorZ(level.ship, p) },
+    };
+  },
 };
 
 init();
