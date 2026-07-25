@@ -14,8 +14,7 @@ import * as tx from './textures.js';
 const GRID_STATIC = 161;      // terrain vertices per side (static levels)
 const GRID_DYNAMIC = 111;     // moving levels re-deform the grid every frame
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
-const FINE_GAIN = 0.25;       // aim response when the pointer creeps
-const FINE_V_LO = 80;         // px/s — at or below, full fine gain
+const FINE_MAX = 12;          // deepest fine ratio at a near-still pointer
 const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
 const MIN_LAUNCH = 6;
 const THRUST_ACCEL = 16;
@@ -54,6 +53,7 @@ let aimSmooth = null;          // low-pass filtered touch aim (kills hand tremor
 let aimFine = null;            // gain-remapped aim point (slow drags move it finer)
 let aimFinePrev = null;        // last pointer sample for the speed estimate
 let fineActive = false;
+let fineGain = 1;
 let aimHist = [];              // recent smoothed aims for release rollback
 let launchVel = { x: 0, z: 0 };
 let pointers = new Map();     // active pointerId -> {x, y}
@@ -866,7 +866,45 @@ function clampPan() {
   camPan.z = Math.min(Math.max(camPan.z, -lim), lim);
 }
 // Frame each leg's start: view centered over the ship, rotated so the active
-// target sits up-screen, zoomed so both are visible.
+// target sits up-screen, zoomed in as far as the pair allows.
+const _fitCam = new THREE.PerspectiveCamera();
+const _fitV = new THREE.Vector3();
+// Smallest camZoom (= closest camera) that keeps the whole target ring and
+// the ship inside the frame, each with its own edge margin (fraction of the
+// screen). Mirrors updateCamera's settled 'ready'-state transform.
+function fitZoom(tgt, marginTgt, marginShip) {
+  const E = level.extent;
+  _fitCam.fov = camera.fov;
+  _fitCam.aspect = window.innerWidth / window.innerHeight;
+  _fitCam.near = camera.near;
+  _fitCam.far = camera.far;
+  const followX = ship.x * 0.3, followZ = ship.z * 0.18;
+  const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
+  const inside = (x, y, z, m) => {
+    _fitV.set(x, y, z).project(_fitCam);
+    return Math.abs(_fitV.x) <= 1 - m * 2 && Math.abs(_fitV.y) <= 1 - m * 2;
+  };
+  const test = z => {
+    const tx = followX * 0.4 + camPan.x, tz = followZ * 0.4 + camPan.z;
+    const ox = followX * 0.6, oz = E * 1.52 * z + followZ * 0.6;
+    _fitCam.position.set(tx + ox * cos + oz * sin, E * 1.02 * z, tz + (-ox * sin + oz * cos));
+    _fitCam.lookAt(tx, -4, tz);
+    _fitCam.updateProjectionMatrix();
+    _fitCam.updateMatrixWorld();
+    const r = Math.max(tgt.r, 1.5);
+    return inside(tgt.x - r, 0, tgt.z, marginTgt) && inside(tgt.x + r, 0, tgt.z, marginTgt)
+      && inside(tgt.x, 0, tgt.z - r, marginTgt) && inside(tgt.x, 0, tgt.z + r, marginTgt)
+      && inside(ship.x, shipY(), ship.z, marginShip);
+  };
+  let lo = 0.05, hi = 1;
+  if (test(lo)) return lo;
+  if (!test(hi)) return hi;
+  for (let i = 0; i < 18; i++) {
+    const mid = (lo + hi) / 2;
+    if (test(mid)) hi = mid; else lo = mid;
+  }
+  return hi;
+}
 function resetCamera() {
   camZoom = 1;
   camYaw = 0;
@@ -878,9 +916,10 @@ function resetCamera() {
   if (D > 1) camYaw = Math.atan2(-dx, -dz);
   const midX = ship.x * 0.55 + tgt.x * 0.45, midZ = ship.z * 0.55 + tgt.z * 0.45;
   camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
-  // frame the ship->target hop snugly (distance floor keeps tiny hops sane)
-  camZoom = Math.min(Math.max((D * 0.8) / level.extent, 19 / level.extent), 1);
   clampPan();
+  // zoom in on the ship as far as possible with the target still on screen:
+  // target ring 3.5% inside the frame, ship 11% (user-picked "maximum zoom")
+  camZoom = Math.min(Math.max(fitZoom(tgt, 0.035, 0.11), 9 / level.extent), 1);
 }
 function onWheel(e) {
   e.preventDefault();
@@ -980,29 +1019,33 @@ function cancelAim() {
   updateFuelBar();
 }
 
-// Adaptive fine aim: when the pointer creeps, its motion reaches the handle
-// at FINE_GAIN scale so the last tenths of a degree are dialable; fast flicks
-// stay 1:1 and pull the handle back onto the finger so offset never piles up.
+// Adaptive fine aim: the slower the pointer creeps, the finer its motion
+// reaches the handle — ramping continuously from 1:1 at flick speed down to
+// 1/FINE_MAX at a near-still crawl, so the last hundredths of a degree are
+// dialable. Fast flicks pull the handle back onto the finger so slow-phase
+// offset never piles up.
 function fineAim(e, p) {
   const now = performance.now();
   if (!aimFinePrev) {
     aimFine = { x: p.x, z: p.z };
     aimFinePrev = { sx: e.clientX, sy: e.clientY, wx: p.x, wz: p.z, t: now, v: FINE_V_HI };
     fineActive = false;
+    fineGain = 1;
     return aimFine;
   }
   const dt = Math.max(now - aimFinePrev.t, 1);
   const pxs = (Math.hypot(e.clientX - aimFinePrev.sx, e.clientY - aimFinePrev.sy) / dt) * 1000;
   const v = aimFinePrev.v + (pxs - aimFinePrev.v) * 0.35;
-  const t = Math.min(Math.max((v - FINE_V_LO) / (FINE_V_HI - FINE_V_LO), 0), 1);
-  const gain = FINE_GAIN + (1 - FINE_GAIN) * t;
+  const t = Math.min(v / FINE_V_HI, 1);
+  const gain = Math.max(t ** 1.4, 1 / FINE_MAX);
   aimFine.x += (p.x - aimFinePrev.wx) * gain;
   aimFine.z += (p.z - aimFinePrev.wz) * gain;
   const k = t * t * 0.3;
   aimFine.x += (p.x - aimFine.x) * k;
   aimFine.z += (p.z - aimFine.z) * k;
   aimFinePrev = { sx: e.clientX, sy: e.clientY, wx: p.x, wz: p.z, t: now, v };
-  fineActive = gain < 0.5;
+  fineActive = gain < 0.6;
+  fineGain = gain;
   return aimFine;
 }
 
@@ -1044,6 +1087,7 @@ const _proj = new THREE.Vector3();
 function updateFineChip(p) {
   const chip = document.getElementById('fine-chip');
   if (!fineActive) { chip.hidden = true; return; }
+  chip.textContent = `FINE ×${Math.round(1 / fineGain)}`;
   _proj.set(p.x, shipY() + 0.5, p.z).project(camera);
   const r = renderer.domElement.getBoundingClientRect();
   chip.style.left = `${r.left + ((_proj.x + 1) / 2) * r.width}px`;
@@ -1585,7 +1629,7 @@ window.GL = {
   load: i => loadLevel(i),
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
-  aim: () => ({ fine: fineActive, v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
 };
 
 init();
