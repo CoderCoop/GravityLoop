@@ -3,6 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
+  anchorX, anchorZ,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import * as sfx from './audio.js';
@@ -11,8 +12,8 @@ import * as tx from './textures.js';
 // ---------------------------------------------------------------------------
 // Constants & state
 // ---------------------------------------------------------------------------
-const GRID_STATIC = 161;      // terrain vertices per side (static levels)
-const GRID_DYNAMIC = 111;     // moving levels re-deform the grid every frame
+const GRID_N = 161;           // terrain vertices per side
+const DEFORM_EPS = 0.12;      // world units a body must move to redraw terrain
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
 const FINE_MAX = 12;          // deepest fine ratio at a near-still pointer
 const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
@@ -28,11 +29,12 @@ const SAVE_KEY = 'gravityloop-save-v2';
 let renderer, scene, camera;
 let terrain;
 let bodyVisuals = [];         // [{ group, body, spin, discSpin? }]
+let orbitVisuals = [];        // dotted orbit rings, one per orbiting body
 let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
 let shipGroup, engineSprite, cargoBox, trailLine, trailPts = [];
-let predictLine, predictDots, predictMarker, aimArrow;
+let predictLine, predictDots, predictMarker, aimArrow, aimDial;
 let aimAnchor, aimHandle, aimBand;
 let goalGroup, padGroup;
 let fxList = [];
@@ -201,8 +203,7 @@ function makeGlow(color, scale, opacity = 0.85) {
 // ---------------------------------------------------------------------------
 function buildTerrain() {
   if (terrain) { scene.remove(terrain.lines); terrain.lines.geometry.dispose(); }
-  const dyn = level.bodies.some(b => b.orbit);
-  const N = dyn ? GRID_DYNAMIC : GRID_STATIC, E = level.extent, span = 2 * E;
+  const N = GRID_N, E = level.extent, span = 2 * E;
   const gridX = new Float32Array(N * N), gridZ = new Float32Array(N * N);
   const pos = new Float32Array(N * N * 3), col = new Float32Array(N * N * 3);
   for (let j = 0; j < N; j++) {
@@ -253,9 +254,28 @@ function heightColor(y, out, o) {
   out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
 }
 
+// Every level moves now, so the whole grid can't be re-deformed every frame at
+// full density. It doesn't need to be: redraw only once the bodies have
+// actually shifted by a fraction of a grid cell, which for the slow early sets
+// is a few times a second and for fast alien systems is every frame.
+let deformAt = null;
+function terrainNeedsUpdate(positions) {
+  if (!deformAt || deformAt.length !== positions.length * 2) return true;
+  for (let i = 0; i < positions.length; i++) {
+    if (Math.abs(positions[i].x - deformAt[i * 2]) +
+        Math.abs(positions[i].z - deformAt[i * 2 + 1]) > DEFORM_EPS) return true;
+  }
+  return false;
+}
+
 function updateTerrain(positions) {
   const { gridX, gridZ, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
+  deformAt = new Float64Array(positions.length * 2);
+  for (let i = 0; i < positions.length; i++) {
+    deformAt[i * 2] = positions[i].x;
+    deformAt[i * 2 + 1] = positions[i].z;
+  }
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = heightAt(level, gridX[idx], gridZ[idx], positions);
     pos[idx * 3 + 1] = y;
@@ -342,9 +362,11 @@ function buildBodies() {
       spin = 0.12;
     } else {
       const style = body.radius >= 4.4 && (seed & 1) === 0 ? 'banded' : body.radius >= 4.6 ? 'banded' : 'rocky';
+      // real solar-system worlds get their own look; alien ones stay procedural
+      const named = tx.namedPlanetTexture(body.name, seed);
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(body.radius, 24, 18),
-        new THREE.MeshBasicMaterial({ map: tx.planetTexture(body.color, seed, style) }),
+        new THREE.MeshBasicMaterial({ map: named || tx.planetTexture(body.color, seed, style) }),
       );
       sphere.rotation.z = 0.2 - (seed % 100) / 250;
       const atmo = new THREE.Mesh(
@@ -352,7 +374,8 @@ function buildBodies() {
         new THREE.MeshBasicMaterial({ color: body.color, transparent: true, opacity: 0.13, blending: THREE.AdditiveBlending, depthWrite: false }),
       );
       group.add(sphere, atmo, makeGlow(body.color, body.radius * 3.6, 0.55));
-      if (style === 'banded' && seed % 3 === 0) {
+      const namedRings = /^saturn$/i.test(body.name || '');
+      if (namedRings || (!named && style === 'banded' && seed % 3 === 0)) {
         const rings = new THREE.Mesh(
           new THREE.RingGeometry(body.radius * 1.45, body.radius * 2.3, 48),
           new THREE.MeshBasicMaterial({ map: tx.ringSystemTexture(body.color, seed), transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false }),
@@ -366,6 +389,48 @@ function buildBodies() {
     scene.add(group);
     const arrow = body.orbit ? makeMotionArrow(0x9bd5ff) : null;
     bodyVisuals.push({ group, body, spin, discGroup, arrow });
+  }
+  buildOrbitPaths();
+}
+
+// ---------------------------------------------------------------------------
+// Orbit paths — dotted rings draped over the terrain, so an orbit visibly
+// dips through the wells it crosses.
+// ---------------------------------------------------------------------------
+const ORBIT_SEGS = 132;
+function buildOrbitPaths() {
+  for (const ov of orbitVisuals) scene.remove(ov.line);
+  orbitVisuals = [];
+  for (let i = 0; i < level.bodies.length; i++) {
+    const o = level.bodies[i].orbit;
+    if (!o) continue;
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((ORBIT_SEGS + 1) * 3), 3));
+    // fixed-size beads: legible at every zoom, unlike world-scaled dashes
+    const line = new THREE.Points(geo, new THREE.PointsMaterial({
+      color: 0xffd9a0, size: 2.6, sizeAttenuation: false,
+      transparent: true, opacity: 0.85, depthWrite: false,
+    }));
+    line.frustumCulled = false;
+    scene.add(line);
+    orbitVisuals.push({ line, o });
+  }
+}
+function updateOrbitPaths(positions) {
+  for (const ov of orbitVisuals) {
+    const o = ov.o;
+    const c = o.parent != null ? positions[o.parent] : { x: o.cx || 0, z: o.cz || 0 };
+    const attr = ov.line.geometry.getAttribute('position');
+    const arr = attr.array;
+    for (let j = 0; j <= ORBIT_SEGS; j++) {
+      const a = (j / ORBIT_SEGS) * Math.PI * 2;
+      const x = c.x + Math.cos(a) * o.radius, z = c.z + Math.sin(a) * o.radius;
+      arr[j * 3] = x;
+      arr[j * 3 + 1] = heightAt(level, x, z, positions) + 0.35;
+      arr[j * 3 + 2] = z;
+    }
+    attr.needsUpdate = true;
+    ov.line.geometry.computeBoundingSphere();
   }
 }
 
@@ -536,9 +601,9 @@ function buildGoal() {
 
 // The light column always stands on whatever you must reach NEXT — a cargo
 // stop, a station, or the final goal.
-function updateBeacon() {
+function updateBeacon(positions) {
   if (!goalBeacon || !level) return;
-  const tgt = activeTarget(level, stage);
+  const tgt = activeTarget(level, stage, positions);
   goalBeacon.position.set(tgt.x, 23, tgt.z);
   const s = Math.max(tgt.r, 1.8) / Math.max(level.goal.r, 0.001);
   goalBeacon.scale.set(s, 1, s);
@@ -626,6 +691,7 @@ function buildPredict() {
   aimArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(), 6, 0x7cff6b, 2.4, 1.6);
   aimArrow.visible = false;
   scene.add(aimArrow);
+  aimDial = buildAimDial();
 
   // slingshot touch indicators: ring where the drag started, a handle dot
   // under the finger, and a dashed rubber band between them
@@ -672,7 +738,9 @@ function hideAimUI() {
   aimAnchor.visible = false;
   aimHandle.visible = false;
   aimBand.visible = false;
+  if (aimDial) aimDial.visible = false;
   document.getElementById('fine-chip').hidden = true;
+  document.getElementById('aim-readout').hidden = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -717,7 +785,7 @@ function derivedCarrying() {
 
 function resetLeg() {
   state = 'ready';
-  const start = legStart(level, stage);
+  const start = legStart(level, stage, bodiesAt(level, simTime));
   ship = { x: start.x, z: start.z, vx: 0, vz: 0 };
   resetCamera();
   updateBeacon();
@@ -910,7 +978,7 @@ function resetCamera() {
   camYaw = 0;
   camPan = { x: 0, z: 0 };
   if (!level) return;
-  const tgt = activeTarget(level, stage);
+  const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
   const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
   const D = Math.hypot(dx, dz);
   if (D > 1) camYaw = Math.atan2(-dx, -dz);
@@ -1112,8 +1180,64 @@ function updateAimTouchUI(p, power) {
 }
 
 const _dir = new THREE.Vector3();
+// Launch telemetry: with fine-aim damping the handle is no longer the launch
+// vector, so show the vector itself — a full-power reference ring with
+// heading ticks (the aim arrow is the needle, its tip touching the ring at
+// 100%) plus an exact heading/power readout.
+const AIM_RING_R = 7;
+function buildAimDial() {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(AIM_RING_R, 0.12, 6, 72),
+    new THREE.MeshBasicMaterial({ color: 0x7f8cc0, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }),
+  );
+  ring.rotation.x = Math.PI / 2;
+  g.add(ring);
+  const pts = [];
+  for (let d = 0; d < 360; d += 15) {
+    const a = (d * Math.PI) / 180;
+    const inner = d % 45 === 0 ? AIM_RING_R - 1.9 : AIM_RING_R - 0.9;
+    pts.push(Math.cos(a) * inner, 0, Math.sin(a) * inner,
+             Math.cos(a) * (AIM_RING_R + 0.3), 0, Math.sin(a) * (AIM_RING_R + 0.3));
+  }
+  const tg = new THREE.BufferGeometry();
+  tg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3));
+  g.add(new THREE.LineSegments(tg, new THREE.LineBasicMaterial({
+    color: 0x8fa0d8, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false,
+  })));
+  g.visible = false;
+  scene.add(g);
+  return g;
+}
+
+const _tproj = new THREE.Vector3();
+function updateAimTelemetry(power) {
+  const speed = Math.hypot(launchVel.x, launchVel.z);
+  const chip = document.getElementById('aim-readout');
+  if (speed < MIN_LAUNCH) {
+    if (aimDial) aimDial.visible = false;
+    chip.hidden = true;
+    return;
+  }
+  if (aimDial) {
+    aimDial.visible = true;
+    aimDial.position.set(ship.x, shipY() + 0.5, ship.z);
+  }
+  // screen-up is -z rotated by the camera yaw; report a compass heading so the
+  // number means the same thing however the view is twisted
+  let deg = (Math.atan2(launchVel.x, -launchVel.z) * 180) / Math.PI - (camYaw * 180) / Math.PI;
+  deg = ((deg % 360) + 360) % 360;
+  chip.textContent = `${deg.toFixed(1)}° · ${Math.round(power * 100)}%`;
+  _tproj.set(ship.x, shipY() + 0.5, ship.z).project(camera);
+  const r = renderer.domElement.getBoundingClientRect();
+  chip.style.left = `${r.left + ((_tproj.x + 1) / 2) * r.width}px`;
+  chip.style.top = `${r.top + ((1 - _tproj.y) / 2) * r.height}px`;
+  chip.hidden = false;
+}
+
 function updateAimArrow(power) {
   const speed = Math.hypot(launchVel.x, launchVel.z);
+  updateAimTelemetry(power);
   if (speed < MIN_LAUNCH) { aimArrow.visible = false; return; }
   _dir.set(launchVel.x / speed, 0, launchVel.z / speed);
   aimArrow.position.set(ship.x, shipY() + 0.6, ship.z);
@@ -1296,7 +1420,7 @@ function frame(now) {
   }
 
   const positions = bodiesAt(level, simTime);
-  if (dynamic && (level.bodies.length <= 4 || frameCount % 2 === 0)) updateTerrain(positions);
+  if (dynamic && terrainNeedsUpdate(positions)) updateTerrain(positions);
 
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
@@ -1311,6 +1435,8 @@ function frame(now) {
     const corona = bv.group.getObjectByName('corona');
     if (corona) corona.scale.setScalar(bv.body.radius * (5.2 + Math.sin(vTime * 1.7) * 0.5));
   }
+
+  updateOrbitPaths(positions);
 
   // hazards
   const hazPositions = hazardsAt(level, simTime);
@@ -1346,22 +1472,33 @@ function frame(now) {
 
   // waypoints
   for (const wv of waypointVisuals) {
-    const y = heightAt(level, wv.wp.x, wv.wp.z, positions);
-    wv.group.position.set(wv.wp.x, y + 0.5, wv.wp.z);
+    const wx = anchorX(wv.wp, positions), wz = anchorZ(wv.wp, positions);
+    const y = heightAt(level, wx, wz, positions);
+    wv.group.position.set(wx, y + 0.5, wz);
     const ring = wv.group.getObjectByName('ring');
     if (wv.index === stage) ring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
     const core = wv.group.getObjectByName('core');
     if (core) core.rotation.y += dt * 0.8;
   }
 
-  // goal + pad
-  const gy = goalY(positions);
-  goalGroup.position.set(level.goal.x, gy + 0.5, level.goal.z);
+  // goal + pad (both may be stations riding an orbiting body)
+  const goalX = anchorX(level.goal, positions), goalZ = anchorZ(level.goal, positions);
+  goalGroup.position.set(goalX, goalY(positions) + 0.5, goalZ);
   const gring = goalGroup.getObjectByName('pulse');
   if (gring && stage >= (level.waypoints || []).length) gring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
   const gstation = goalGroup.getObjectByName('station');
   if (gstation) gstation.rotation.y += dt * 0.5;
-  padGroup.position.set(level.ship.x, heightAt(level, level.ship.x, level.ship.z, positions) + 0.4, level.ship.z);
+  const padX = anchorX(level.ship, positions), padZ = anchorZ(level.ship, positions);
+  padGroup.position.set(padX, heightAt(level, padX, padZ, positions) + 0.4, padZ);
+  // the parked ship rides its pad until launch
+  if (state === 'ready' || state === 'aiming') {
+    if (stage === 0) { ship.x = padX; ship.z = padZ; }
+    else {
+      const wp = level.waypoints[stage - 1];
+      ship.x = anchorX(wp, positions); ship.z = anchorZ(wp, positions);
+    }
+  }
+  updateBeacon(positions);
 
   // ship
   if (shipGroup.visible) {
@@ -1371,7 +1508,7 @@ function frame(now) {
     if (state === 'flying' && (ship.vx || ship.vz)) {
       shipGroup.rotation.y = Math.atan2(ship.vx, ship.vz);
     } else if (state === 'ready' || state === 'aiming') {
-      const tgt = activeTarget(level, stage);
+      const tgt = activeTarget(level, stage, positions);
       const dir = state === 'aiming' && Math.hypot(launchVel.x, launchVel.z) > 2
         ? launchVel : { x: tgt.x - ship.x, z: tgt.z - ship.z };
       shipGroup.rotation.y = Math.atan2(dir.x, dir.z);
@@ -1424,7 +1561,8 @@ function shipY(positions) {
   return heightAt(level, ship.x, ship.z, positions || bodiesAt(level, simTime)) + 1.6;
 }
 function goalY(positions) {
-  return heightAt(level, level.goal.x, level.goal.z, positions || bodiesAt(level, simTime));
+  const p = positions || bodiesAt(level, simTime);
+  return heightAt(level, anchorX(level.goal, p), anchorZ(level.goal, p), p);
 }
 
 function updateCamera(dt) {
@@ -1630,6 +1768,14 @@ window.GL = {
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
   aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  debugSpots: () => {
+    const p = bodiesAt(level, simTime);
+    return {
+      t: simTime,
+      goal: { x: anchorX(level.goal, p), z: anchorZ(level.goal, p) },
+      pad: { x: anchorX(level.ship, p), z: anchorZ(level.ship, p) },
+    };
+  },
 };
 
 init();

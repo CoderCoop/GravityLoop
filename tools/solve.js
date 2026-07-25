@@ -7,7 +7,7 @@
 //
 // --fast uses the coarse grid (the one CI and the generator use); the default
 // fine grid is ~8x slower but gives smoother difficulty estimates.
-import { predict, legStart, legCount } from '../src/physics.js';
+import { predict, legStart, legCount, bodiesAt } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
 
 const args = process.argv.slice(2).filter(a => a !== '--fast');
@@ -32,9 +32,10 @@ for (let li = 0; li < LEVELS.length; li++) {
 
   let minRate = Infinity, minWins = Infinity, dead = false;
   for (let leg = 0; leg < legs; leg++) {
-    const start = legStart(level, leg);
     let total = 0, wins = 0;
     for (const t0 of times) {
+      // the pad rides its body, so where you launch from depends on when
+      const start = legStart(level, leg, bodiesAt(level, t0));
       for (const ang of angles) {
         const rad = (ang * Math.PI) / 180;
         for (const sp of speeds) {

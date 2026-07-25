@@ -70,18 +70,33 @@ export function hazardsAt(level, t) {
 }
 const EMPTY = [];
 
-// The target the ship must reach next: waypoint `stage`, or the goal once all
-// waypoints are done. Levels without waypoints go straight for the goal.
-export function activeTarget(level, stage) {
-  const wps = level.waypoints || EMPTY;
-  if (stage < wps.length) return { x: wps[stage].x, z: wps[stage].z, r: wps[stage].r, kind: 'waypoint', index: stage };
-  return { x: level.goal.x, z: level.goal.z, r: level.goal.r, kind: 'goal' };
+// Launch pads and stations are structures in orbit, not points painted on
+// space: one anchored to body `b` keeps a fixed offset from it and rides
+// along. `positions` comes from bodiesAt(level, t) — omit it for t = 0.
+export function anchorX(spot, positions) {
+  return spot.anchor && positions ? positions[spot.anchor.body].x + spot.anchor.dx : spot.x;
+}
+export function anchorZ(spot, positions) {
+  return spot.anchor && positions ? positions[spot.anchor.body].z + spot.anchor.dz : spot.z;
 }
 
-// Where the ship launches from for a given stage.
-export function legStart(level, stage) {
+// The target the ship must reach next: waypoint `stage`, or the goal once all
+// waypoints are done. Levels without waypoints go straight for the goal.
+export function activeTarget(level, stage, positions) {
   const wps = level.waypoints || EMPTY;
-  return stage === 0 ? level.ship : wps[stage - 1];
+  const s = stage < wps.length ? wps[stage] : level.goal;
+  return {
+    x: anchorX(s, positions), z: anchorZ(s, positions), r: s.r,
+    kind: stage < wps.length ? 'waypoint' : 'goal',
+    index: stage < wps.length ? stage : undefined,
+  };
+}
+
+// Where the ship launches from for a given stage, at the given body positions.
+export function legStart(level, stage, positions) {
+  const wps = level.waypoints || EMPTY;
+  const s = stage === 0 ? level.ship : wps[stage - 1];
+  return { x: anchorX(s, positions), z: anchorZ(s, positions) };
 }
 
 export function legCount(level) {
@@ -138,7 +153,7 @@ export function checkState(level, x, z, positions, hazPositions, stage) {
       if (dx * dx + dz * dz < hit * hit) return { type: 'hazard', hazard: i };
     }
   }
-  const tgt = activeTarget(level, stage);
+  const tgt = activeTarget(level, stage, positions);
   const gx = tgt.x - x, gz = tgt.z - z;
   if (gx * gx + gz * gz < tgt.r * tgt.r) {
     return tgt.kind === 'goal' ? { type: 'goal' } : { type: 'waypoint', index: tgt.index };
