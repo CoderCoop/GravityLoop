@@ -142,9 +142,16 @@ make it reproducible ship with the code:
 
 | File | What it is |
 | --- | --- |
-| [`PROMPT.md`](PROMPT.md) | **Reconstitution prompt.** The spec-as-prompt that rebuilds this game from an empty directory — core fantasy, physics constants, level-design rules and the verification gates. Readable and copyable in-game under *Built by AI · rebuild it yourself*. |
+| [`PROMPT.md`](PROMPT.md) | **Reconstitution entry point.** The kickoff prompt, plus a map of the spec. Copyable in-game under *Built by AI · rebuild it yourself* — the button hands you the prompt and all three spec documents in one block. |
+| [`spec/requirements.md`](spec/requirements.md) | **What to build.** Normative requirements in [EARS](https://alistairmavin.com/ears/) notation (Mavin et al., IEEE RE 2009) with [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) keywords and stable IDs. |
+| [`spec/design.md`](spec/design.md) | **How it hangs together.** Module boundaries, data model, and rationale for the decisions that were reached the hard way. |
+| [`spec/tasks.md`](spec/tasks.md) | **What order to build it in.** Phased tasks, each naming the requirements it satisfies and the check that proves it. |
 | [`AGENTS.md`](AGENTS.md) | Standing conventions for agents working on this repo, in the cross-tool [AGENTS.md](https://agents.md) format. `CLAUDE.md` is a symlink to it. |
 | [`src/changelog.js`](src/changelog.js) | Player-facing release notes, shown in-game under *What's new*. |
+
+The spec follows the requirements → design → tasks triad that
+[GitHub Spec Kit](https://github.com/github/spec-kit) and Amazon Kiro both
+generate, so an agent that knows either already knows this layout.
 
 The working practices these encode are the load-bearing part:
 

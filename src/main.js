@@ -1745,13 +1745,15 @@ async function showRebuild() {
     <div class="panel wide">
       <h1 class="news-h1">Rebuild this game</h1>
       <p class="tagline">GravityLoop was specified in conversation and written by an AI
-        coding agent. This is the reconstitution prompt — hand it to a capable agent in an
-        empty directory and you should get this game back.</p>
+        coding agent. It ships with the specification that rebuilds it — requirements in
+        EARS notation, a design, and a phased task list. Copy the whole thing into an
+        agent in an empty directory and you should get this game back.</p>
       <pre id="prompt-box" class="promptbox">Loading…</pre>
       <div class="rebuild-actions">
-        <button id="btn-copy-prompt">📋 Copy prompt</button>
-        <a class="btnlink" href="${REPO}/blob/main/PROMPT.md" target="_blank" rel="noopener">PROMPT.md ↗</a>
-        <a class="btnlink" href="${REPO}/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md ↗</a>
+        <button id="btn-copy-prompt">📋 Copy full spec</button>
+        <a class="btnlink" href="${REPO}/blob/main/spec/requirements.md" target="_blank" rel="noopener">requirements ↗</a>
+        <a class="btnlink" href="${REPO}/blob/main/spec/design.md" target="_blank" rel="noopener">design ↗</a>
+        <a class="btnlink" href="${REPO}/blob/main/spec/tasks.md" target="_blank" rel="noopener">tasks ↗</a>
       </div>
       <button id="btn-rebuild-back" class="big">◀ Back</button>
     </div>`);
@@ -1759,14 +1761,19 @@ async function showRebuild() {
     sfx.clickSound();
     showMenu();
   });
+  // Assemble the kickoff prompt and the three spec documents into one
+  // copyable block, straight from the repo files — no second copy to drift.
   let text = '';
   try {
-    const md = await (await fetch('PROMPT.md')).text();
-    // the prompt proper is the blockquote under "## The prompt"
-    text = md.split('## The prompt')[1].split('\n---')[0]
+    const [prompt, ...specs] = await Promise.all(
+      ['PROMPT.md', 'spec/requirements.md', 'spec/design.md', 'spec/tasks.md']
+        .map(f => fetch(f).then(r => r.text())),
+    );
+    const kickoff = prompt.split('## The kickoff prompt')[1].split('\n## ')[0]
       .split('\n').filter(l => l.startsWith('>')).map(l => l.replace(/^> ?/, '')).join('\n').trim();
+    text = [kickoff, ...specs.map(s => `\n\n${'='.repeat(60)}\n\n${s.trim()}`)].join('');
   } catch {
-    text = `Could not load the prompt offline — read it at ${REPO}/blob/main/PROMPT.md`;
+    text = `Could not load the spec offline — read it at ${REPO}/blob/main/PROMPT.md`;
   }
   const box = document.getElementById('prompt-box');
   if (box) box.textContent = text;
