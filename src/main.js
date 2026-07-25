@@ -34,7 +34,7 @@ let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
 let shipGroup, engineSprite, cargoBox, trailLine, trailPts = [];
-let predictLine, predictDots, predictMarker, aimArrow;
+let predictLine, predictDots, predictMarker, aimArrow, aimDial;
 let aimAnchor, aimHandle, aimBand;
 let goalGroup, padGroup;
 let fxList = [];
@@ -691,6 +691,7 @@ function buildPredict() {
   aimArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(), 6, 0x7cff6b, 2.4, 1.6);
   aimArrow.visible = false;
   scene.add(aimArrow);
+  aimDial = buildAimDial();
 
   // slingshot touch indicators: ring where the drag started, a handle dot
   // under the finger, and a dashed rubber band between them
@@ -737,7 +738,9 @@ function hideAimUI() {
   aimAnchor.visible = false;
   aimHandle.visible = false;
   aimBand.visible = false;
+  if (aimDial) aimDial.visible = false;
   document.getElementById('fine-chip').hidden = true;
+  document.getElementById('aim-readout').hidden = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -1177,8 +1180,66 @@ function updateAimTouchUI(p, power) {
 }
 
 const _dir = new THREE.Vector3();
+// Launch telemetry: with fine-aim damping the handle is no longer the launch
+// vector, so show the vector itself — a full-power reference ring with
+// heading ticks (the aim arrow is the needle, its tip touching the ring at
+// 100%) plus an exact heading/power readout.
+const AIM_RING_R = window.TELE_R || 7;
+function buildAimDial() {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(AIM_RING_R, 0.12, 6, 72),
+    new THREE.MeshBasicMaterial({ color: 0x7f8cc0, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }),
+  );
+  ring.rotation.x = Math.PI / 2;
+  g.add(ring);
+  const pts = [];
+  for (let d = 0; d < 360; d += 15) {
+    const a = (d * Math.PI) / 180;
+    const inner = d % 45 === 0 ? AIM_RING_R - 1.9 : AIM_RING_R - 0.9;
+    pts.push(Math.cos(a) * inner, 0, Math.sin(a) * inner,
+             Math.cos(a) * (AIM_RING_R + 0.3), 0, Math.sin(a) * (AIM_RING_R + 0.3));
+  }
+  const tg = new THREE.BufferGeometry();
+  tg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3));
+  g.add(new THREE.LineSegments(tg, new THREE.LineBasicMaterial({
+    color: 0x8fa0d8, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false,
+  })));
+  g.visible = false;
+  scene.add(g);
+  return g;
+}
+
+const _tproj = new THREE.Vector3();
+function updateAimTelemetry(power) {
+  const mode = window.TELE || 'both';
+  const speed = Math.hypot(launchVel.x, launchVel.z);
+  const chip = document.getElementById('aim-readout');
+  if (speed < MIN_LAUNCH) {
+    if (aimDial) aimDial.visible = false;
+    chip.hidden = true;
+    return;
+  }
+  if (aimDial) {
+    aimDial.visible = mode !== 'chip';
+    aimDial.position.set(ship.x, shipY() + 0.5, ship.z);
+  }
+  if (mode === 'dial') { chip.hidden = true; return; }
+  // screen-up is -z rotated by the camera yaw; report a compass heading so the
+  // number means the same thing however the view is twisted
+  let deg = (Math.atan2(launchVel.x, -launchVel.z) * 180) / Math.PI - (camYaw * 180) / Math.PI;
+  deg = ((deg % 360) + 360) % 360;
+  chip.textContent = `${deg.toFixed(1)}° · ${Math.round(power * 100)}%`;
+  _tproj.set(ship.x, shipY() + 0.5, ship.z).project(camera);
+  const r = renderer.domElement.getBoundingClientRect();
+  chip.style.left = `${r.left + ((_tproj.x + 1) / 2) * r.width}px`;
+  chip.style.top = `${r.top + ((1 - _tproj.y) / 2) * r.height}px`;
+  chip.hidden = false;
+}
+
 function updateAimArrow(power) {
   const speed = Math.hypot(launchVel.x, launchVel.z);
+  updateAimTelemetry(power);
   if (speed < MIN_LAUNCH) { aimArrow.visible = false; return; }
   _dir.set(launchVel.x / speed, 0, launchVel.z / speed);
   aimArrow.position.set(ship.x, shipY() + 0.6, ship.z);

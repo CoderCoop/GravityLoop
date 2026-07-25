@@ -176,6 +176,23 @@ html, body {
 .level-dot.current { background: rgba(60, 130, 255, 0.45); border-color: #7ad7ff; }
 .level-dot.locked { opacity: 0.45; cursor: default; font-size: 12px; }
 
+/* ------------------------------------------------ launch telemetry */
+#aim-readout {
+  position: fixed;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate(-50%, 150%);
+  background: rgba(8, 6, 24, 0.9);
+  border: 1.5px solid rgba(255, 209, 102, 0.75);
+  color: #ffe9b0;
+  border-radius: 9px;
+  padding: 4px 11px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------------------------------------------------- fine-aim chip */
 #fine-chip {
   position: fixed;

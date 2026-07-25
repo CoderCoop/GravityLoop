@@ -78,9 +78,9 @@ function keepOuts(level, anchors) {
 }
 
 // Orbit for body i of `level`, or null if it should stay put.
-function orbitFor(level, i, scale, anchors) {
+function orbitFor(level, i, scale, anchors, frozen) {
   const b = level.bodies[i];
-  if (b.orbit || isSun(b) || i === 0) return null;
+  if (b.orbit || isSun(b) || i === 0 || (frozen && frozen.has(i))) return null;
   const pi = b.moonOf != null ? b.moonOf : 0;
   const p = level.bodies[pi];
   if (!p || p.x == null) return null;
@@ -111,10 +111,10 @@ function orbitFor(level, i, scale, anchors) {
   };
 }
 
-function withOrbits(level, scale, anchors) {
+function withOrbits(level, scale, anchors, frozen) {
   const out = { ...level, bodies: level.bodies.map(b => ({ ...b })) };
   for (let i = 0; i < out.bodies.length; i++) {
-    const o = orbitFor(level, i, scale, anchors);
+    const o = orbitFor(level, i, scale, anchors, frozen);
     if (!o) continue;
     delete out.bodies[i].x;
     delete out.bodies[i].z;
@@ -134,7 +134,10 @@ function withOrbits(level, scale, anchors) {
 
 // Backstop for the geometric check above: moons ride a moving parent, and an
 // anchored station must never be swept by a body OTHER than its own.
-function keepsClear(level, anchors) {
+// Which orbiting bodies sweep a pad or station they are not carrying. Empty
+// means the level is clear.
+function offenders(level, anchors) {
+  const bad = new Set();
   const spots = keepOuts(level, anchors);
   const riders = [
     { spot: level.ship, r: 3, own: anchors.ship && anchors.ship.body },
@@ -147,16 +150,16 @@ function keepsClear(level, anchors) {
       const b = level.bodies[i];
       if (!b.orbit) continue;
       for (const s of spots) {
-        if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < b.radius + s.r) return false;
+        if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < b.radius + s.r) bad.add(i);
       }
       for (const rd of riders) {
         if (rd.own === i) continue;                       // its own host is fine
         const sx = anchorX(rd.spot, ps), sz = anchorZ(rd.spot, ps);
-        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < b.radius + rd.r) return false;
+        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < b.radius + rd.r) bad.add(i);
       }
     }
   }
-  return true;
+  return bad;
 }
 
 // Coarse solver sweep, identical in shape to solve.js --fast.
@@ -190,12 +193,20 @@ function solveLevel(index) {
     return { index, scale: null, skipped: 'already moving', bodies: [] };
   }
   const anchors = anchorsFor(level);
+  // Freeze the specific bodies that would sweep a pad or station — slowing
+  // them down never helps, it only delays the collision.
+  const frozen = new Set();
+  for (let pass = 0; pass < 8; pass++) {
+    const bad = offenders(withOrbits(level, 1, anchors, frozen), anchors);
+    if (!bad.size) break;
+    bad.forEach(i => frozen.add(i));
+  }
   for (const scale of BACKOFF) {
-    const cand = withOrbits(level, scale, anchors);
+    const cand = withOrbits(level, scale, anchors, frozen);
     if (!cand.bodies.some(b => b.orbit)) {
       return { index, scale: null, skipped: 'no orbitable bodies', bodies: [] };
     }
-    if (!keepsClear(cand, anchors)) continue;
+    if (offenders(cand, anchors).size) continue;
     const wins = minWinsOf(cand);
     if (wins >= MIN_WINS) {
       const bodies = cand.bodies.map((b, i) => (b.orbit ? { i, orbit: b.orbit } : null)).filter(Boolean);
