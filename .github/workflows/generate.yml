@@ -27,9 +27,9 @@ jobs:
             const shard = (s, slots, n) => slots.forEach(sl => { for (let k = 0; k < n; k++) jobs.push({ s, slot: sl, k, n }); });
             single(0, [0,1,2,3,4,5,6,7,8,9]);          // Earthrise: light
             single(1, [0,1,2,3,4,5,6,7,8,9]);          // Inner: light
-            single(2, [0,1,2,3]); shard(2, [4,5,6,7,8,9], 2);  // Outer: stations medium
-            single(3, [0,1,2]);  shard(3, [3,4,5,6,7,8,9], 6); // Belt: cargo hauls heavy
-            single(4, [0,1,2,3,4,5,6,7,8,9]);          // Alien: light-medium
+            single(2, [0,1]); shard(2, [2,3], 2); shard(2, [4,5,6,7,8,9], 3);  // Outer
+            single(3, [0,1,2]);  shard(3, [3,4,5,6,7,8,9], 8); // Belt: cargo hauls heavy
+            single(4, [0,1]); shard(4, [2,3,4,5,6,7,8,9], 2);  // Alien: dynamic solves
             console.log("matrix=" + JSON.stringify({ include: jobs }));
           ' >> "$GITHUB_OUTPUT"
   gen:
@@ -71,11 +71,17 @@ jobs:
           merge-multiple: true
       - name: Merge shards and assemble levels.js
         run: |
-          for slot in 4 5 6 7 8 9; do
+          for slot in 2 3; do
             node tools/generate.js --merge-slot=2:$slot --dir=slots --shards=2
           done
+          for slot in 4 5 6 7 8 9; do
+            node tools/generate.js --merge-slot=2:$slot --dir=slots --shards=3
+          done
           for slot in 3 4 5 6 7 8 9; do
-            node tools/generate.js --merge-slot=3:$slot --dir=slots --shards=6
+            node tools/generate.js --merge-slot=3:$slot --dir=slots --shards=8
+          done
+          for slot in 2 3 4 5 6 7 8 9; do
+            node tools/generate.js --merge-slot=4:$slot --dir=slots --shards=2
           done
           node tools/generate.js --assemble=slots
           node tools/solve.js --fast

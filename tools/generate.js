@@ -1021,17 +1021,18 @@ const SETS = [
 // Turning thresholds per set: [every winner must bend >=, median winner
 // should bend >=] in radians. GEN_TIER=A is moderate, B (default) demands
 // loops-and-curves hard, scaling with difficulty.
-const TIER = process.env.GEN_TIER || 'B';
+const TIER = process.env.GEN_TIER || 'C';
 const TURNS = {
   A: [[0.7, 1.2], [1.0, 1.5], [1.3, 1.8], [1.6, 2.2], [2.0, 2.8]],
   B: [[1.0, 1.8], [1.5, 2.3], [2.0, 2.8], [2.5, 3.3], [3.2, 4.0]],
+  C: [[1.3, 2.2], [2.0, 2.9], [2.6, 3.5], [3.2, 4.2], [4.0, 5.0]],
 }[TIER];
 SETS.forEach((s, i) => { s.turnMin = TURNS[i][0]; s.turnMed = TURNS[i][1]; });
 // blockers + turn gates cut raw win rates: halve the band floors
 SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
-const ATTEMPTS = 500;
+const ATTEMPTS = +(process.env.GEN_ATTEMPTS || 800);   // extreme-turn candidates are rare
 
 // `--sets=1,2` generates only those sets and skips writing levels.js — a
 // dry run for tuning samplers without waiting for the full campaign.
