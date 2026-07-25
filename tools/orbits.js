@@ -33,6 +33,15 @@ function isSun(b) {
   return b.type === 'sun' || b.type === 'blackhole' || b.mass < 0;
 }
 
+// Fixed points a body must never be able to reach: the launch pad, every
+// waypoint, and the goal.
+function keepOuts(level) {
+  const spots = [{ x: level.ship.x, z: level.ship.z, r: 3 },
+                 { x: level.goal.x, z: level.goal.z, r: level.goal.r + 1 }];
+  for (const wp of level.waypoints || []) spots.push({ x: wp.x, z: wp.z, r: wp.r + 1 });
+  return spots;
+}
+
 // Orbit for body i of `level`, or null if it should stay put.
 function orbitFor(level, i, scale) {
   const b = level.bodies[i];
@@ -43,6 +52,12 @@ function orbitFor(level, i, scale) {
   const dx = b.x - p.x, dz = b.z - p.z;
   const r = Math.hypot(dx, dz);
   if (r < 1) return null;
+  // A circle that passes over the pad, a waypoint or the goal sweeps it
+  // sooner or later no matter how slow it turns — that body stays put.
+  for (const s of keepOuts(level)) {
+    const d = Math.hypot(s.x - p.x, s.z - p.z);
+    if (Math.abs(d - r) < b.radius + s.r + 1) return null;
+  }
   const set = Math.min(Math.floor(level.difficulty ? level.difficulty - 1 : 0), 3);
   const base = (SWEEP_DEG[set] * Math.PI) / 180 / 10;
   // inner orbits sweep faster (Kepler-ish), moons faster still
@@ -66,12 +81,11 @@ function withOrbits(level, scale) {
   return out;
 }
 
-// No body may sweep over the pad, a waypoint or the goal during a flight.
+// Backstop for the geometric check above: moons ride a moving parent, so
+// sample the real positions too.
 function keepsClear(level) {
-  const spots = [{ x: level.ship.x, z: level.ship.z, r: 3 },
-                 { x: level.goal.x, z: level.goal.z, r: level.goal.r + 1 }];
-  for (const wp of level.waypoints || []) spots.push({ x: wp.x, z: wp.z, r: wp.r + 1 });
-  for (let t = 0; t <= 40; t += 0.5) {
+  const spots = keepOuts(level);
+  for (let t = 0; t <= 120; t += 0.5) {
     const ps = bodiesAt(level, t);
     for (let i = 0; i < ps.length; i++) {
       const b = level.bodies[i];
