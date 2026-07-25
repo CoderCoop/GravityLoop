@@ -3,6 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
+  anchorX, anchorZ,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import * as sfx from './audio.js';
@@ -600,9 +601,9 @@ function buildGoal() {
 
 // The light column always stands on whatever you must reach NEXT — a cargo
 // stop, a station, or the final goal.
-function updateBeacon() {
+function updateBeacon(positions) {
   if (!goalBeacon || !level) return;
-  const tgt = activeTarget(level, stage);
+  const tgt = activeTarget(level, stage, positions);
   goalBeacon.position.set(tgt.x, 23, tgt.z);
   const s = Math.max(tgt.r, 1.8) / Math.max(level.goal.r, 0.001);
   goalBeacon.scale.set(s, 1, s);
@@ -781,7 +782,7 @@ function derivedCarrying() {
 
 function resetLeg() {
   state = 'ready';
-  const start = legStart(level, stage);
+  const start = legStart(level, stage, bodiesAt(level, simTime));
   ship = { x: start.x, z: start.z, vx: 0, vz: 0 };
   resetCamera();
   updateBeacon();
@@ -974,7 +975,7 @@ function resetCamera() {
   camYaw = 0;
   camPan = { x: 0, z: 0 };
   if (!level) return;
-  const tgt = activeTarget(level, stage);
+  const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
   const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
   const D = Math.hypot(dx, dz);
   if (D > 1) camYaw = Math.atan2(-dx, -dz);
@@ -1412,22 +1413,33 @@ function frame(now) {
 
   // waypoints
   for (const wv of waypointVisuals) {
-    const y = heightAt(level, wv.wp.x, wv.wp.z, positions);
-    wv.group.position.set(wv.wp.x, y + 0.5, wv.wp.z);
+    const wx = anchorX(wv.wp, positions), wz = anchorZ(wv.wp, positions);
+    const y = heightAt(level, wx, wz, positions);
+    wv.group.position.set(wx, y + 0.5, wz);
     const ring = wv.group.getObjectByName('ring');
     if (wv.index === stage) ring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
     const core = wv.group.getObjectByName('core');
     if (core) core.rotation.y += dt * 0.8;
   }
 
-  // goal + pad
-  const gy = goalY(positions);
-  goalGroup.position.set(level.goal.x, gy + 0.5, level.goal.z);
+  // goal + pad (both may be stations riding an orbiting body)
+  const goalX = anchorX(level.goal, positions), goalZ = anchorZ(level.goal, positions);
+  goalGroup.position.set(goalX, goalY(positions) + 0.5, goalZ);
   const gring = goalGroup.getObjectByName('pulse');
   if (gring && stage >= (level.waypoints || []).length) gring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
   const gstation = goalGroup.getObjectByName('station');
   if (gstation) gstation.rotation.y += dt * 0.5;
-  padGroup.position.set(level.ship.x, heightAt(level, level.ship.x, level.ship.z, positions) + 0.4, level.ship.z);
+  const padX = anchorX(level.ship, positions), padZ = anchorZ(level.ship, positions);
+  padGroup.position.set(padX, heightAt(level, padX, padZ, positions) + 0.4, padZ);
+  // the parked ship rides its pad until launch
+  if (state === 'ready' || state === 'aiming') {
+    if (stage === 0) { ship.x = padX; ship.z = padZ; }
+    else {
+      const wp = level.waypoints[stage - 1];
+      ship.x = anchorX(wp, positions); ship.z = anchorZ(wp, positions);
+    }
+  }
+  updateBeacon(positions);
 
   // ship
   if (shipGroup.visible) {
@@ -1437,7 +1449,7 @@ function frame(now) {
     if (state === 'flying' && (ship.vx || ship.vz)) {
       shipGroup.rotation.y = Math.atan2(ship.vx, ship.vz);
     } else if (state === 'ready' || state === 'aiming') {
-      const tgt = activeTarget(level, stage);
+      const tgt = activeTarget(level, stage, positions);
       const dir = state === 'aiming' && Math.hypot(launchVel.x, launchVel.z) > 2
         ? launchVel : { x: tgt.x - ship.x, z: tgt.z - ship.z };
       shipGroup.rotation.y = Math.atan2(dir.x, dir.z);
@@ -1490,7 +1502,8 @@ function shipY(positions) {
   return heightAt(level, ship.x, ship.z, positions || bodiesAt(level, simTime)) + 1.6;
 }
 function goalY(positions) {
-  return heightAt(level, level.goal.x, level.goal.z, positions || bodiesAt(level, simTime));
+  const p = positions || bodiesAt(level, simTime);
+  return heightAt(level, anchorX(level.goal, p), anchorZ(level.goal, p), p);
 }
 
 function updateCamera(dt) {

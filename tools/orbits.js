@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { predict, legStart, legCount, bodiesAt } from '../src/physics.js';
+import { predict, legStart, legCount, bodiesAt, anchorX, anchorZ } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
 
 // Degrees a mid-distance planet sweeps during a 10s flight, per set.
@@ -33,17 +33,52 @@ function isSun(b) {
   return b.type === 'sun' || b.type === 'blackhole' || b.mass < 0;
 }
 
-// Fixed points a body must never be able to reach: the launch pad, every
-// waypoint, and the goal.
-function keepOuts(level) {
-  const spots = [{ x: level.ship.x, z: level.ship.z, r: 3 },
-                 { x: level.goal.x, z: level.goal.z, r: level.goal.r + 1 }];
-  for (const wp of level.waypoints || []) spots.push({ x: wp.x, z: wp.z, r: wp.r + 1 });
+// Pads and stations are structures parked beside a world, so they ride it:
+// anything sitting within ANCHOR_GAP of a body's surface is anchored to that
+// body and keeps its offset as the body orbits. Deep-space stations that
+// belong to no world stay where they are.
+const ANCHOR_GAP = 12;
+function anchorTo(level, spot) {
+  let best = -1, bestD = Infinity;
+  for (let i = 0; i < level.bodies.length; i++) {
+    const b = level.bodies[i];
+    if (b.x == null) continue;                 // already-orbiting body
+    const d = Math.hypot(spot.x - b.x, spot.z - b.z) - b.radius;
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  if (best < 0 || bestD > ANCHOR_GAP) return null;
+  const b = level.bodies[best];
+  return { body: best, dx: +(spot.x - b.x).toFixed(3), dz: +(spot.z - b.z).toFixed(3) };
+}
+function anchorsFor(level) {
+  const out = { ship: anchorTo(level, level.ship), goal: anchorTo(level, level.goal), waypoints: [] };
+  for (const wp of level.waypoints || []) out.waypoints.push(anchorTo(level, wp));
+  return out;
+}
+
+// Pads/stations anchored to body `pi`, as offsets from it.
+function ridersOf(level, anchors, pi) {
+  const out = [];
+  const add = (a, r) => { if (a && a.body === pi) out.push({ dx: a.dx, dz: a.dz, r }); };
+  add(anchors.ship, 3);
+  add(anchors.goal, level.goal.r + 1);
+  (level.waypoints || []).forEach((wp, i) => add(anchors.waypoints[i], wp.r + 1));
+  return out;
+}
+
+// Fixed points a body must never sweep over: only the ones NOT riding it.
+function keepOuts(level, anchors) {
+  const spots = [];
+  if (!anchors.ship) spots.push({ x: level.ship.x, z: level.ship.z, r: 3 });
+  if (!anchors.goal) spots.push({ x: level.goal.x, z: level.goal.z, r: level.goal.r + 1 });
+  (level.waypoints || []).forEach((wp, i) => {
+    if (!anchors.waypoints[i]) spots.push({ x: wp.x, z: wp.z, r: wp.r + 1 });
+  });
   return spots;
 }
 
 // Orbit for body i of `level`, or null if it should stay put.
-function orbitFor(level, i, scale) {
+function orbitFor(level, i, scale, anchors) {
   const b = level.bodies[i];
   if (b.orbit || isSun(b) || i === 0) return null;
   const pi = b.moonOf != null ? b.moonOf : 0;
@@ -52,10 +87,17 @@ function orbitFor(level, i, scale) {
   const dx = b.x - p.x, dz = b.z - p.z;
   const r = Math.hypot(dx, dz);
   if (r < 1) return null;
-  // A circle that passes over the pad, a waypoint or the goal sweeps it
-  // sooner or later no matter how slow it turns — that body stays put.
-  for (const s of keepOuts(level)) {
+  // A circle that passes over an unattached pad/station sweeps it sooner or
+  // later no matter how slow it turns — that body stays put.
+  for (const s of keepOuts(level, anchors)) {
     const d = Math.hypot(s.x - p.x, s.z - p.z);
+    if (Math.abs(d - r) < b.radius + s.r + 1) return null;
+  }
+  // Same test in parent-relative space for stations riding this same parent
+  // (a moon and a station on the one planet keep a fixed relative geometry,
+  // so if the moon's ring crosses the station it always will).
+  for (const s of ridersOf(level, anchors, pi)) {
+    const d = Math.hypot(s.dx, s.dz);
     if (Math.abs(d - r) < b.radius + s.r + 1) return null;
   }
   const set = Math.min(Math.floor(level.difficulty ? level.difficulty - 1 : 0), 3);
@@ -69,22 +111,36 @@ function orbitFor(level, i, scale) {
   };
 }
 
-function withOrbits(level, scale) {
+function withOrbits(level, scale, anchors) {
   const out = { ...level, bodies: level.bodies.map(b => ({ ...b })) };
   for (let i = 0; i < out.bodies.length; i++) {
-    const o = orbitFor(level, i, scale);
+    const o = orbitFor(level, i, scale, anchors);
     if (!o) continue;
     delete out.bodies[i].x;
     delete out.bodies[i].z;
     out.bodies[i].orbit = o;
   }
+  // pads and stations ride the body they were parked beside — but only if
+  // that body actually ended up moving
+  const rides = a => a && !!out.bodies[a.body].orbit;
+  out.ship = rides(anchors.ship) ? { ...level.ship, anchor: anchors.ship } : level.ship;
+  out.goal = rides(anchors.goal) ? { ...level.goal, anchor: anchors.goal } : level.goal;
+  if (level.waypoints) {
+    out.waypoints = level.waypoints.map((wp, i) =>
+      (rides(anchors.waypoints[i]) ? { ...wp, anchor: anchors.waypoints[i] } : wp));
+  }
   return out;
 }
 
-// Backstop for the geometric check above: moons ride a moving parent, so
-// sample the real positions too.
-function keepsClear(level) {
-  const spots = keepOuts(level);
+// Backstop for the geometric check above: moons ride a moving parent, and an
+// anchored station must never be swept by a body OTHER than its own.
+function keepsClear(level, anchors) {
+  const spots = keepOuts(level, anchors);
+  const riders = [
+    { spot: level.ship, r: 3, own: anchors.ship && anchors.ship.body },
+    { spot: level.goal, r: level.goal.r + 1, own: anchors.goal && anchors.goal.body },
+    ...(level.waypoints || []).map((wp, i) => ({ spot: wp, r: wp.r + 1, own: anchors.waypoints[i] && anchors.waypoints[i].body })),
+  ].filter(x => x.own != null);
   for (let t = 0; t <= 120; t += 0.5) {
     const ps = bodiesAt(level, t);
     for (let i = 0; i < ps.length; i++) {
@@ -92,6 +148,11 @@ function keepsClear(level) {
       if (!b.orbit) continue;
       for (const s of spots) {
         if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < b.radius + s.r) return false;
+      }
+      for (const rd of riders) {
+        if (rd.own === i) continue;                       // its own host is fine
+        const sx = anchorX(rd.spot, ps), sz = anchorZ(rd.spot, ps);
+        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < b.radius + rd.r) return false;
       }
     }
   }
@@ -103,10 +164,10 @@ function minWinsOf(level) {
   const legs = legCount(level);
   let worst = Infinity;
   for (let leg = 0; leg < legs; leg++) {
-    const start = legStart(level, leg);
     let wins = 0;
     for (let ti = 0; ti < T_SAMPLES; ti++) {
       const t0 = ti * 0.9;
+      const start = legStart(level, leg, bodiesAt(level, t0));
       for (let ang = 0; ang < 360; ang += 3) {
         const rad = (ang * Math.PI) / 180;
         for (let sp = 10; sp <= level.maxLaunch; sp += 4) {
@@ -128,16 +189,23 @@ function solveLevel(index) {
   if (already) {
     return { index, scale: null, skipped: 'already moving', bodies: [] };
   }
+  const anchors = anchorsFor(level);
   for (const scale of BACKOFF) {
-    const cand = withOrbits(level, scale);
+    const cand = withOrbits(level, scale, anchors);
     if (!cand.bodies.some(b => b.orbit)) {
       return { index, scale: null, skipped: 'no orbitable bodies', bodies: [] };
     }
-    if (!keepsClear(cand)) continue;
+    if (!keepsClear(cand, anchors)) continue;
     const wins = minWinsOf(cand);
     if (wins >= MIN_WINS) {
       const bodies = cand.bodies.map((b, i) => (b.orbit ? { i, orbit: b.orbit } : null)).filter(Boolean);
-      return { index, scale, minWins: wins, bodies };
+      const rides = a => a && bodies.some(x => x.i === a.body);
+      return {
+        index, scale, minWins: wins, bodies,
+        ship: rides(anchors.ship) ? anchors.ship : null,
+        goal: rides(anchors.goal) ? anchors.goal : null,
+        waypoints: (level.waypoints || []).map((_, i) => (rides(anchors.waypoints[i]) ? anchors.waypoints[i] : null)),
+      };
     }
   }
   return { index, scale: 0, skipped: 'stays static (no speed kept it winnable)', bodies: [] };
@@ -161,8 +229,14 @@ if (applyDir) {
       delete levels[i].bodies[bi].z;
       levels[i].bodies[bi].orbit = orbit;
     }
+    if (r.ship) levels[i].ship = { ...levels[i].ship, anchor: r.ship };
+    if (r.goal) levels[i].goal = { ...levels[i].goal, anchor: r.goal };
+    (r.waypoints || []).forEach((a, wi) => {
+      if (a) levels[i].waypoints[wi] = { ...levels[i].waypoints[wi], anchor: a };
+    });
+    const rid = [r.ship && 'pad', r.goal && 'goal', (r.waypoints || []).filter(Boolean).length && 'stations'].filter(Boolean);
     moved++;
-    console.log(`L${String(i + 1).padStart(2)} ${(levels[i].name || '').padEnd(20)} speed ${(r.scale * 100).toFixed(0)}% of target  min-leg ${r.minWins} wins`);
+    console.log(`L${String(i + 1).padStart(2)} ${(levels[i].name || '').padEnd(20)} speed ${(r.scale * 100).toFixed(0)}%  min-leg ${String(r.minWins).padStart(3)} wins  riding: ${rid.join('+') || 'none'}`);
   }
   const setsOut = SETS.map(s => ({ name: s.name, difficulty: s.difficulty }));
   let js = `// GravityLoop — level data (50 levels in 5 themed sets of 10).
