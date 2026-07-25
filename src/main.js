@@ -11,8 +11,8 @@ import * as tx from './textures.js';
 // ---------------------------------------------------------------------------
 // Constants & state
 // ---------------------------------------------------------------------------
-const GRID_STATIC = 161;      // terrain vertices per side (static levels)
-const GRID_DYNAMIC = 111;     // moving levels re-deform the grid every frame
+const GRID_N = 161;           // terrain vertices per side
+const DEFORM_EPS = 0.12;      // world units a body must move to redraw terrain
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
 const FINE_MAX = 12;          // deepest fine ratio at a near-still pointer
 const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
@@ -28,6 +28,7 @@ const SAVE_KEY = 'gravityloop-save-v2';
 let renderer, scene, camera;
 let terrain;
 let bodyVisuals = [];         // [{ group, body, spin, discSpin? }]
+let orbitVisuals = [];        // dotted orbit rings, one per orbiting body
 let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
@@ -201,8 +202,7 @@ function makeGlow(color, scale, opacity = 0.85) {
 // ---------------------------------------------------------------------------
 function buildTerrain() {
   if (terrain) { scene.remove(terrain.lines); terrain.lines.geometry.dispose(); }
-  const dyn = level.bodies.some(b => b.orbit);
-  const N = dyn ? GRID_DYNAMIC : GRID_STATIC, E = level.extent, span = 2 * E;
+  const N = GRID_N, E = level.extent, span = 2 * E;
   const gridX = new Float32Array(N * N), gridZ = new Float32Array(N * N);
   const pos = new Float32Array(N * N * 3), col = new Float32Array(N * N * 3);
   for (let j = 0; j < N; j++) {
@@ -253,9 +253,28 @@ function heightColor(y, out, o) {
   out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
 }
 
+// Every level moves now, so the whole grid can't be re-deformed every frame at
+// full density. It doesn't need to be: redraw only once the bodies have
+// actually shifted by a fraction of a grid cell, which for the slow early sets
+// is a few times a second and for fast alien systems is every frame.
+let deformAt = null;
+function terrainNeedsUpdate(positions) {
+  if (!deformAt || deformAt.length !== positions.length * 2) return true;
+  for (let i = 0; i < positions.length; i++) {
+    if (Math.abs(positions[i].x - deformAt[i * 2]) +
+        Math.abs(positions[i].z - deformAt[i * 2 + 1]) > DEFORM_EPS) return true;
+  }
+  return false;
+}
+
 function updateTerrain(positions) {
   const { gridX, gridZ, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
+  deformAt = new Float64Array(positions.length * 2);
+  for (let i = 0; i < positions.length; i++) {
+    deformAt[i * 2] = positions[i].x;
+    deformAt[i * 2 + 1] = positions[i].z;
+  }
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = heightAt(level, gridX[idx], gridZ[idx], positions);
     pos[idx * 3 + 1] = y;
@@ -342,9 +361,11 @@ function buildBodies() {
       spin = 0.12;
     } else {
       const style = body.radius >= 4.4 && (seed & 1) === 0 ? 'banded' : body.radius >= 4.6 ? 'banded' : 'rocky';
+      // real solar-system worlds get their own look; alien ones stay procedural
+      const named = tx.namedPlanetTexture(body.name, seed);
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(body.radius, 24, 18),
-        new THREE.MeshBasicMaterial({ map: tx.planetTexture(body.color, seed, style) }),
+        new THREE.MeshBasicMaterial({ map: named || tx.planetTexture(body.color, seed, style) }),
       );
       sphere.rotation.z = 0.2 - (seed % 100) / 250;
       const atmo = new THREE.Mesh(
@@ -352,7 +373,8 @@ function buildBodies() {
         new THREE.MeshBasicMaterial({ color: body.color, transparent: true, opacity: 0.13, blending: THREE.AdditiveBlending, depthWrite: false }),
       );
       group.add(sphere, atmo, makeGlow(body.color, body.radius * 3.6, 0.55));
-      if (style === 'banded' && seed % 3 === 0) {
+      const namedRings = /^saturn$/i.test(body.name || '');
+      if (namedRings || (!named && style === 'banded' && seed % 3 === 0)) {
         const rings = new THREE.Mesh(
           new THREE.RingGeometry(body.radius * 1.45, body.radius * 2.3, 48),
           new THREE.MeshBasicMaterial({ map: tx.ringSystemTexture(body.color, seed), transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false }),
@@ -366,6 +388,48 @@ function buildBodies() {
     scene.add(group);
     const arrow = body.orbit ? makeMotionArrow(0x9bd5ff) : null;
     bodyVisuals.push({ group, body, spin, discGroup, arrow });
+  }
+  buildOrbitPaths();
+}
+
+// ---------------------------------------------------------------------------
+// Orbit paths — dotted rings draped over the terrain, so an orbit visibly
+// dips through the wells it crosses.
+// ---------------------------------------------------------------------------
+const ORBIT_SEGS = 132;
+function buildOrbitPaths() {
+  for (const ov of orbitVisuals) scene.remove(ov.line);
+  orbitVisuals = [];
+  for (let i = 0; i < level.bodies.length; i++) {
+    const o = level.bodies[i].orbit;
+    if (!o) continue;
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((ORBIT_SEGS + 1) * 3), 3));
+    // fixed-size beads: legible at every zoom, unlike world-scaled dashes
+    const line = new THREE.Points(geo, new THREE.PointsMaterial({
+      color: 0xffd9a0, size: 2.6, sizeAttenuation: false,
+      transparent: true, opacity: 0.85, depthWrite: false,
+    }));
+    line.frustumCulled = false;
+    scene.add(line);
+    orbitVisuals.push({ line, o });
+  }
+}
+function updateOrbitPaths(positions) {
+  for (const ov of orbitVisuals) {
+    const o = ov.o;
+    const c = o.parent != null ? positions[o.parent] : { x: o.cx || 0, z: o.cz || 0 };
+    const attr = ov.line.geometry.getAttribute('position');
+    const arr = attr.array;
+    for (let j = 0; j <= ORBIT_SEGS; j++) {
+      const a = (j / ORBIT_SEGS) * Math.PI * 2;
+      const x = c.x + Math.cos(a) * o.radius, z = c.z + Math.sin(a) * o.radius;
+      arr[j * 3] = x;
+      arr[j * 3 + 1] = heightAt(level, x, z, positions) + 0.35;
+      arr[j * 3 + 2] = z;
+    }
+    attr.needsUpdate = true;
+    ov.line.geometry.computeBoundingSphere();
   }
 }
 
@@ -1296,7 +1360,7 @@ function frame(now) {
   }
 
   const positions = bodiesAt(level, simTime);
-  if (dynamic && (level.bodies.length <= 4 || frameCount % 2 === 0)) updateTerrain(positions);
+  if (dynamic && terrainNeedsUpdate(positions)) updateTerrain(positions);
 
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
@@ -1311,6 +1375,8 @@ function frame(now) {
     const corona = bv.group.getObjectByName('corona');
     if (corona) corona.scale.setScalar(bv.body.radius * (5.2 + Math.sin(vTime * 1.7) * 0.5));
   }
+
+  updateOrbitPaths(positions);
 
   // hazards
   const hazPositions = hazardsAt(level, simTime);
