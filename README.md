@@ -134,6 +134,33 @@ the serial pick.
 
 Both verification checks run in CI on every pull request.
 
+## Built by AI — and reproducible
+
+Every feature in this game was specified in conversation and implemented by
+an AI coding agent. Rather than leave that as a footnote, the artifacts that
+make it reproducible ship with the code:
+
+| File | What it is |
+| --- | --- |
+| [`PROMPT.md`](PROMPT.md) | **Reconstitution prompt.** The spec-as-prompt that rebuilds this game from an empty directory — core fantasy, physics constants, level-design rules and the verification gates. Readable and copyable in-game under *Built by AI · rebuild it yourself*. |
+| [`AGENTS.md`](AGENTS.md) | Standing conventions for agents working on this repo, in the cross-tool [AGENTS.md](https://agents.md) format. `CLAUDE.md` is a symlink to it. |
+| [`src/changelog.js`](src/changelog.js) | Player-facing release notes, shown in-game under *What's new*. |
+
+The working practices these encode are the load-bearing part:
+
+- **Mockup-first for anything visible.** Options get rendered from a real
+  working copy with headless Chromium and chosen by a human *before*
+  implementation, instead of being described in prose and guessed at.
+- **Verify, don't assert.** Difficulty, winnability and orbit speeds are
+  established by running the real solver over the real physics — never by
+  reasoning about them. Most of this project's hard bugs were caught that way
+  (a body whose orbit would sweep a station, for instance, cannot be fixed by
+  slowing it down; the check has to prove it, not assume it).
+- **Determinism as a contract.** Seeded generation plus provably equivalent
+  shard merging is what lets a 50-level campaign be searched across a CI
+  matrix and reassembled byte-identically.
+- **Provenance.** AI-assisted commits carry `Co-Authored-By` trailers.
+
 ## Tech
 
 - [Three.js](https://threejs.org) (vendored in `vendor/`) for rendering — a

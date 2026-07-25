@@ -6,6 +6,7 @@ import {
   anchorX, anchorZ,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
+import { CHANGELOG, VERSION } from './changelog.js';
 import * as sfx from './audio.js';
 import * as tx from './textures.js';
 
@@ -1716,12 +1717,95 @@ function showMenu() {
         <b>R</b> restart · <b>M</b> mute · fewer launches = more stars ⭐
       </p>
       <button id="btn-play" class="big">▶ Play</button>
+      <button id="btn-news" class="linkish">v${VERSION} · What's new${unreadNews() ? ' <span class="news-dot">NEW</span>' : ''}</button>
+      <button id="btn-rebuild" class="linkish">Built by AI · rebuild it yourself</button>
     </div>`);
   document.getElementById('btn-play').addEventListener('click', () => {
     sfx.clickSound();
     hideOverlay();
     resetLevel();
     state = 'ready';
+  });
+  document.getElementById('btn-news').addEventListener('click', () => {
+    sfx.clickSound();
+    showChangelog();
+  });
+  document.getElementById('btn-rebuild').addEventListener('click', () => {
+    sfx.clickSound();
+    showRebuild();
+  });
+}
+
+// The whole game was specified in conversation and built by an AI agent, so
+// the spec that reconstitutes it ships with it — readable and copyable here,
+// versioned as PROMPT.md in the repo.
+const REPO = 'https://github.com/CoderCoop/GravityLoop';
+async function showRebuild() {
+  showOverlay(`
+    <div class="panel wide">
+      <h1 class="news-h1">Rebuild this game</h1>
+      <p class="tagline">GravityLoop was specified in conversation and written by an AI
+        coding agent. This is the reconstitution prompt — hand it to a capable agent in an
+        empty directory and you should get this game back.</p>
+      <pre id="prompt-box" class="promptbox">Loading…</pre>
+      <div class="rebuild-actions">
+        <button id="btn-copy-prompt">📋 Copy prompt</button>
+        <a class="btnlink" href="${REPO}/blob/main/PROMPT.md" target="_blank" rel="noopener">PROMPT.md ↗</a>
+        <a class="btnlink" href="${REPO}/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md ↗</a>
+      </div>
+      <button id="btn-rebuild-back" class="big">◀ Back</button>
+    </div>`);
+  document.getElementById('btn-rebuild-back').addEventListener('click', () => {
+    sfx.clickSound();
+    showMenu();
+  });
+  let text = '';
+  try {
+    const md = await (await fetch('PROMPT.md')).text();
+    // the prompt proper is the blockquote under "## The prompt"
+    text = md.split('## The prompt')[1].split('\n---')[0]
+      .split('\n').filter(l => l.startsWith('>')).map(l => l.replace(/^> ?/, '')).join('\n').trim();
+  } catch {
+    text = `Could not load the prompt offline — read it at ${REPO}/blob/main/PROMPT.md`;
+  }
+  const box = document.getElementById('prompt-box');
+  if (box) box.textContent = text;
+  const copy = document.getElementById('btn-copy-prompt');
+  if (copy) {
+    copy.addEventListener('click', async () => {
+      sfx.clickSound();
+      try {
+        await navigator.clipboard.writeText(text);
+        copy.textContent = '✓ Copied';
+      } catch {
+        copy.textContent = 'Select the text above to copy';
+      }
+    });
+  }
+}
+
+// ------------------------------------------------------------- what's new
+const NEWS_KEY = 'gl-news-seen';
+function unreadNews() {
+  try { return localStorage.getItem(NEWS_KEY) !== VERSION; } catch { return false; }
+}
+function showChangelog() {
+  try { localStorage.setItem(NEWS_KEY, VERSION); } catch { /* private mode */ }
+  const entries = CHANGELOG.map((e, i) => `
+    <div class="rel${i === 0 ? ' latest' : ''}">
+      <div class="rel-head"><span class="rel-v">v${e.v}</span> <span class="rel-t">${e.title}</span>
+        <span class="rel-d">${e.date}</span></div>
+      <ul>${e.notes.map(n => `<li>${n}</li>`).join('')}</ul>
+    </div>`).join('');
+  showOverlay(`
+    <div class="panel wide">
+      <h1 class="news-h1">What's new</h1>
+      <div class="rel-list">${entries}</div>
+      <button id="btn-news-back" class="big">◀ Back</button>
+    </div>`);
+  document.getElementById('btn-news-back').addEventListener('click', () => {
+    sfx.clickSound();
+    showMenu();
   });
 }
 
