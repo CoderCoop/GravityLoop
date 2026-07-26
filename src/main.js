@@ -269,19 +269,33 @@ function terrainNeedsUpdate(positions) {
   return false;
 }
 
-// MOCKUP: level the grid off inside a disc around each body, so the world
-// sits on a visible shelf instead of at the bottom of a funnel. Visual only —
-// physics still uses the true potential.
-function plateauY(x, z, positions, y) {
+// Level the grid off inside a disc around each world, so it sits on a visible
+// shelf instead of vanishing down its own funnel. Drawn surface only — the
+// physics and the solver still use the true potential.
+//
+// Rim heights are solved once per deform (`shelves`) rather than per vertex:
+// doing it inline would make the deform quadratic in body count.
+let shelves = [];
+function computeShelves(positions) {
+  shelves.length = 0;
   for (let i = 0; i < level.bodies.length; i++) {
     const b = level.bodies[i];
     if (b.mass < 0 || b.type === 'blackhole') continue;
     const R = b.radius * 3.2;
-    const d = Math.hypot(positions[i].x - x, positions[i].z - z);
-    if (d >= R) continue;
-    const rim = heightAt(level, positions[i].x + R, positions[i].z, positions);
-    const t = d / R;                       // 0 at center, 1 at the rim
-    y = Math.max(y, rim - (rim - y) * t * t * 0.35);
+    shelves.push({
+      x: positions[i].x, z: positions[i].z, R, R2: R * R,
+      rim: heightAt(level, positions[i].x + R, positions[i].z, positions),
+    });
+  }
+}
+function shelfY(x, z, y) {
+  for (let i = 0; i < shelves.length; i++) {
+    const s = shelves[i];
+    const dx = s.x - x, dz = s.z - z;
+    const d2 = dx * dx + dz * dz;
+    if (d2 >= s.R2) continue;
+    const t = Math.sqrt(d2) / s.R;         // 0 at the center, 1 at the rim
+    y = Math.max(y, s.rim - (s.rim - y) * t * t * 0.35);
   }
   return y;
 }
@@ -302,10 +316,9 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
-  const plateau = window.PLANETVIS === 'plateau';
+  computeShelves(positions);
   for (let idx = 0; idx < gridX.length; idx++) {
-    let y = heightAt(level, gridX[idx], gridZ[idx], positions);
-    if (plateau) y = plateauY(gridX[idx], gridZ[idx], positions, y);
+    const y = shelfY(gridX[idx], gridZ[idx], heightAt(level, gridX[idx], gridZ[idx], positions));
     terrain.targetY[idx] = y;
     if (snap) {
       pos[idx * 3 + 1] = y;
@@ -325,21 +338,21 @@ function easeTerrain(dt) {
   const { targetY, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
   const k = Math.min(dt * 9, 1);
-  let moved = false;
+  let moved = false, recoloured = false;
   for (let idx = 0; idx < targetY.length; idx++) {
     const cur = pos[idx * 3 + 1], want = targetY[idx];
     const d = want - cur;
     if (d > 0.002 || d < -0.002) {
       const y = cur + d * k;
       pos[idx * 3 + 1] = y;
-      heightColor(y, col, idx * 3);
       moved = true;
+      // depth colour is a slow gradient — only worth redoing on a visible
+      // change, which keeps the per-frame ease cheap at full grid density
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
     }
   }
-  if (moved) {
-    posAttr.needsUpdate = true;
-    colAttr.needsUpdate = true;
-  }
+  if (moved) posAttr.needsUpdate = true;
+  if (recoloured) colAttr.needsUpdate = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -818,10 +831,6 @@ function hideAimUI() {
 function loadLevel(i) {
   levelIndex = i;
   level = LEVELS[i];
-  if (window.GOALSCALE) {                                   // MOCKUP: target size
-    level = { ...level, goal: { ...level.goal, r: +(level.goal.r * window.GOALSCALE).toFixed(2) } };
-    if (level.waypoints) level.waypoints = level.waypoints.map(w => ({ ...w, r: +(w.r * window.GOALSCALE).toFixed(2) }));
-  }
   displaySet = Math.floor(i / 10);
   simTime = 0;
   attempts = 0;
@@ -1521,9 +1530,8 @@ function frame(now) {
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
     const bv = bodyVisuals[i], p = positions[i];
-    let y = heightAt(level, p.x, p.z, positions);
-    if (window.PLANETVIS === 'lift') y += -y * 0.45;      // MOCKUP: ride higher
-    if (window.PLANETVIS === 'plateau') y = plateauY(p.x, p.z, positions, y);
+    // sit on the shelf the terrain draws, not in the mathematical well floor
+    const y = shelfY(p.x, p.z, heightAt(level, p.x, p.z, positions));
     bv.group.position.set(p.x, y + bv.body.radius * 0.55, p.z);
     bv.group.rotation.y += bv.spin * dt;
     if (bv.arrow) updateMotionArrow(bv.arrow, bodiesAt, i, y + bv.body.radius + 3, );
@@ -1961,6 +1969,19 @@ window.GL = {
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
   aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  perf: () => {
+    const ps = bodiesAt(level, simTime);
+    let t0 = performance.now();
+    for (let i = 0; i < 5; i++) updateTerrain(ps, true);
+    const deform = (performance.now() - t0) / 5;
+    t0 = performance.now();
+    for (let i = 0; i < 20; i++) easeTerrain(1 / 60);
+    return {
+      bodies: level.bodies.length,
+      deformMs: +deform.toFixed(2),
+      easeMs: +((performance.now() - t0) / 20).toFixed(2),
+    };
+  },
   debugPredict: () => {
     const v = Math.hypot(launchVel.x, launchVel.z);
     const r = predict(level, ship.x, ship.z, launchVel.x, launchVel.z, simTime, PREDICT_T, stage);
