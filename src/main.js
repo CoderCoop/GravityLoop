@@ -3,7 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
-  anchorX, anchorZ, SHIP_R,
+  anchorX, anchorZ, SHIP_R, VIS,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import { CHANGELOG, VERSION } from './changelog.js';
@@ -75,6 +75,9 @@ const GLOW_TEX = tx.glowTexture();
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
+// MOCKUP hook: lets the well-shape variants be rendered without a rebuild.
+if (typeof window !== 'undefined' && window.WELLSHAPE) Object.assign(VIS, window.WELLSHAPE);
+
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));

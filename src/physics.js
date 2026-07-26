@@ -119,15 +119,38 @@ export function accelAt(level, x, z, positions) {
 }
 
 // Terrain height = scaled gravitational potential (negative in wells,
-// positive on repulsor hills). Softened so it is finite at body centers.
+// positive on repulsor hills).
+//
+// This is a VISUALISATION, not the force law: gravity itself comes from
+// accelAt, and nothing in the solver or generator reads this function. So the
+// surface can be restyled freely for legibility without touching gameplay.
+//
+//   soft — softening in body radii. Larger rounds the spike at the centre into
+//          a bowl instead of a needle that saturates the depth clamp.
+//   exp  — distance falloff. Below 1 spreads a well wider for the same depth,
+//          which is what makes a sun's dominance visible as breadth (the
+//          planets orbit inside its bowl) rather than as one deep puncture.
+//          Normalised at REF so overall scale holds as exp changes.
+//   comp — smooth depth saturation (tanh) instead of a hard clamp, so a deep
+//          well has a rounded floor rather than a flat cut.
+// `round: false` keeps a hard distance floor at 1.1 body radii, which is the
+// original shape — a needle that saturates the depth clamp. `round: true`
+// softens the centre instead, so the spike becomes a bowl.
+export const VIS = { round: false, soft: 2.4, exp: 1, comp: false };
+const REF = 20;
 export function heightAt(level, x, z, positions) {
   let h = 0;
+  const { round, soft, exp, comp } = VIS;
   for (let i = 0; i < level.bodies.length; i++) {
     const b = level.bodies[i], p = positions[i];
     const dx = p.x - x, dz = p.z - z;
-    const r = Math.max(Math.sqrt(dx * dx + dz * dz), b.radius * 1.1);
-    h -= (HEIGHT_K * b.mass) / r;
+    const r2 = dx * dx + dz * dz;
+    const d = round
+      ? Math.sqrt(r2 + b.radius * soft * (b.radius * soft))
+      : Math.max(Math.sqrt(r2), b.radius * 1.1);
+    h -= (HEIGHT_K * b.mass) * (exp === 1 ? 1 / d : Math.pow(REF, exp - 1) / Math.pow(d, exp));
   }
+  if (comp) return DEPTH_MAX * Math.tanh(h / DEPTH_MAX);
   return Math.max(Math.min(h, DEPTH_MAX), -DEPTH_MAX);
 }
 
