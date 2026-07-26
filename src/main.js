@@ -230,7 +230,7 @@ function buildTerrain() {
   const lines = new THREE.LineSegments(geo, mat);
   scene.add(lines);
   terrain = { lines, gridX, gridZ, posAttr: geo.getAttribute('position'), colAttr: geo.getAttribute('color') };
-  updateTerrain(bodiesAt(level, simTime));
+  updateTerrain(bodiesAt(level, simTime), true);
 }
 
 const _c = new THREE.Color();
@@ -269,7 +269,42 @@ function terrainNeedsUpdate(positions) {
   return false;
 }
 
-function updateTerrain(positions) {
+// Level the grid off inside a disc around each world, so it sits on a visible
+// shelf instead of vanishing down its own funnel. Drawn surface only — the
+// physics and the solver still use the true potential.
+//
+// Rim heights are solved once per deform (`shelves`) rather than per vertex:
+// doing it inline would make the deform quadratic in body count.
+let shelves = [];
+function computeShelves(positions) {
+  shelves.length = 0;
+  for (let i = 0; i < level.bodies.length; i++) {
+    const b = level.bodies[i];
+    if (b.mass < 0 || b.type === 'blackhole') continue;
+    const R = b.radius * 3.2;
+    shelves.push({
+      x: positions[i].x, z: positions[i].z, R, R2: R * R,
+      rim: heightAt(level, positions[i].x + R, positions[i].z, positions),
+    });
+  }
+}
+function shelfY(x, z, y) {
+  for (let i = 0; i < shelves.length; i++) {
+    const s = shelves[i];
+    const dx = s.x - x, dz = s.z - z;
+    const d2 = dx * dx + dz * dz;
+    if (d2 >= s.R2) continue;
+    const t = Math.sqrt(d2) / s.R;         // 0 at the center, 1 at the rim
+    y = Math.max(y, s.rim - (s.rim - y) * t * t * 0.35);
+  }
+  return y;
+}
+
+// Recompute the height field the terrain is heading toward. The expensive
+// part (a potential sum per vertex) happens here; `easeTerrain` then walks
+// the drawn vertices toward it every frame so motion stays smooth even
+// though the field is only re-solved when bodies have actually moved.
+function updateTerrain(positions, snap) {
   const { gridX, gridZ, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
   deformAt = new Float64Array(positions.length * 2);
@@ -277,13 +312,47 @@ function updateTerrain(positions) {
     deformAt[i * 2] = positions[i].x;
     deformAt[i * 2 + 1] = positions[i].z;
   }
-  for (let idx = 0; idx < gridX.length; idx++) {
-    const y = heightAt(level, gridX[idx], gridZ[idx], positions);
-    pos[idx * 3 + 1] = y;
-    heightColor(y, col, idx * 3);
+  if (!terrain.targetY || terrain.targetY.length !== gridX.length) {
+    terrain.targetY = new Float32Array(gridX.length);
+    snap = true;
   }
-  posAttr.needsUpdate = true;
-  colAttr.needsUpdate = true;
+  computeShelves(positions);
+  for (let idx = 0; idx < gridX.length; idx++) {
+    const y = shelfY(gridX[idx], gridZ[idx], heightAt(level, gridX[idx], gridZ[idx], positions));
+    terrain.targetY[idx] = y;
+    if (snap) {
+      pos[idx * 3 + 1] = y;
+      heightColor(y, col, idx * 3);
+    }
+  }
+  if (snap) {
+    posAttr.needsUpdate = true;
+    colAttr.needsUpdate = true;
+  }
+}
+
+// Glide the drawn surface toward the target field. Cheap: no potential sums,
+// just a lerp per vertex, so it can run every frame at full grid density.
+function easeTerrain(dt) {
+  if (!terrain || !terrain.targetY) return;
+  const { targetY, posAttr, colAttr } = terrain;
+  const pos = posAttr.array, col = colAttr.array;
+  const k = Math.min(dt * 9, 1);
+  let moved = false, recoloured = false;
+  for (let idx = 0; idx < targetY.length; idx++) {
+    const cur = pos[idx * 3 + 1], want = targetY[idx];
+    const d = want - cur;
+    if (d > 0.002 || d < -0.002) {
+      const y = cur + d * k;
+      pos[idx * 3 + 1] = y;
+      moved = true;
+      // depth colour is a slow gradient — only worth redoing on a visible
+      // change, which keeps the per-frame ease cheap at full grid density
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
+    }
+  }
+  if (moved) posAttr.needsUpdate = true;
+  if (recoloured) colAttr.needsUpdate = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -535,7 +604,8 @@ function buildWaypoints() {
       }
       core.add(hub);
     }
-    core.position.y = 1.4;
+    core.scale.setScalar(stationScale(wp.r) * (wp.type === 'station' ? 1 : 1.6));
+    core.position.y = 0.8;
     core.name = 'core';
     const glow = makeGlow(color, wp.r * 3.2, 0.6);
     group.add(ring, core, glow);
@@ -563,6 +633,13 @@ function refreshWaypointStates() {
 // Goal, pad, ship
 // ---------------------------------------------------------------------------
 let goalRingMat, goalBeacon, goalGlow;
+// Station models are authored ~8.8 units across; scale them to span a little
+// under their docking ring so the structure always reads as smaller than any
+// world nearby.
+function stationScale(r) {
+  return Math.max(r, 0.8) * 0.2;
+}
+
 function buildGoal() {
   if (goalGroup) scene.remove(goalGroup);
   goalGroup = new THREE.Group();
@@ -587,7 +664,10 @@ function buildGoal() {
     station.add(panel);
   }
   station.add(hub, spine);
-  station.position.y = 1.6;
+  // a station is a structure, not a world: scale it to sit inside its own
+  // docking ring rather than dwarfing the moon it orbits
+  station.scale.setScalar(stationScale(level.goal.r));
+  station.position.y = 0.9;
   if (goalBeacon) scene.remove(goalBeacon);
   goalBeacon = new THREE.Mesh(
     new THREE.CylinderGeometry(level.goal.r * 0.45, level.goal.r * 0.7, 46, 16, 1, true),
@@ -620,8 +700,9 @@ function setGoalActive(active) {
 function buildPad() {
   if (padGroup) scene.remove(padGroup);
   padGroup = new THREE.Group();
+  // the pad is a launch platform, not a landmark — keep it near the goal ring
   const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(2.6, 0.25, 8, 36),
+    new THREE.TorusGeometry(1.2, 0.16, 8, 36),
     new THREE.MeshBasicMaterial({ color: 0x35e0ff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   ring.rotation.x = Math.PI / 2;
@@ -673,15 +754,27 @@ function buildPredict() {
   predictLine.material.opacity = 0.45;
   predictLine.frustumCulled = false;
   predictLine.visible = false;
+  // draw over everything: a shot that dives toward a planet would otherwise
+  // vanish inside that planet's glow sprite and the wall of its own well
+  predictLine.material.depthTest = false;
+  predictLine.renderOrder = 20;
   scene.add(predictLine);
   // chunky dots along the same geometry: the trajectory reads clearly even
   // on bright terrain and small phone screens
-  predictDots = new THREE.Points(g, new THREE.PointsMaterial({
+  // Dots get their own geometry sampled by DISTANCE, not by time: sharing the
+  // line's time-sampled points piles them into an unreadable blob wherever the
+  // ship is moving slowly — exactly where a shot starts, and worst of all next
+  // to a planet where a stubby trail needs to read clearly.
+  const gd = new THREE.BufferGeometry();
+  gd.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PREDICT_MAX * 3), 3));
+  predictDots = new THREE.Points(gd, new THREE.PointsMaterial({
     color: 0xffffff, size: 6, sizeAttenuation: false, transparent: true,
     opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false,
   }));
   predictDots.frustumCulled = false;
   predictDots.visible = false;
+  predictDots.material.depthTest = false;
+  predictDots.renderOrder = 21;
   scene.add(predictDots);
   predictMarker = new THREE.Mesh(
     new THREE.SphereGeometry(1, 10, 8),
@@ -941,13 +1034,14 @@ const _fitV = new THREE.Vector3();
 // Smallest camZoom (= closest camera) that keeps the whole target ring and
 // the ship inside the frame, each with its own edge margin (fraction of the
 // screen). Mirrors updateCamera's settled 'ready'-state transform.
-function fitZoom(tgt, marginTgt, marginShip) {
+function fitZoom(tgt, marginTgt, marginShip, flying) {
   const E = level.extent;
   _fitCam.fov = camera.fov;
   _fitCam.aspect = window.innerWidth / window.innerHeight;
   _fitCam.near = camera.near;
   _fitCam.far = camera.far;
-  const followX = ship.x * 0.3, followZ = ship.z * 0.18;
+  // mirror updateCamera: in flight the view rides camPan with no follow bias
+  const followX = flying ? 0 : ship.x * 0.3, followZ = flying ? 0 : ship.z * 0.18;
   const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
   const inside = (x, y, z, m) => {
     _fitV.set(x, y, z).project(_fitCam);
@@ -1272,6 +1366,22 @@ function updatePrediction() {
   }
   attr.needsUpdate = true;
   predictLine.geometry.setDrawRange(0, n);
+  // even spacing along the path, so short trails still read as a trail
+  const dAttr = predictDots.geometry.getAttribute('position');
+  const STEP_U = 1.15;
+  let dn = 0, acc = STEP_U, px = attr.array[0], pz = attr.array[2];
+  for (let i = 0; i < n && dn < PREDICT_MAX; i++) {
+    const x = attr.array[i * 3], y = attr.array[i * 3 + 1], z = attr.array[i * 3 + 2];
+    acc += Math.hypot(x - px, z - pz);
+    px = x; pz = z;
+    if (acc >= STEP_U) {
+      acc = 0;
+      dAttr.array[dn * 3] = x; dAttr.array[dn * 3 + 1] = y; dAttr.array[dn * 3 + 2] = z;
+      dn++;
+    }
+  }
+  dAttr.needsUpdate = true;
+  predictDots.geometry.setDrawRange(0, dn);
   const good = r.outcome === 'goal' || r.outcome === 'waypoint';
   const bad = r.outcome === 'crash' || r.outcome === 'hazard';
   const color = good ? 0x7cff6b : bad ? 0xff5d5d : r.outcome === 'oob' ? 0x8a8fa3 : 0x9bd5ff;
@@ -1282,6 +1392,11 @@ function updatePrediction() {
     const positions = dynamic ? bodiesAt(level, simTime + last.t) : nowPositions;
     predictMarker.position.set(last.x, heightAt(level, last.x, last.z, positions) + 1.5, last.z);
     predictMarker.material.color.setHex(color);
+    predictMarker.material.depthTest = false;
+    predictMarker.renderOrder = 22;
+    // scale with the view so "you end up here" stays legible when the whole
+    // trail is only a few units long
+    predictMarker.scale.setScalar(bad ? 1.5 : 1.1);
     predictMarker.visible = true;
   } else {
     predictMarker.visible = false;
@@ -1422,11 +1537,13 @@ function frame(now) {
 
   const positions = bodiesAt(level, simTime);
   if (dynamic && terrainNeedsUpdate(positions)) updateTerrain(positions);
+  easeTerrain(dt);
 
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
     const bv = bodyVisuals[i], p = positions[i];
-    const y = heightAt(level, p.x, p.z, positions);
+    // sit on the shelf the terrain draws, not in the mathematical well floor
+    const y = shelfY(p.x, p.z, heightAt(level, p.x, p.z, positions));
     bv.group.position.set(p.x, y + bv.body.radius * 0.55, p.z);
     bv.group.rotation.y += bv.spin * dt;
     if (bv.arrow) updateMotionArrow(bv.arrow, bodiesAt, i, y + bv.body.radius + 3, );
@@ -1574,6 +1691,11 @@ function updateCamera(dt) {
     camPan.x += (ship.x - camPan.x) * k2;
     camPan.z += (ship.z - camPan.z) * k2;
     clampPan();
+    // and breathe the zoom so the ship and what it is heading for both stay
+    // in frame as the gap between them opens and closes
+    const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
+    const want = Math.min(Math.max(fitZoom(tgt, 0.07, 0.15, true), 9 / E), 1.8);
+    camZoom += (want - camZoom) * Math.min(dt * 1.6, 1);
   }
   const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
   const followX = state === 'flying' ? 0 : inFlight ? ship.x * 0.25 : ship.x * 0.3;
@@ -1859,6 +1981,45 @@ window.GL = {
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
   aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  perf: () => {
+    const ps = bodiesAt(level, simTime);
+    let t0 = performance.now();
+    for (let i = 0; i < 5; i++) updateTerrain(ps, true);
+    const deform = (performance.now() - t0) / 5;
+    t0 = performance.now();
+    for (let i = 0; i < 20; i++) easeTerrain(1 / 60);
+    return {
+      bodies: level.bodies.length,
+      deformMs: +deform.toFixed(2),
+      easeMs: +((performance.now() - t0) / 20).toFixed(2),
+    };
+  },
+  debugPredict: () => {
+    const v = Math.hypot(launchVel.x, launchVel.z);
+    const r = predict(level, ship.x, ship.z, launchVel.x, launchVel.z, simTime, PREDICT_T, stage);
+    const ys = [];
+    const attr = predictLine.geometry.getAttribute('position');
+    const n = predictLine.geometry.drawRange.count;
+    for (let i = 0; i < Math.min(n, 400); i++) ys.push(attr.array[i * 3 + 1]);
+    return {
+      speed: +v.toFixed(2), outcome: r.outcome, pts: r.points.length, drawn: n,
+      lineVis: predictLine.visible, dotsVis: predictDots.visible,
+      yMin: ys.length ? +Math.min(...ys).toFixed(1) : null,
+      yMax: ys.length ? +Math.max(...ys).toFixed(1) : null,
+      shipY: +shipY().toFixed(1),
+      screen: (() => {
+        const v = new THREE.Vector3();
+        const rect = renderer.domElement.getBoundingClientRect();
+        const out = [];
+        for (const i of [0, Math.floor(n / 2), n - 1]) {
+          if (i < 0) continue;
+          v.set(attr.array[i * 3], attr.array[i * 3 + 1], attr.array[i * 3 + 2]).project(camera);
+          out.push([Math.round((v.x + 1) / 2 * rect.width), Math.round((1 - v.y) / 2 * rect.height)]);
+        }
+        return out;
+      })(),
+    };
+  },
   debugSpots: () => {
     const p = bodiesAt(level, simTime);
     return {
