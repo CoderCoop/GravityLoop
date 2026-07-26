@@ -78,10 +78,17 @@ solver check always passes.
 
 ## Shipping flow
 
-Work on branch `claude/spaceship-gravity-well-game-kesebo`, push, open a PR
-to `main`, wait for ALL CI checks to pass, then merge. GitHub Pages
-redeploys from `main` automatically (the live game is
+**A fresh branch per change**, named for what it does: `claude/<topic>`, e.g.
+`claude/beacon-alignment`, `claude/dust-asteroids`. Push it, open a PR to
+`main`, wait for ALL CI checks to pass, then merge. GitHub Pages redeploys
+from `main` automatically (the live game is
 https://codercoop.github.io/GravityLoop/).
+
+Do **not** reuse one long-lived branch for successive PRs. Tooling that links
+a conversation to a pull request keys off the branch name, so a reused branch
+keeps pointing at the first PR ever opened from it — every later PR then shows
+the wrong link. It also makes each PR's history harder to read, since the
+branch carries commits from changes that already merged.
 
 **One topic per pull request.** When several unrelated changes are in flight,
 land them as separate PRs rather than accumulating a batch — a PR that mixes
