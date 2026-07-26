@@ -3,6 +3,30 @@
 // ships; the menu badges the button until the player has read that version.
 export const CHANGELOG = [
   {
+    v: '1.9',
+    date: '2026-07-26',
+    title: 'Reading the field',
+    notes: [
+      'Gravity wells are shaped to read properly: rounded centres instead of needles, so a world sits in a visible bowl rather than disappearing down a spike, and a sun now shows its pull as a wide basin the planets orbit inside.',
+      'Moving targets show their lead — a ghost ring marks where the station will be when your shot arrives, with beads tracing the path it travels while you fly.',
+      'Asteroid fields are drifting dust rather than moon-sized boulders.',
+      'Worlds dropped their direction arrows; the orbit paths already say where everything is going.',
+      'The view now travels with your ship while it waits on a moving launch pad.',
+    ],
+  },
+  {
+    v: '1.8',
+    date: '2026-07-26',
+    title: 'Tighter targets, truer collisions',
+    notes: [
+      'Docking targets are half the size — about a moon\u2019s width, smaller than any planet — and every level was re-checked to confirm it is still winnable.',
+      'Crashes now register when you actually touch a planet, not while you are still visibly clear of it, and flying through a docking ring scores as it looks like it should.',
+      'The flight preview stays readable on shots that curve straight back into a nearby world.',
+      'Stations and launch pads are structures again rather than landmarks larger than the moons beside them.',
+      'The terrain glides as worlds move instead of stepping, and the camera breathes to keep your ship and its target both in frame.',
+    ],
+  },
+  {
     v: '1.7',
     date: '2026-07-25',
     title: 'Living solar systems',
