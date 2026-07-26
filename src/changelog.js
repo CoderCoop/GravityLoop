@@ -1,9 +1,17 @@
 // GravityLoop — release notes shown in-game ("What's new").
-// Newest first. Bump the top entry's `v` whenever something player-visible
-// ships; the menu badges the button until the player has read that version.
+//
+// Newest first. Versions are semantic (https://semver.org): MAJOR.MINOR.PATCH.
+//   MAJOR — the game changes in a way that invalidates what a player knew:
+//           reworked controls, a rebuilt campaign, physics they must relearn.
+//   MINOR — new capability or content that leaves existing skills intact.
+//   PATCH — fixes and polish; nothing new to learn.
+// Bump the top entry whenever something player-visible ships; the menu badges
+// the button until the player has read that version, and VERSION is derived
+// from this entry, so this is the only place a version lives.
+// tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
-    v: '2.0',
+    v: '1.10.0',
     date: '2026-07-26',
     title: 'Finding your way around',
     notes: [
@@ -12,7 +20,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.9',
+    v: '1.9.0',
     date: '2026-07-26',
     title: 'Reading the field',
     notes: [
@@ -24,7 +32,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.8',
+    v: '1.8.0',
     date: '2026-07-26',
     title: 'Tighter targets, truer collisions',
     notes: [
@@ -36,7 +44,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.7',
+    v: '1.7.0',
     date: '2026-07-25',
     title: 'Living solar systems',
     notes: [
@@ -48,7 +56,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.6',
+    v: '1.6.0',
     date: '2026-07-25',
     title: 'Precision aiming',
     notes: [
@@ -57,7 +65,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.5',
+    v: '1.5.0',
     date: '2026-07-25',
     title: 'Loops and curves',
     notes: [
@@ -67,7 +75,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.4',
+    v: '1.4.0',
     date: '2026-07-23',
     title: 'Reading the shot',
     notes: [
@@ -77,7 +85,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.3',
+    v: '1.3.0',
     date: '2026-07-21',
     title: 'Routes worth flying',
     notes: [
@@ -87,7 +95,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.2',
+    v: '1.2.0',
     date: '2026-07-20',
     title: 'The Sol campaign',
     notes: [
@@ -97,7 +105,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.1',
+    v: '1.1.0',
     date: '2026-07-19',
     title: 'Fuel, engines, timing',
     notes: [
@@ -107,7 +115,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.0',
+    v: '1.0.0',
     date: '2026-07-18',
     title: 'Liftoff',
     notes: [

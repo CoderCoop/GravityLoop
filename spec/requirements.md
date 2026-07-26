@@ -208,6 +208,11 @@ release-notes entry with a new version. The version MUST be derived from the
 notes so there is exactly one place to update, and this MUST be enforced
 automatically rather than left to habit.
 
+**REQ-PRG-5** Versions MUST be semantic (`MAJOR.MINOR.PATCH`), classified from
+the player's perspective: MAJOR when prior knowledge stops holding, MINOR for
+new capability or content, PATCH for fixes and polish. The format and a
+strictly increasing value MUST both be checked automatically.
+
 ## 8. Verification
 
 These are the acceptance gates. All three MUST pass in CI on every pull

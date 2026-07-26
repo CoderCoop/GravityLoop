@@ -61,6 +61,24 @@ if (before === null) {
 console.log(`player-visible changes: ${touched.join(', ')}`);
 console.log(`changelog version: ${before} (${base}) -> ${after} (HEAD)`);
 
+// semantic versions, so the ordering is machine-checkable and MAJOR/MINOR/
+// PATCH carry the meaning described at the top of src/changelog.js
+const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
+if (!SEMVER.test(after)) {
+  console.error(`\n✗ '${after}' is not a semantic version. Use MAJOR.MINOR.PATCH (see https://semver.org):
+  MAJOR for changes that invalidate what a player knew, MINOR for new
+  capability or content, PATCH for fixes and polish.`);
+  process.exit(1);
+}
+const rank = v => v.match(SEMVER).slice(1).map(Number);
+if (SEMVER.test(before)) {
+  const [a1, a2, a3] = rank(before), [b1, b2, b3] = rank(after);
+  if (b1 * 1e6 + b2 * 1e3 + b3 <= a1 * 1e6 + a2 * 1e3 + a3) {
+    console.error(`\n✗ ${after} does not come after ${before} — the version must increase.`);
+    process.exit(1);
+  }
+}
+
 if (before === after) {
   console.error(`
 ✗ These changes are visible to players but the changelog was not bumped.

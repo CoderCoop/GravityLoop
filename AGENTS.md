@@ -32,7 +32,18 @@ mock it up.
 If a change touches `src/main.js`, `src/physics.js`, `src/levels.js`,
 `src/textures.js`, `src/audio.js`, `index.html`, `styles.css` or the
 manifest, add a new entry at the top of `src/changelog.js` **with a bumped
-version** describing the change from the player's point of view. The in-game
+version** describing the change from the player's point of view.
+
+Versions are [semantic](https://semver.org) — `MAJOR.MINOR.PATCH`, judged from
+the player's side, not the code's:
+
+| Bump | When |
+| --- | --- |
+| MAJOR | the game changes so that what a player knew no longer holds — reworked controls, a rebuilt campaign, physics to relearn |
+| MINOR | new capability or content that leaves existing skills intact |
+| PATCH | fixes and polish; nothing new to learn |
+
+The format and a strictly increasing version are both CI-enforced. The in-game
 *What's new* panel renders it and the NEW badge keys off the version, and
 `VERSION` is derived from the top entry — so the changelog entry *is* the
 version bump; there is nowhere else to update.
@@ -68,9 +79,17 @@ solver check always passes.
 ## Shipping flow
 
 Work on branch `claude/spaceship-gravity-well-game-kesebo`, push, open a PR
-to `main`, wait for BOTH CI checks to pass, then merge. GitHub Pages
+to `main`, wait for ALL CI checks to pass, then merge. GitHub Pages
 redeploys from `main` automatically (the live game is
 https://codercoop.github.io/GravityLoop/).
+
+**One topic per pull request.** When several unrelated changes are in flight,
+land them as separate PRs rather than accumulating a batch — a PR that mixes
+a physics fix, a visual restyle and a new CI gate is hard to review and
+impossible to revert cleanly. Split by what a reader would call "the change":
+each PR gets its own changelog entry, and its title should describe one thing.
+If a request naturally spans several topics, ship them in dependency order
+rather than together.
 
 ## Long-running work: keep the user posted
 
