@@ -17,6 +17,22 @@ jobs:
       - name: Brute-force solver over every level
         run: node tools/solve.js --fast
 
+  changelog:
+    name: Release notes accompany visible changes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Changelog bumped when the player can see the change
+        run: |
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          CHANGELOG_BASE="origin/${{ github.base_ref }}" node tools/changelog-check.mjs
+
   invariants:
     name: Physics invariants hold
     runs-on: ubuntu-latest

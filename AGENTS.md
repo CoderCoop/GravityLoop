@@ -27,10 +27,29 @@ Exempt: purely mechanical fixes with one obvious rendering (typo, off-by-one
 overflow fix, color token already specified by the user). When in doubt,
 mock it up.
 
+## Every player-visible change ships release notes
+
+If a change touches `src/main.js`, `src/physics.js`, `src/levels.js`,
+`src/textures.js`, `src/audio.js`, `index.html`, `styles.css` or the
+manifest, add a new entry at the top of `src/changelog.js` **with a bumped
+version** describing the change from the player's point of view. The in-game
+*What's new* panel renders it and the NEW badge keys off the version, and
+`VERSION` is derived from the top entry — so the changelog entry *is* the
+version bump; there is nowhere else to update.
+
+`node tools/changelog-check.mjs` enforces this and runs as a CI gate on every
+pull request. Tools, specs, workflows and docs are exempt: refactoring the
+solver is not a release.
+
 ## Verify before every commit
 
 - `node tools/solve.js --fast` — every level and every leg must stay winnable
   (this is also a CI gate).
+- `node tools/invariants.mjs` — physics outcomes must be supported by the
+  geometry, prediction must be deterministic (CI gate).
+- `CHROMIUM_PATH=... node tools/contract-test.mjs` — the drawn scene must
+  agree with the simulation: silhouettes, docking rings, surface placement,
+  preview legibility (CI gate).
 - `CHROMIUM_PATH=/opt/pw-browsers/chromium node tools/ui-test.mjs` — no HUD
   element may render outside the viewport at phone/tablet/desktop sizes
   (also a CI gate).

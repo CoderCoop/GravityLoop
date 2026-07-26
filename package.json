@@ -7,7 +7,8 @@
     "test:levels": "node tools/solve.js --fast",
     "test:ui": "node tools/ui-test.mjs",
     "test:invariants": "node tools/invariants.mjs",
-    "test:contract": "node tools/contract-test.mjs"
+    "test:contract": "node tools/contract-test.mjs",
+    "test:changelog": "node tools/changelog-check.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.49.0"

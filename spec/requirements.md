@@ -203,6 +203,11 @@ shall persist progress locally.
 **REQ-PRG-3** The system shall present release notes in-game and shall
 indicate when notes are newer than those the player has seen.
 
+**REQ-PRG-4** When a change alters anything the player can see, it MUST add a
+release-notes entry with a new version. The version MUST be derived from the
+notes so there is exactly one place to update, and this MUST be enforced
+automatically rather than left to habit.
+
 ## 8. Verification
 
 These are the acceptance gates. All three MUST pass in CI on every pull
