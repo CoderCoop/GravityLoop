@@ -142,14 +142,16 @@ export function checkState(level, x, z, positions, hazPositions, stage) {
   for (let i = 0; i < level.bodies.length; i++) {
     const b = level.bodies[i], p = positions[i];
     const dx = p.x - x, dz = p.z - z;
-    const hit = (b.horizon || b.radius) + SHIP_R * 0.7;
+    // hug the drawn silhouette: a wider margin registers a crash while the
+    // ship is visibly clear of the planet
+    const hit = (b.horizon || b.radius) + SHIP_R * 0.25;
     if (dx * dx + dz * dz < hit * hit) return { type: 'crash', body: i };
   }
   if (level.hazards) {
     for (let i = 0; i < level.hazards.length; i++) {
       const h = level.hazards[i], p = hazPositions[i];
       const dx = p.x - x, dz = p.z - z;
-      const hit = h.radius + SHIP_R * 0.7;
+      const hit = h.radius + SHIP_R * 0.25;
       if (dx * dx + dz * dz < hit * hit) return { type: 'hazard', hazard: i };
     }
   }
