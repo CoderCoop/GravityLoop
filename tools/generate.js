@@ -825,7 +825,7 @@ function sampleBelt(rng, slot) {
     if (inGap(ang)) continue;
     const R = rand(rng, bandLo, bandHi);
     const h = {
-      kind: 'asteroid', radius: +rand(rng, 0.8, 1.6).toFixed(1),
+      kind: 'asteroid', radius: +rand(rng, 0.22, 0.45).toFixed(2),
       x: Math.round(sun.x + Math.cos(ang) * R), z: Math.round(sun.z + Math.sin(ang) * R),
     };
     if (Math.hypot(h.x, h.z) > E * 0.93) continue;

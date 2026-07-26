@@ -1,9 +1,50 @@
 // GravityLoop — release notes shown in-game ("What's new").
-// Newest first. Bump the top entry's `v` whenever something player-visible
-// ships; the menu badges the button until the player has read that version.
+//
+// Newest first. Versions are semantic (https://semver.org): MAJOR.MINOR.PATCH.
+//   MAJOR — the game changes in a way that invalidates what a player knew:
+//           reworked controls, a rebuilt campaign, physics they must relearn.
+//   MINOR — new capability or content that leaves existing skills intact.
+//   PATCH — fixes and polish; nothing new to learn.
+// Bump the top entry whenever something player-visible ships; the menu badges
+// the button until the player has read that version, and VERSION is derived
+// from this entry, so this is the only place a version lives.
+// tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
-    v: '1.7',
+    v: '1.10.0',
+    date: '2026-07-26',
+    title: 'Finding your way around',
+    notes: [
+      'A \u2302 button in the HUD returns you to the title screen at any time, and Esc does the same.',
+      'The title screen links out to the project site, so the code and the spec behind the game are one click away.',
+    ],
+  },
+  {
+    v: '1.9.0',
+    date: '2026-07-26',
+    title: 'Reading the field',
+    notes: [
+      'Gravity wells are shaped to read properly: rounded centres instead of needles, so a world sits in a visible bowl rather than disappearing down a spike, and a sun now shows its pull as a wide basin the planets orbit inside.',
+      'Moving targets show their lead — a ghost ring marks where the station will be when your shot arrives, with beads tracing the path it travels while you fly.',
+      'Asteroid fields are drifting dust rather than moon-sized boulders.',
+      'Worlds dropped their direction arrows; the orbit paths already say where everything is going.',
+      'The view now travels with your ship while it waits on a moving launch pad.',
+    ],
+  },
+  {
+    v: '1.8.0',
+    date: '2026-07-26',
+    title: 'Tighter targets, truer collisions',
+    notes: [
+      'Docking targets are half the size — about a moon\u2019s width, smaller than any planet — and every level was re-checked to confirm it is still winnable.',
+      'Crashes now register when you actually touch a planet, not while you are still visibly clear of it, and flying through a docking ring scores as it looks like it should.',
+      'The flight preview stays readable on shots that curve straight back into a nearby world.',
+      'Stations and launch pads are structures again rather than landmarks larger than the moons beside them.',
+      'The terrain glides as worlds move instead of stepping, and the camera breathes to keep your ship and its target both in frame.',
+    ],
+  },
+  {
+    v: '1.7.0',
     date: '2026-07-25',
     title: 'Living solar systems',
     notes: [
@@ -15,7 +56,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.6',
+    v: '1.6.0',
     date: '2026-07-25',
     title: 'Precision aiming',
     notes: [
@@ -24,7 +65,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.5',
+    v: '1.5.0',
     date: '2026-07-25',
     title: 'Loops and curves',
     notes: [
@@ -34,7 +75,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.4',
+    v: '1.4.0',
     date: '2026-07-23',
     title: 'Reading the shot',
     notes: [
@@ -44,7 +85,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.3',
+    v: '1.3.0',
     date: '2026-07-21',
     title: 'Routes worth flying',
     notes: [
@@ -54,7 +95,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.2',
+    v: '1.2.0',
     date: '2026-07-20',
     title: 'The Sol campaign',
     notes: [
@@ -64,7 +105,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.1',
+    v: '1.1.0',
     date: '2026-07-19',
     title: 'Fuel, engines, timing',
     notes: [
@@ -74,7 +115,7 @@ export const CHANGELOG = [
     ],
   },
   {
-    v: '1.0',
+    v: '1.0.0',
     date: '2026-07-18',
     title: 'Liftoff',
     notes: [
