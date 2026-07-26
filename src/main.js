@@ -237,7 +237,7 @@ function buildTerrain() {
 }
 
 const _c = new THREE.Color();
-function heightColor(y, out, o) {
+function heightColor(y, out, o, fade) {
   if (y > 0.4) {
     // antimatter hills glow violet
     const t = Math.min(y / 12, 1);
@@ -255,7 +255,8 @@ function heightColor(y, out, o) {
       _c.setRGB(0.56 + 0.44 * t, 0.24 - 0.06 * t, 0.95 - 0.37 * t);
     }
   }
-  out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
+  const f = fade == null ? 1 : fade;
+  out[o] = _c.r * f; out[o + 1] = _c.g * f; out[o + 2] = _c.b * f;
 }
 
 // Every level moves now, so the whole grid can't be re-deformed every frame at
@@ -276,6 +277,26 @@ function terrainNeedsUpdate(positions) {
 // part (a potential sum per vertex) happens here; `easeTerrain` then walks
 // the drawn vertices toward it every frame so motion stays smooth even
 // though the field is only re-solved when bodies have actually moved.
+// How much to dim the grid at a point, so the mesh does not weave in front of
+// the world sitting in the well. Additive blending means dimming to zero makes
+// the lines vanish, leaving the planet against clean space.
+function gridFade(x, z, positions) {
+  const mode = window.WELLVIS || 'fade';
+  if (mode === 'off') return 1;
+  let f = 1;
+  for (let i = 0; i < level.bodies.length; i++) {
+    const b = level.bodies[i];
+    const inner = b.radius * (b.type === 'sun' ? 1.5 : 1.9);
+    const outer = b.radius * (b.type === 'sun' ? 2.6 : 3.4);
+    const d = Math.hypot(positions[i].x - x, positions[i].z - z);
+    if (d >= outer) continue;
+    if (mode === 'aperture') { if (d < outer * 0.72) return 0; continue; }
+    const t = Math.min(Math.max((d - inner) / (outer - inner), 0), 1);
+    f = Math.min(f, t * t * (3 - 2 * t));
+  }
+  return f;
+}
+
 function updateTerrain(positions, snap) {
   const { gridX, gridZ, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
@@ -288,13 +309,19 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
+  if (!terrain.fade || terrain.fade.length !== gridX.length) terrain.fade = new Float32Array(gridX.length);
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
+    terrain.fade[idx] = gridFade(gridX[idx], gridZ[idx], positions);
     if (snap) {
       pos[idx * 3 + 1] = y;
-      heightColor(y, col, idx * 3);
+      heightColor(y, col, idx * 3, terrain.fade[idx]);
     }
+  }
+  if (!snap) {
+    for (let idx = 0; idx < gridX.length; idx++) heightColor(pos[idx * 3 + 1], col, idx * 3, terrain.fade[idx]);
+    colAttr.needsUpdate = true;
   }
   if (snap) {
     posAttr.needsUpdate = true;
@@ -319,7 +346,7 @@ function easeTerrain(dt) {
       moved = true;
       // depth colour is a slow gradient — only worth redoing on a visible
       // change, which keeps the per-frame ease cheap at full grid density
-      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3, terrain.fade ? terrain.fade[idx] : 1); recoloured = true; }
     }
   }
   if (moved) posAttr.needsUpdate = true;
@@ -500,12 +527,25 @@ function buildHazards() {
       tail.name = 'tail';
       group.add(ice, tail, makeGlow(0xbfe8ff, hazard.radius * 5, 0.7));
     } else if (hazard.kind === 'asteroid') {
-      const rock = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(hazard.radius, 1),
-        new THREE.MeshBasicMaterial({ map: tx.planetTexture(0x8a7f72, tx.hashStr(`ast${hazard.x},${hazard.z}`), 'rocky') }),
-      );
-      rock.rotation.set(Math.random() * 3, Math.random() * 3, 0);
-      group.add(rock, makeGlow(0xd0a070, hazard.radius * 3, 0.3));
+      // a grainy dust cloud, not a modelled rock: at belt scale these are
+      // specks, and drawing each as an object made them read like moons
+      const grains = 22;
+      const g = new THREE.BufferGeometry();
+      const pos = new Float32Array(grains * 3);
+      const rng = tx.mulberry32(tx.hashStr(`ast${hazard.x},${hazard.z}`));
+      for (let i = 0; i < grains; i++) {
+        const a = rng() * 6.283, u = rng() + rng();
+        const rr = (u > 1 ? 2 - u : u) * hazard.radius * 2.2;
+        pos[i * 3] = Math.cos(a) * rr;
+        pos[i * 3 + 1] = (rng() - 0.5) * hazard.radius * 1.2;
+        pos[i * 3 + 2] = Math.sin(a) * rr;
+      }
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const dust = new THREE.Points(g, new THREE.PointsMaterial({
+        color: 0xc9b79c, size: 2, sizeAttenuation: false,
+        transparent: true, opacity: 0.85, depthWrite: false,
+      }));
+      group.add(dust, makeGlow(0xd0a070, hazard.radius * 5, 0.22));
     } else {
       const hull = new THREE.Mesh(
         new THREE.ConeGeometry(hazard.radius * 0.55, hazard.radius * 1.9, 8),
@@ -810,6 +850,7 @@ function hideAimUI() {
   aimHandle.visible = false;
   aimBand.visible = false;
   if (aimDial) aimDial.visible = false;
+  hideLeadVis();
   document.getElementById('fine-chip').hidden = true;
   document.getElementById('aim-readout').hidden = true;
 }
@@ -1288,6 +1329,7 @@ function updateAimTelemetry(power) {
   const chip = document.getElementById('aim-readout');
   if (speed < MIN_LAUNCH) {
     if (aimDial) aimDial.visible = false;
+  hideLeadVis();
     chip.hidden = true;
     return;
   }
@@ -1377,6 +1419,98 @@ function updatePrediction() {
     predictMarker.visible = true;
   } else {
     predictMarker.visible = false;
+  }
+  updateLeadVis(r, dynamic);
+}
+
+// Where the target will be when the shot gets closest to it. The trajectory
+// alone cannot explain a miss against a moving station: the line runs through
+// where the target is NOW, while the shot is scored against where it will be.
+let ghostRing = null, leadArc = null, leadLink = null;
+let leadState = null;
+function buildLeadVis() {
+  if (ghostRing) return;
+  ghostRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1, 0.1, 8, 40),
+    new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }),
+  );
+  ghostRing.rotation.x = Math.PI / 2;
+  ghostRing.material.depthTest = false;
+  ghostRing.renderOrder = 19;
+  ghostRing.visible = false;
+  scene.add(ghostRing);
+
+  const arcGeo = new THREE.BufferGeometry();
+  arcGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(120 * 3), 3));
+  leadArc = new THREE.Points(arcGeo, new THREE.PointsMaterial({
+    color: 0xffd166, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0.5, depthWrite: false,
+  }));
+  leadArc.material.depthTest = false;
+  leadArc.renderOrder = 19;
+  leadArc.frustumCulled = false;
+  leadArc.visible = false;
+  scene.add(leadArc);
+
+  const linkGeo = new THREE.BufferGeometry();
+  linkGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  leadLink = new THREE.Line(linkGeo, new THREE.LineDashedMaterial({
+    color: 0xffd166, dashSize: 0.7, gapSize: 0.6, transparent: true, opacity: 0.6, depthWrite: false,
+  }));
+  leadLink.material.depthTest = false;
+  leadLink.renderOrder = 19;
+  leadLink.frustumCulled = false;
+  leadLink.visible = false;
+  scene.add(leadLink);
+
+}
+
+function hideLeadVis() {
+  for (const o of [ghostRing, leadArc, leadLink]) if (o) o.visible = false;
+  leadState = null;
+}
+
+function updateLeadVis(r, dynamic) {
+  buildLeadVis();
+  if (!dynamic || !r.points.length) { hideLeadVis(); return; }
+
+  // closest approach to the target as it moves
+  let best = null;
+  for (let i = 0; i < r.points.length; i += 6) {
+    const pt = r.points[i];
+    const ps = bodiesAt(level, simTime + pt.t);
+    const tgt = activeTarget(level, stage, ps);
+    const d = Math.hypot(pt.x - tgt.x, pt.z - tgt.z);
+    if (!best || d < best.d) best = { d, t: pt.t, sx: pt.x, sz: pt.z, tx: tgt.x, tz: tgt.z, r: tgt.r, ps };
+  }
+  if (!best) { hideLeadVis(); return; }
+  leadState = best;
+
+  const gy = surfaceY(best.tx, best.tz, best.ps) + 0.5;
+  ghostRing.position.set(best.tx, gy, best.tz);
+  ghostRing.scale.setScalar(best.r);
+  ghostRing.visible = true;
+
+  const linkAttr = leadLink.geometry.getAttribute('position');
+  linkAttr.array.set([best.sx, surfaceY(best.sx, best.sz, best.ps) + 1.2, best.sz, best.tx, gy, best.tz]);
+  linkAttr.needsUpdate = true;
+  leadLink.computeLineDistances();
+  leadLink.visible = best.d > best.r;
+
+  {
+    const attr = leadArc.geometry.getAttribute('position');
+    const n = 60;
+    for (let i = 0; i < n; i++) {
+      const t = (best.t * i) / (n - 1);
+      const ps = bodiesAt(level, simTime + t);
+      const tg = activeTarget(level, stage, ps);
+      attr.array[i * 3] = tg.x;
+      attr.array[i * 3 + 1] = surfaceY(tg.x, tg.z, ps) + 0.5;
+      attr.array[i * 3 + 2] = tg.z;
+    }
+    attr.needsUpdate = true;
+    leadArc.geometry.setDrawRange(0, n);
+    leadArc.geometry.computeBoundingSphere();
+    leadArc.visible = true;
   }
 }
 

@@ -4424,181 +4424,181 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -27,
         "z": -21
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 80,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -32,
         "z": -10
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 23,
         "z": 83
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -37,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 65,
         "z": 53
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 11,
         "z": -37
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -41,
         "z": 4
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 79,
         "z": 16
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 15,
         "z": 80
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -35,
         "z": -4
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 29,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 71,
         "z": 54
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 50,
         "z": 75
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 2,
         "z": -37
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 5,
         "z": 84
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -25,
         "z": -24
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -32,
         "z": -19
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 22,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -30,
         "z": -16
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 27,
         "z": -34
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 65,
         "z": -10
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 63,
         "z": -21
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 74,
         "z": 10
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -1,
         "z": 78
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 60,
         "z": -18
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 57,
         "z": 65
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 45,
         "z": 74
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -3,
         "z": -33
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 63,
         "z": 57
       }
@@ -4746,193 +4746,193 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -15,
         "z": -29
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 28,
         "z": -29
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -13,
         "z": 76
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 60,
         "z": -8
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -41,
         "z": -6
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 18,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -29,
         "z": 64
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -16,
         "z": -33
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 67,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 72,
         "z": 27
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -44,
         "z": 47
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 57,
         "z": 62
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -47,
         "z": 17
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -41,
         "z": 57
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 20,
         "z": -33
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -47,
         "z": 38
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 51,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -40,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -34,
         "z": 66
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 12,
         "z": -38
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -26,
         "z": -28
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 43,
         "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -17,
         "z": 72
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -50,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -27,
         "z": -19
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 61,
         "z": 4
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -49,
         "z": 43
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 44,
         "z": 65
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -45,
         "z": 23
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 25,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -21,
         "z": 68
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 65,
         "z": 15
       }
@@ -5092,205 +5092,205 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 34,
         "z": 22
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -83,
         "z": 14
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -27,
         "z": -48
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -80,
         "z": 19
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 17,
         "z": -36
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -17,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -80,
         "z": 2
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -47,
         "z": 61
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -77,
         "z": 33
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 21,
         "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 27,
         "z": -20
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -69,
         "z": 40
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -40,
         "z": -43
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 13,
         "z": -42
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -78,
         "z": 26
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 33,
         "z": -19
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -75,
         "z": -18
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 29,
         "z": -15
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -55,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -62,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -49,
         "z": 66
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -75,
         "z": 22
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -53,
         "z": 55
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -52,
         "z": -46
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -76,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -74,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 31,
         "z": 3
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -15,
         "z": 68
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -83,
         "z": -4
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -41,
         "z": -48
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 20,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -74,
         "z": 39
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -69,
         "z": -20
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -64,
         "z": 54
       },
@@ -5468,217 +5468,217 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 82,
         "z": 24
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -33,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 78,
         "z": 29
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 83,
         "z": 32
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 36,
         "z": 60
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 57,
         "z": 54
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 41,
         "z": -51
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 87,
         "z": 12
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -27,
         "z": -7
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -19,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 87,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 80,
         "z": -28
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 51,
         "z": 56
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -32,
         "z": -1
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -33,
         "z": -5
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 30,
         "z": -54
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 7,
         "z": 55
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 14,
         "z": -53
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 20,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 80,
         "z": 18
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 81,
         "z": -15
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -16,
         "z": 44
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 41,
         "z": 59
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -26,
         "z": -24
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 40,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 7,
         "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -17,
         "z": 48
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -8,
         "z": -44
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -35,
         "z": 9
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 40,
         "z": -55
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 83,
         "z": -1
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -14,
         "z": -41
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 11,
         "z": -50
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -24,
         "z": -16
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -34,
         "z": 13
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -34,
         "z": 5
       },
@@ -5861,229 +5861,229 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 46,
         "z": 52
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 43,
         "z": -4
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -63,
         "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 5,
         "z": 86
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 18,
         "z": 82
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -55,
         "z": -9
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -70,
         "z": 14
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -55,
         "z": -13
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -70,
         "z": 27
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 56,
         "z": 40
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 13,
         "z": 82
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 51,
         "z": 41
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 51,
         "z": 25
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -7,
         "z": -31
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 32,
         "z": -23
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 7,
         "z": -28
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -62,
         "z": -4
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -3,
         "z": 87
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -54,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 55,
         "z": 28
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 32,
         "z": 68
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 55,
         "z": 18
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -67,
         "z": 38
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -64,
         "z": 7
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -39,
         "z": 83
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 20,
         "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -2,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -50,
         "z": -9
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 31,
         "z": 78
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -13,
         "z": 84
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 50,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -36,
         "z": 77
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -59,
         "z": -9
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -67,
         "z": 51
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -51,
         "z": 68
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -57,
         "z": 51
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 11,
         "z": 87
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -50,
         "z": 75
       },
@@ -6264,241 +6264,241 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 83,
         "z": 3
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -5,
         "z": -41
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 62,
         "z": 53
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -18,
         "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 24,
         "z": 74
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 84,
         "z": 8
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 84,
         "z": 19
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 30,
         "z": 73
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 4,
         "z": 67
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 10,
         "z": -47
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 28,
         "z": 70
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 65,
         "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 82,
         "z": 13
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 73,
         "z": 51
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 33,
         "z": 76
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 14,
         "z": 76
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 8,
         "z": -40
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 61,
         "z": -36
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -25,
         "z": 52
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -32,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 7,
         "z": 72
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 67,
         "z": -30
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 32,
         "z": -46
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 43,
         "z": -44
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -23,
         "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -28,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -10,
         "z": 64
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -27,
         "z": 49
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 25,
         "z": -42
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 30,
         "z": -42
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 74,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 78,
         "z": 9
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 25,
         "z": -48
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -27,
         "z": -19
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 47,
         "z": -38
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -13,
         "z": 66
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 73,
         "z": -9
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -38,
         "z": 23
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 68,
         "z": -24
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -11,
         "z": -31
       },
@@ -6701,253 +6701,253 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -44,
         "z": -60
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -83,
         "z": -16
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -52,
         "z": 53
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 26,
         "z": -31
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -64,
         "z": -45
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -20,
         "z": -64
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -26,
         "z": -65
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -13,
         "z": -58
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -66,
         "z": 49
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -38,
         "z": -58
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -76,
         "z": -37
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 11,
         "z": 41
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 28,
         "z": -10
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -27,
         "z": 53
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -83,
         "z": 18
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -81,
         "z": -36
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -85,
         "z": -6
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -86,
         "z": 25
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -64,
         "z": -52
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": -18,
         "z": -56
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -27,
         "z": 59
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -9,
         "z": -59
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 8,
         "z": -50
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -69,
         "z": 38
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -77,
         "z": 31
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -86,
         "z": -23
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -30,
         "z": -63
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 5,
         "z": -55
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -12,
         "z": 54
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 26,
         "z": 13
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -89,
         "z": -5
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -56,
         "z": 47
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -71,
         "z": -49
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 28,
         "z": 2
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -89,
         "z": 15
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -84,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 27,
         "z": -20
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -72,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -14,
         "z": 59
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 18,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -55,
         "z": -54
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 2,
         "z": -50
       },
@@ -7140,265 +7140,265 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -45,
         "z": 3
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 61,
         "z": -56
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 20,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -51,
         "z": -34
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -42,
         "z": -48
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -3,
         "z": 35
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 36,
         "z": 29
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -39,
         "z": 6
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 19,
         "z": 40
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 35,
         "z": -76
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -40,
         "z": -55
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 70,
         "z": -17
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 16,
         "z": -81
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 27,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -50,
         "z": -42
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -32,
         "z": -62
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 67,
         "z": -25
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 26,
         "z": 31
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -48,
         "z": -17
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 64,
         "z": -13
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -36,
         "z": -66
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 49,
         "z": 17
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 67,
         "z": 3
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 68,
         "z": -5
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -23,
         "z": -69
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -34,
         "z": 23
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 24,
         "z": 40
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -45,
         "z": -41
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 62,
         "z": -41
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 2,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 4,
         "z": -78
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -47,
         "z": -13
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 19,
         "z": 33
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -1,
         "z": -77
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 70,
         "z": -29
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 54,
         "z": 19
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 32,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 23,
         "z": -84
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 61,
         "z": -50
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -16,
         "z": 31
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -54,
         "z": -24
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 26,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 43,
         "z": 25
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -51,
         "z": -11
       },
@@ -7612,277 +7612,277 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 20,
         "z": -87
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": 63,
         "z": 16
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 54,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 7,
         "z": 37
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -40,
         "z": -17
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -28,
         "z": -59
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -37,
         "z": -59
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -18,
         "z": 24
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -41,
         "z": -36
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 1,
         "z": -85
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 66,
         "z": -55
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -35,
         "z": -62
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -25,
         "z": 18
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 23,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 13,
         "z": -88
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 70,
         "z": -61
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -7,
         "z": -81
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -6,
         "z": 35
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -29,
         "z": 17
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -29,
         "z": 11
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 54,
         "z": -71
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -16,
         "z": -70
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 80,
         "z": -18
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 75,
         "z": -25
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 40,
         "z": -80
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -20,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -2,
         "z": 41
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -41,
         "z": -47
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 36,
         "z": 34
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -36,
         "z": 5
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 83,
         "z": -19
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 40,
         "z": -75
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 16,
         "z": 38
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 29,
         "z": 41
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 3,
         "z": 34
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -38,
         "z": -3
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -38,
         "z": -43
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 71,
         "z": -50
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": -4,
         "z": -82
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -33,
         "z": -52
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -10,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 65,
         "z": 19
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 7,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": 79,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -1,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 71,
         "z": 11
       },
@@ -8070,289 +8070,289 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": -1,
         "z": -81
       },
       {
         "kind": "asteroid",
-        "radius": 1.5,
+        "radius": 0.42,
         "x": -34,
         "z": -33
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -22,
         "z": -60
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -39,
         "z": -41
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 82,
         "z": -10
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 25,
         "z": 40
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -32,
         "z": -60
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 40,
         "z": 29
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -26,
         "z": 11
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -43,
         "z": -32
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 73,
         "z": -45
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -38,
         "z": -8
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -4,
         "z": 31
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 46,
         "z": 31
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 60,
         "z": 20
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 76,
         "z": -35
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 8,
         "z": 36
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 67,
         "z": 14
       },
       {
         "kind": "asteroid",
-        "radius": 1.4,
+        "radius": 0.39,
         "x": -34,
         "z": -2
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 24,
         "z": 35
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 67,
         "z": -56
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -32,
         "z": 8
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 77,
         "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 9,
         "z": 32
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -36,
         "z": -38
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 59,
         "z": -72
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 35,
         "z": 33
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 42,
         "z": 32
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 31,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 61,
         "z": -64
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 50,
         "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -38,
         "z": -20
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": 8,
         "z": -86
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 26,
         "z": -86
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -24,
         "z": -69
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": 9,
         "z": -80
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 61,
         "z": -59
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 43,
         "z": 29
       },
       {
         "kind": "asteroid",
-        "radius": 1.6,
+        "radius": 0.45,
         "x": 76,
         "z": -14
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": -38,
         "z": -2
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": 74,
         "z": -4
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 81,
         "z": -18
       },
       {
         "kind": "asteroid",
-        "radius": 1,
+        "radius": 0.28,
         "x": -11,
         "z": 26
       },
       {
         "kind": "asteroid",
-        "radius": 0.8,
+        "radius": 0.22,
         "x": 51,
         "z": 23
       },
       {
         "kind": "asteroid",
-        "radius": 1.2,
+        "radius": 0.34,
         "x": 33,
         "z": 37
       },
       {
         "kind": "asteroid",
-        "radius": 1.1,
+        "radius": 0.31,
         "x": -33,
         "z": -54
       },
       {
         "kind": "asteroid",
-        "radius": 1.3,
+        "radius": 0.36,
         "x": 60,
         "z": 26
       },
       {
         "kind": "asteroid",
-        "radius": 0.9,
+        "radius": 0.25,
         "x": -24,
         "z": -57
       },
