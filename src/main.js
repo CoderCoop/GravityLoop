@@ -33,6 +33,7 @@ let bodyVisuals = [];         // [{ group, body, spin, discSpin? }]
 let orbitVisuals = [];        // dotted orbit rings, one per orbiting body
 let lastCrash = null;         // last body collision, for the collision test hook
 let shipBob = 0;              // idle hover offset, reported to the contract test
+let camDriftFrom = null;      // ship position last frame, while parked
 let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
@@ -271,37 +272,6 @@ function terrainNeedsUpdate(positions) {
   return false;
 }
 
-// Level the grid off inside a disc around each world, so it sits on a visible
-// shelf instead of vanishing down its own funnel. Drawn surface only — the
-// physics and the solver still use the true potential.
-//
-// Rim heights are solved once per deform (`shelves`) rather than per vertex:
-// doing it inline would make the deform quadratic in body count.
-let shelves = [];
-function computeShelves(positions) {
-  shelves.length = 0;
-  for (let i = 0; i < level.bodies.length; i++) {
-    const b = level.bodies[i];
-    if (b.mass < 0 || b.type === 'blackhole') continue;
-    const R = b.radius * 3.2;
-    shelves.push({
-      x: positions[i].x, z: positions[i].z, R, R2: R * R,
-      rim: heightAt(level, positions[i].x + R, positions[i].z, positions),
-    });
-  }
-}
-function shelfY(x, z, y) {
-  for (let i = 0; i < shelves.length; i++) {
-    const s = shelves[i];
-    const dx = s.x - x, dz = s.z - z;
-    const d2 = dx * dx + dz * dz;
-    if (d2 >= s.R2) continue;
-    const t = Math.sqrt(d2) / s.R;         // 0 at the center, 1 at the rim
-    y = Math.max(y, s.rim - (s.rim - y) * t * t * 0.35);
-  }
-  return y;
-}
-
 // Recompute the height field the terrain is heading toward. The expensive
 // part (a potential sum per vertex) happens here; `easeTerrain` then walks
 // the drawn vertices toward it every frame so motion stays smooth even
@@ -318,7 +288,6 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
-  computeShelves(positions);
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
@@ -459,8 +428,10 @@ function buildBodies() {
       spin = 0.22;
     }
     scene.add(group);
-    const arrow = body.orbit ? makeMotionArrow(0x9bd5ff) : null;
-    bodyVisuals.push({ group, body, spin, discGroup, arrow });
+    // no motion arrow: the dotted orbit path already shows where a world is
+    // going, and the two together just crowd the map. Hazards keep theirs —
+    // no path is drawn for patrols, comets or derelicts.
+    bodyVisuals.push({ group, body, spin, discGroup, arrow: null });
   }
   buildOrbitPaths();
 }
@@ -1554,7 +1525,6 @@ function frame(now) {
   // bodies
   for (let i = 0; i < bodyVisuals.length; i++) {
     const bv = bodyVisuals[i], p = positions[i];
-    // sit on the shelf the terrain draws, not in the mathematical well floor
     const y = surfaceY(p.x, p.z, positions);
     bv.group.position.set(p.x, y + bv.body.radius * 0.55, p.z);
     bv.group.rotation.y += bv.spin * dt;
@@ -1688,14 +1658,11 @@ function checkPickups() {
   }
 }
 
-// Height of the DRAWN surface at a point. Everything that sits on the terrain
-// must use this, not the raw potential: the shelf lifts the drawn ground near
-// a world, so an object placed at the true well depth renders below the
-// surface and no longer lines up with the planet it is next to — which makes
-// a real collision look like a near miss.
-function surfaceY(x, z, positions) {
-  return shelfY(x, z, heightAt(level, x, z, positions));
-}
+// Height of the DRAWN surface at a point. Every object resting on the terrain
+// must go through this one helper rather than calling heightAt directly, so
+// the ship, rings, pad and trail can never drift out of agreement with the
+// ground (and with each other) if the surface is ever restyled again.
+function surfaceY(x, z, positions) { return heightAt(level, x, z, positions); }
 function shipY(positions) {
   const p = positions || bodiesAt(level, simTime);
   return surfaceY(ship.x, ship.z, p) + 1.6;
@@ -1707,6 +1674,20 @@ function goalY(positions) {
 
 function updateCamera(dt) {
   const E = level.extent;
+  // Parked on a pad that rides an orbiting world, the ship drifts while the
+  // player lines up a shot. Carry the view along by the ship's own
+  // displacement rather than re-centring on it, so the leg's chosen framing
+  // (and any pan the player has made) survives.
+  if ((state === 'ready' || state === 'aiming') && !gesture) {
+    if (camDriftFrom) {
+      camPan.x += ship.x - camDriftFrom.x;
+      camPan.z += ship.z - camDriftFrom.z;
+      clampPan();
+    }
+    camDriftFrom = { x: ship.x, z: ship.z };
+  } else {
+    camDriftFrom = null;
+  }
   if (state === 'flying' && !gesture) {
     // follow the ship: the tight framing would lose it in a frame or two
     const k2 = Math.min(dt * 3, 1);
@@ -2108,6 +2089,11 @@ window.GL = {
       t: simTime,
       goal: { x: anchorX(level.goal, p), z: anchorZ(level.goal, p) },
       pad: { x: anchorX(level.ship, p), z: anchorZ(level.ship, p) },
+      shipScreen: (() => {
+        const v = new THREE.Vector3(ship.x, shipY(p), ship.z).project(camera);
+        const r = renderer.domElement.getBoundingClientRect();
+        return { x: Math.round((v.x + 1) / 2 * r.width), y: Math.round((1 - v.y) / 2 * r.height) };
+      })(),
     };
   },
 };
