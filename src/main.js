@@ -604,7 +604,8 @@ function buildWaypoints() {
       }
       core.add(hub);
     }
-    core.position.y = 1.4;
+    core.scale.setScalar(stationScale(wp.r) * (wp.type === 'station' ? 1 : 1.6));
+    core.position.y = 0.8;
     core.name = 'core';
     const glow = makeGlow(color, wp.r * 3.2, 0.6);
     group.add(ring, core, glow);
@@ -632,6 +633,13 @@ function refreshWaypointStates() {
 // Goal, pad, ship
 // ---------------------------------------------------------------------------
 let goalRingMat, goalBeacon, goalGlow;
+// Station models are authored ~8.8 units across; scale them to span a little
+// under their docking ring so the structure always reads as smaller than any
+// world nearby.
+function stationScale(r) {
+  return Math.max(r, 0.8) * 0.2;
+}
+
 function buildGoal() {
   if (goalGroup) scene.remove(goalGroup);
   goalGroup = new THREE.Group();
@@ -656,7 +664,10 @@ function buildGoal() {
     station.add(panel);
   }
   station.add(hub, spine);
-  station.position.y = 1.6;
+  // a station is a structure, not a world: scale it to sit inside its own
+  // docking ring rather than dwarfing the moon it orbits
+  station.scale.setScalar(stationScale(level.goal.r));
+  station.position.y = 0.9;
   if (goalBeacon) scene.remove(goalBeacon);
   goalBeacon = new THREE.Mesh(
     new THREE.CylinderGeometry(level.goal.r * 0.45, level.goal.r * 0.7, 46, 16, 1, true),
@@ -689,8 +700,9 @@ function setGoalActive(active) {
 function buildPad() {
   if (padGroup) scene.remove(padGroup);
   padGroup = new THREE.Group();
+  // the pad is a launch platform, not a landmark — keep it near the goal ring
   const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(2.6, 0.25, 8, 36),
+    new THREE.TorusGeometry(1.2, 0.16, 8, 36),
     new THREE.MeshBasicMaterial({ color: 0x35e0ff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   ring.rotation.x = Math.PI / 2;
