@@ -17,6 +17,29 @@ jobs:
       - name: Brute-force solver over every level
         run: node tools/solve.js --fast
 
+  invariants:
+    name: Physics invariants hold
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Outcome/geometry agreement, determinism, metamorphic properties
+        run: node tools/invariants.mjs
+
+  contract:
+    name: Drawn scene matches the simulation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Silhouettes, docking rings, surface placement, preview legibility
+        run: CHROMIUM_PATH="$(command -v google-chrome || command -v chromium-browser || command -v chromium)" node tools/contract-test.mjs
+
   ui-layout:
     name: UI fits all viewports
     runs-on: ubuntu-latest

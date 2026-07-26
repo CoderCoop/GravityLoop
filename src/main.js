@@ -3,7 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
-  anchorX, anchorZ,
+  anchorX, anchorZ, SHIP_R,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import { CHANGELOG, VERSION } from './changelog.js';
@@ -32,6 +32,7 @@ let terrain;
 let bodyVisuals = [];         // [{ group, body, spin, discSpin? }]
 let orbitVisuals = [];        // dotted orbit rings, one per orbiting body
 let lastCrash = null;         // last body collision, for the collision test hook
+let shipBob = 0;              // idle hover offset, reported to the contract test
 let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
@@ -1633,6 +1634,7 @@ function frame(now) {
   if (shipGroup.visible) {
     const sy = shipY(positions);
     const bob = state === 'ready' || state === 'aiming' ? Math.sin(vTime * 2.2) * 0.35 : 0;
+    shipBob = bob;
     shipGroup.position.set(ship.x, sy + bob, ship.z);
     if (state === 'flying' && (ship.vx || ship.vz)) {
       shipGroup.rotation.y = Math.atan2(ship.vx, ship.vz);
@@ -2015,6 +2017,42 @@ window.GL = {
       dy: +(sp.y - bp.y).toFixed(2),
     };
   },
+  // Everything the contract test needs to compare the drawn scene with the
+  // scoring geometry.
+  debugContract: () => {
+    const ps = bodiesAt(level, simTime);
+    const rings = [];
+    const goalRing = goalGroup.getObjectByName('pulse');
+    rings.push({
+      what: 'goal ring',
+      drawnRadius: goalRing.geometry.parameters.radius,
+      scoringRadius: level.goal.r,
+      tube: goalRing.geometry.parameters.tube,
+    });
+    for (const wv of waypointVisuals) {
+      const g = wv.group.getObjectByName('ring').geometry.parameters;
+      rings.push({ what: `waypoint ${wv.index} ring`, drawnRadius: g.radius, scoringRadius: wv.wp.r, tube: g.tube });
+    }
+    const bodies = bodyVisuals.map(bv => ({
+      name: bv.body.name,
+      drawnRadius: bv.body.type === 'blackhole' ? bv.body.horizon : bv.body.radius,
+      hitRadius: (bv.body.horizon || bv.body.radius) + SHIP_R * 0.25,
+    }));
+    const onSurface = [
+      { what: 'ship', y: shipGroup.position.y, surfaceY: surfaceY(ship.x, ship.z, ps), offset: 1.6 + shipBob },
+      { what: 'launch pad', y: padGroup.position.y,
+        surfaceY: surfaceY(anchorX(level.ship, ps), anchorZ(level.ship, ps), ps), offset: 0.4 },
+      { what: 'goal', y: goalGroup.position.y,
+        surfaceY: surfaceY(anchorX(level.goal, ps), anchorZ(level.goal, ps), ps), offset: 0.5 },
+    ];
+    for (const wv of waypointVisuals) {
+      onSurface.push({
+        what: `waypoint ${wv.index}`, y: wv.group.position.y,
+        surfaceY: surfaceY(anchorX(wv.wp, ps), anchorZ(wv.wp, ps), ps), offset: 0.5,
+      });
+    }
+    return { rings, bodies, onSurface };
+  },
   debugRing: () => {
     const ring = goalGroup.getObjectByName('pulse');
     const tube = ring.geometry.parameters.tube;
@@ -2047,6 +2085,7 @@ window.GL = {
     return {
       speed: +v.toFixed(2), outcome: r.outcome, pts: r.points.length, drawn: n,
       lineVis: predictLine.visible, dotsVis: predictDots.visible,
+      dotsDrawn: predictDots.geometry.drawRange.count,
       yMin: ys.length ? +Math.min(...ys).toFixed(1) : null,
       yMax: ys.length ? +Math.max(...ys).toFixed(1) : null,
       shipY: +shipY().toFixed(1),
