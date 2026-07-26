@@ -136,11 +136,22 @@ export function accelAt(level, x, z, positions) {
 // `round: false` keeps a hard distance floor at 1.1 body radii, which is the
 // original shape — a needle that saturates the depth clamp. `round: true`
 // softens the centre instead, so the spike becomes a bowl.
-export const VIS = { round: false, soft: 2.4, exp: 1, comp: false };
+//   gain — overall depth multiplier, so a well widened by a flatter falloff
+//          can be pushed back down to a clearly-visible depth instead of
+//          reading as a shallow dish.
+//   depth — depth limit for the drawn surface. The default 26 is what cuts a
+//          sun's bowl off flat at the bottom, which is what makes it read as a
+//          hole rather than a basin; raising it lets the bowl keep its shape.
+// Shipped shape: centres rounded just enough to stop a body sitting in a
+// needle, depth restored by gain so the well stays plainly visible, and the
+// clamp raised so a sun's bowl is not cut off flat at the bottom. True 1/r
+// falloff is kept deliberately — flattening it spreads mass influence outward
+// but tilts the whole sheet, which washes local wells out entirely.
+export const VIS = { round: true, soft: 1.35, exp: 1, comp: false, gain: 1.35, depth: 40 };
 const REF = 20;
 export function heightAt(level, x, z, positions) {
   let h = 0;
-  const { round, soft, exp, comp } = VIS;
+  const { round, soft, exp, comp, gain, depth } = VIS;
   for (let i = 0; i < level.bodies.length; i++) {
     const b = level.bodies[i], p = positions[i];
     const dx = p.x - x, dz = p.z - z;
@@ -148,10 +159,10 @@ export function heightAt(level, x, z, positions) {
     const d = round
       ? Math.sqrt(r2 + b.radius * soft * (b.radius * soft))
       : Math.max(Math.sqrt(r2), b.radius * 1.1);
-    h -= (HEIGHT_K * b.mass) * (exp === 1 ? 1 / d : Math.pow(REF, exp - 1) / Math.pow(d, exp));
+    h -= (HEIGHT_K * gain * b.mass) * (exp === 1 ? 1 / d : Math.pow(REF, exp - 1) / Math.pow(d, exp));
   }
-  if (comp) return DEPTH_MAX * Math.tanh(h / DEPTH_MAX);
-  return Math.max(Math.min(h, DEPTH_MAX), -DEPTH_MAX);
+  if (comp) return depth * Math.tanh(h / depth);
+  return Math.max(Math.min(h, depth), -depth);
 }
 
 // Collision/target/bounds check for one instant of flight. Returns null while

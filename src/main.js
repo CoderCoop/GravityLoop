@@ -3,7 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
-  anchorX, anchorZ, SHIP_R, VIS,
+  anchorX, anchorZ, SHIP_R,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import { CHANGELOG, VERSION } from './changelog.js';
@@ -75,9 +75,6 @@ const GLOW_TEX = tx.glowTexture();
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
-// MOCKUP hook: lets the well-shape variants be rendered without a rebuild.
-if (typeof window !== 'undefined' && window.WELLSHAPE) Object.assign(VIS, window.WELLSHAPE);
-
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -240,7 +237,7 @@ function buildTerrain() {
 }
 
 const _c = new THREE.Color();
-function heightColor(y, out, o, fade) {
+function heightColor(y, out, o) {
   if (y > 0.4) {
     // antimatter hills glow violet
     const t = Math.min(y / 12, 1);
@@ -258,8 +255,7 @@ function heightColor(y, out, o, fade) {
       _c.setRGB(0.56 + 0.44 * t, 0.24 - 0.06 * t, 0.95 - 0.37 * t);
     }
   }
-  const f = fade == null ? 1 : fade;
-  out[o] = _c.r * f; out[o + 1] = _c.g * f; out[o + 2] = _c.b * f;
+  out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
 }
 
 // Every level moves now, so the whole grid can't be re-deformed every frame at
@@ -280,26 +276,6 @@ function terrainNeedsUpdate(positions) {
 // part (a potential sum per vertex) happens here; `easeTerrain` then walks
 // the drawn vertices toward it every frame so motion stays smooth even
 // though the field is only re-solved when bodies have actually moved.
-// How much to dim the grid at a point, so the mesh does not weave in front of
-// the world sitting in the well. Additive blending means dimming to zero makes
-// the lines vanish, leaving the planet against clean space.
-function gridFade(x, z, positions) {
-  const mode = window.WELLVIS || 'fade';
-  if (mode === 'off') return 1;
-  let f = 1;
-  for (let i = 0; i < level.bodies.length; i++) {
-    const b = level.bodies[i];
-    const inner = b.radius * (b.type === 'sun' ? 1.5 : 1.9);
-    const outer = b.radius * (b.type === 'sun' ? 2.6 : 3.4);
-    const d = Math.hypot(positions[i].x - x, positions[i].z - z);
-    if (d >= outer) continue;
-    if (mode === 'aperture') { if (d < outer * 0.72) return 0; continue; }
-    const t = Math.min(Math.max((d - inner) / (outer - inner), 0), 1);
-    f = Math.min(f, t * t * (3 - 2 * t));
-  }
-  return f;
-}
-
 function updateTerrain(positions, snap) {
   const { gridX, gridZ, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
@@ -312,19 +288,13 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
-  if (!terrain.fade || terrain.fade.length !== gridX.length) terrain.fade = new Float32Array(gridX.length);
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
-    terrain.fade[idx] = gridFade(gridX[idx], gridZ[idx], positions);
     if (snap) {
       pos[idx * 3 + 1] = y;
-      heightColor(y, col, idx * 3, terrain.fade[idx]);
+      heightColor(y, col, idx * 3);
     }
-  }
-  if (!snap) {
-    for (let idx = 0; idx < gridX.length; idx++) heightColor(pos[idx * 3 + 1], col, idx * 3, terrain.fade[idx]);
-    colAttr.needsUpdate = true;
   }
   if (snap) {
     posAttr.needsUpdate = true;
@@ -349,7 +319,7 @@ function easeTerrain(dt) {
       moved = true;
       // depth colour is a slow gradient — only worth redoing on a visible
       // change, which keeps the per-frame ease cheap at full grid density
-      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3, terrain.fade ? terrain.fade[idx] : 1); recoloured = true; }
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
     }
   }
   if (moved) posAttr.needsUpdate = true;
