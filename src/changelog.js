@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '1.10.1',
+    date: '2026-07-26',
+    title: 'Everything lines up with the ground',
+    notes: [
+      'Planets rest on the gravity surface instead of being half sunk into it, so the grid no longer appears to slice through them.',
+      'The beacon column now stands on its target instead of stopping short above it, so the next place you are heading is easy to pick out.',
+    ],
+  },
+  {
     v: '1.10.0',
     date: '2026-07-26',
     title: 'Finding your way around',

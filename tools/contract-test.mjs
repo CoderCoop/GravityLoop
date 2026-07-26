@@ -94,6 +94,15 @@ async function main() {
         }
       }
 
+      // a world must rest ON the grid, not half-buried in it: with its centre
+      // less than a radius up, grid lines nearer the camera draw across it
+      for (const b of r.bodies) {
+        if (b.sitsAt == null) continue;
+        if (b.sitsAt < b.sitRadius - 0.01) {
+          fail(`L${li + 1} ${b.name}: centre only ${b.sitsAt.toFixed(2)}u above the drawn surface for a sphere of radius ${b.sitRadius.toFixed(2)}u — the grid cuts through it`);
+        }
+      }
+
       // everything resting on the terrain must use the drawn surface
       for (const o of r.onSurface) {
         if (Math.abs(o.y - (o.surfaceY + o.offset)) > 0.05) {
