@@ -222,3 +222,18 @@ scripting hook exposing at least level load, launch and status.
 MUST be independent and deterministic in `(set, slot)`, and heavy slots MUST
 be splittable into attempt shards whose merged result provably equals the
 serial result.
+
+**REQ-VER-5** *(Drawn scene matches the simulation.)* Because the solver never
+renders and the layout test only measures HUD boxes, the gap between them MUST
+be checked directly. A body's drawn silhouette shall match the radius the ship
+collides with; a docking ring's drawn centreline shall equal the radius that
+scores, and its visible thickness shall stay within 20% of that radius; every
+object resting on the terrain shall be placed at the *drawn* surface height,
+not the raw potential; and the flight preview shall stay legible even when a
+shot crashes within a fraction of a second.
+
+**REQ-VER-6** *(Outcomes are supported by the geometry.)* When the simulation
+reports an outcome, the ship's position at that instant shall satisfy the
+outcome's geometric condition, within one physics step of travel. Prediction
+shall be deterministic, and shrinking a target shall never raise a level's
+win count while growing one shall never lower it.

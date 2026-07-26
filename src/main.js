@@ -3,7 +3,7 @@ import * as THREE from '../vendor/three.module.js';
 import {
   STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
-  anchorX, anchorZ,
+  anchorX, anchorZ, SHIP_R,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import { CHANGELOG, VERSION } from './changelog.js';
@@ -31,6 +31,8 @@ let renderer, scene, camera;
 let terrain;
 let bodyVisuals = [];         // [{ group, body, spin, discSpin? }]
 let orbitVisuals = [];        // dotted orbit rings, one per orbiting body
+let lastCrash = null;         // last body collision, for the collision test hook
+let shipBob = 0;              // idle hover offset, reported to the contract test
 let hazardVisuals = [];       // [{ group, hazard, prev }]
 let pickupVisuals = [];       // [{ group, pickup, index }]
 let waypointVisuals = [];     // [{ group, wp, ringMat, glow }]
@@ -318,7 +320,7 @@ function updateTerrain(positions, snap) {
   }
   computeShelves(positions);
   for (let idx = 0; idx < gridX.length; idx++) {
-    const y = shelfY(gridX[idx], gridZ[idx], heightAt(level, gridX[idx], gridZ[idx], positions));
+    const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
     if (snap) {
       pos[idx * 3 + 1] = y;
@@ -496,7 +498,7 @@ function updateOrbitPaths(positions) {
       const a = (j / ORBIT_SEGS) * Math.PI * 2;
       const x = c.x + Math.cos(a) * o.radius, z = c.z + Math.sin(a) * o.radius;
       arr[j * 3] = x;
-      arr[j * 3 + 1] = heightAt(level, x, z, positions) + 0.35;
+      arr[j * 3 + 1] = surfaceY(x, z, positions) + 0.35;
       arr[j * 3 + 2] = z;
     }
     attr.needsUpdate = true;
@@ -583,7 +585,7 @@ function buildWaypoints() {
     const color = WP_COLORS[wp.type] || 0x35e0ff;
     const group = new THREE.Group();
     const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(wp.r, 0.35, 10, 44),
+      new THREE.TorusGeometry(wp.r, Math.min(0.35, wp.r * 0.12), 10, 44),
       new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }),
     );
     ring.rotation.x = Math.PI / 2;
@@ -645,8 +647,12 @@ function buildGoal() {
   goalGroup = new THREE.Group();
   // the target is always a space station: hub + solar panels inside a gold
   // docking ring
+  // The win test is "centre distance < goal.r", so the ring's centreline IS
+  // the boundary. A fat tube puts half the drawn ring outside the scoring
+  // radius, which reads as flying through the target without docking — keep
+  // it thin relative to r now that targets are small.
   const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(level.goal.r, 0.4, 10, 48),
+    new THREE.TorusGeometry(level.goal.r, Math.min(0.4, level.goal.r * 0.12), 10, 48),
     new THREE.MeshBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   ring.rotation.x = Math.PI / 2;
@@ -966,7 +972,7 @@ function onCrash(reason) {
   state = 'crashed';
   sfx.stopThrust();
   sfx.crashSound();
-  const y = heightAt(level, ship.x, ship.z, bodiesAt(level, simTime)) + 1.6;
+  const y = surfaceY(ship.x, ship.z, bodiesAt(level, simTime)) + 1.6;
   burst(ship.x, y, ship.z, 0xff7b54, 80);
   shipGroup.visible = false;
   toast(reason);
@@ -1361,7 +1367,7 @@ function updatePrediction() {
     const pt = r.points[i];
     const positions = dynamic ? bodiesAt(level, simTime + pt.t) : nowPositions;
     attr.array[i * 3] = pt.x;
-    attr.array[i * 3 + 1] = heightAt(level, pt.x, pt.z, positions) + 1.3;
+    attr.array[i * 3 + 1] = surfaceY(pt.x, pt.z, positions) + 1.3;
     attr.array[i * 3 + 2] = pt.z;
   }
   attr.needsUpdate = true;
@@ -1390,7 +1396,7 @@ function updatePrediction() {
   if (good || bad) {
     const last = r.points[r.points.length - 1];
     const positions = dynamic ? bodiesAt(level, simTime + last.t) : nowPositions;
-    predictMarker.position.set(last.x, heightAt(level, last.x, last.z, positions) + 1.5, last.z);
+    predictMarker.position.set(last.x, surfaceY(last.x, last.z, positions) + 1.5, last.z);
     predictMarker.material.color.setHex(color);
     predictMarker.material.depthTest = false;
     predictMarker.renderOrder = 22;
@@ -1519,7 +1525,13 @@ function frame(now) {
         if (st.type === 'goal') onWin();
         else if (st.type === 'waypoint') beginDock(st.index);
         else if (st.type === 'oob') failOOB();
-        else onCrash(crashMessage(st));
+        else {
+          lastCrash = st.body != null ? {
+            body: st.body,
+            gap: Math.hypot(ship.x - positions[st.body].x, ship.z - positions[st.body].z),
+          } : null;
+          onCrash(crashMessage(st));
+        }
       }
     }
     if (state === 'flying') checkPickups();
@@ -1543,7 +1555,7 @@ function frame(now) {
   for (let i = 0; i < bodyVisuals.length; i++) {
     const bv = bodyVisuals[i], p = positions[i];
     // sit on the shelf the terrain draws, not in the mathematical well floor
-    const y = shelfY(p.x, p.z, heightAt(level, p.x, p.z, positions));
+    const y = surfaceY(p.x, p.z, positions);
     bv.group.position.set(p.x, y + bv.body.radius * 0.55, p.z);
     bv.group.rotation.y += bv.spin * dt;
     if (bv.arrow) updateMotionArrow(bv.arrow, bodiesAt, i, y + bv.body.radius + 3, );
@@ -1560,7 +1572,7 @@ function frame(now) {
   const hazPositions = hazardsAt(level, simTime);
   for (let i = 0; i < hazardVisuals.length; i++) {
     const hv = hazardVisuals[i], p = hazPositions[i];
-    const y = heightAt(level, p.x, p.z, positions) + 1.6;
+    const y = surfaceY(p.x, p.z, positions) + 1.6;
     hv.group.position.set(p.x, y, p.z);
     if (hv.prev) {
       const dx = p.x - hv.prev.x, dz = p.z - hv.prev.z;
@@ -1582,7 +1594,7 @@ function frame(now) {
     const taken = pickupsDone.has(pv.index) || pickupsTemp.has(pv.index);
     pv.group.visible = !taken;
     if (!taken) {
-      const y = heightAt(level, pv.pickup.x, pv.pickup.z, positions);
+      const y = surfaceY(pv.pickup.x, pv.pickup.z, positions);
       pv.group.position.set(pv.pickup.x, y + 2.2 + Math.sin(vTime * 2 + pv.index) * 0.5, pv.pickup.z);
       pv.group.rotation.y += dt * 1.2;
     }
@@ -1591,7 +1603,7 @@ function frame(now) {
   // waypoints
   for (const wv of waypointVisuals) {
     const wx = anchorX(wv.wp, positions), wz = anchorZ(wv.wp, positions);
-    const y = heightAt(level, wx, wz, positions);
+    const y = surfaceY(wx, wz, positions);
     wv.group.position.set(wx, y + 0.5, wz);
     const ring = wv.group.getObjectByName('ring');
     if (wv.index === stage) ring.scale.setScalar(1 + Math.sin(vTime * 2.6) * 0.07);
@@ -1607,7 +1619,7 @@ function frame(now) {
   const gstation = goalGroup.getObjectByName('station');
   if (gstation) gstation.rotation.y += dt * 0.5;
   const padX = anchorX(level.ship, positions), padZ = anchorZ(level.ship, positions);
-  padGroup.position.set(padX, heightAt(level, padX, padZ, positions) + 0.4, padZ);
+  padGroup.position.set(padX, surfaceY(padX, padZ, positions) + 0.4, padZ);
   // the parked ship rides its pad until launch
   if (state === 'ready' || state === 'aiming') {
     if (stage === 0) { ship.x = padX; ship.z = padZ; }
@@ -1622,6 +1634,7 @@ function frame(now) {
   if (shipGroup.visible) {
     const sy = shipY(positions);
     const bob = state === 'ready' || state === 'aiming' ? Math.sin(vTime * 2.2) * 0.35 : 0;
+    shipBob = bob;
     shipGroup.position.set(ship.x, sy + bob, ship.z);
     if (state === 'flying' && (ship.vx || ship.vz)) {
       shipGroup.rotation.y = Math.atan2(ship.vx, ship.vz);
@@ -1675,12 +1688,21 @@ function checkPickups() {
   }
 }
 
+// Height of the DRAWN surface at a point. Everything that sits on the terrain
+// must use this, not the raw potential: the shelf lifts the drawn ground near
+// a world, so an object placed at the true well depth renders below the
+// surface and no longer lines up with the planet it is next to — which makes
+// a real collision look like a near miss.
+function surfaceY(x, z, positions) {
+  return shelfY(x, z, heightAt(level, x, z, positions));
+}
 function shipY(positions) {
-  return heightAt(level, ship.x, ship.z, positions || bodiesAt(level, simTime)) + 1.6;
+  const p = positions || bodiesAt(level, simTime);
+  return surfaceY(ship.x, ship.z, p) + 1.6;
 }
 function goalY(positions) {
   const p = positions || bodiesAt(level, simTime);
-  return heightAt(level, anchorX(level.goal, p), anchorZ(level.goal, p), p);
+  return surfaceY(anchorX(level.goal, p), anchorZ(level.goal, p), p);
 }
 
 function updateCamera(dt) {
@@ -1981,6 +2003,65 @@ window.GL = {
   launch: (vx, vz) => { if (state === 'ready') launch(vx, vz); },
   status: () => ({ state, stage, fuel, attempts, carrying, level: levelIndex }),
   aim: () => ({ fine: fineActive, gain: +fineGain.toFixed(3), v: aimFinePrev && Math.round(aimFinePrev.v), vel: { ...launchVel } }),
+  // Do the drawn positions agree with what the physics decided?
+  debugCollide: () => {
+    if (!lastCrash) return { state };
+    const bv = bodyVisuals[lastCrash.body];
+    const sp = shipGroup.position, bp = bv.group.position;
+    return {
+      state,
+      body: bv.body.name,
+      bodyR: +bv.body.radius.toFixed(2),
+      gapAtCrash: +lastCrash.gap.toFixed(2),
+      drawnGap: +Math.hypot(sp.x - bp.x, sp.z - bp.z).toFixed(2),
+      dy: +(sp.y - bp.y).toFixed(2),
+    };
+  },
+  // Everything the contract test needs to compare the drawn scene with the
+  // scoring geometry.
+  debugContract: () => {
+    const ps = bodiesAt(level, simTime);
+    const rings = [];
+    const goalRing = goalGroup.getObjectByName('pulse');
+    rings.push({
+      what: 'goal ring',
+      drawnRadius: goalRing.geometry.parameters.radius,
+      scoringRadius: level.goal.r,
+      tube: goalRing.geometry.parameters.tube,
+    });
+    for (const wv of waypointVisuals) {
+      const g = wv.group.getObjectByName('ring').geometry.parameters;
+      rings.push({ what: `waypoint ${wv.index} ring`, drawnRadius: g.radius, scoringRadius: wv.wp.r, tube: g.tube });
+    }
+    const bodies = bodyVisuals.map(bv => ({
+      name: bv.body.name,
+      drawnRadius: bv.body.type === 'blackhole' ? bv.body.horizon : bv.body.radius,
+      hitRadius: (bv.body.horizon || bv.body.radius) + SHIP_R * 0.25,
+    }));
+    const onSurface = [
+      { what: 'ship', y: shipGroup.position.y, surfaceY: surfaceY(ship.x, ship.z, ps), offset: 1.6 + shipBob },
+      { what: 'launch pad', y: padGroup.position.y,
+        surfaceY: surfaceY(anchorX(level.ship, ps), anchorZ(level.ship, ps), ps), offset: 0.4 },
+      { what: 'goal', y: goalGroup.position.y,
+        surfaceY: surfaceY(anchorX(level.goal, ps), anchorZ(level.goal, ps), ps), offset: 0.5 },
+    ];
+    for (const wv of waypointVisuals) {
+      onSurface.push({
+        what: `waypoint ${wv.index}`, y: wv.group.position.y,
+        surfaceY: surfaceY(anchorX(wv.wp, ps), anchorZ(wv.wp, ps), ps), offset: 0.5,
+      });
+    }
+    return { rings, bodies, onSurface };
+  },
+  debugRing: () => {
+    const ring = goalGroup.getObjectByName('pulse');
+    const tube = ring.geometry.parameters.tube;
+    return {
+      r: level.goal.r,
+      inner: +(ring.geometry.parameters.radius - tube).toFixed(2),
+      outer: +(ring.geometry.parameters.radius + tube).toFixed(2),
+    };
+  },
   perf: () => {
     const ps = bodiesAt(level, simTime);
     let t0 = performance.now();
@@ -2004,6 +2085,7 @@ window.GL = {
     return {
       speed: +v.toFixed(2), outcome: r.outcome, pts: r.points.length, drawn: n,
       lineVis: predictLine.visible, dotsVis: predictDots.visible,
+      dotsDrawn: predictDots.geometry.drawRange.count,
       yMin: ys.length ? +Math.min(...ys).toFixed(1) : null,
       yMax: ys.length ? +Math.max(...ys).toFixed(1) : null,
       shipY: +shipY().toFixed(1),
