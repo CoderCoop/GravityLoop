@@ -106,6 +106,7 @@ function init() {
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', e => { keys[e.code] = false; updateThrustSound(); });
 
+  document.getElementById('btn-home').addEventListener('click', () => { sfx.clickSound(); showMenu(); });
   document.getElementById('btn-retry').addEventListener('click', () => { sfx.clickSound(); if (state !== 'menu') resetLevel(); });
   document.getElementById('btn-mute').addEventListener('click', toggleMute);
   document.getElementById('level-label').addEventListener('click', () => {
@@ -1496,6 +1497,7 @@ function onKeyDown(e) {
   if (e.code === 'Escape') {
     if (levelPanelOpen()) setLevelPanel(false);
     else if (state === 'aiming') { aim = null; cancelAim(); }
+    else if (state !== 'menu') { sfx.clickSound(); showMenu(); }
   }
   if (e.code === 'KeyN' && state === 'won') nextLevel();
 }
@@ -1951,6 +1953,10 @@ function showMenu() {
       <button id="btn-play" class="big">▶ Play</button>
       <button id="btn-news" class="linkish">v${VERSION} · What's new${unreadNews() ? ' <span class="news-dot">NEW</span>' : ''}</button>
       <button id="btn-rebuild" class="linkish">Built by AI · rebuild it yourself</button>
+      <div class="menu-links">
+        <a href="${REPO}" target="_blank" rel="noopener">Project site ↗</a>
+        <a href="${REPO}#readme" target="_blank" rel="noopener">How it works ↗</a>
+      </div>
     </div>`);
   document.getElementById('btn-play').addEventListener('click', () => {
     sfx.clickSound();

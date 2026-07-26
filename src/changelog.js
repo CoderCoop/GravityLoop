@@ -3,6 +3,15 @@
 // ships; the menu badges the button until the player has read that version.
 export const CHANGELOG = [
   {
+    v: '2.0',
+    date: '2026-07-26',
+    title: 'Finding your way around',
+    notes: [
+      'A \u2302 button in the HUD returns you to the title screen at any time, and Esc does the same.',
+      'The title screen links out to the project site, so the code and the spec behind the game are one click away.',
+    ],
+  },
+  {
     v: '1.9',
     date: '2026-07-26',
     title: 'Reading the field',

@@ -262,6 +262,20 @@ html, body {
 /* ------------------------------------------------------ what's new panel */
 .panel.wide { max-width: min(680px, 94vw); padding: 28px 30px 24px; }
 .news-h1 { font-size: 30px !important; margin-bottom: 14px !important; }
+.menu-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.menu-links a {
+  color: rgba(190, 205, 255, 0.62);
+  font-size: 12.5px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(190, 205, 255, 0.25);
+}
+.menu-links a:hover { color: #ffd166; border-bottom-color: #ffd166; }
+
 .panel button.linkish {
   background: none;
   border: none;
