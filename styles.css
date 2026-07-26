@@ -181,7 +181,8 @@ html, body {
   position: fixed;
   z-index: 5;
   pointer-events: none;
-  transform: translate(-50%, 150%);
+  /* offset clear of the ship: a short trail lands right below it */
+  transform: translate(-50%, 320%);
   background: rgba(8, 6, 24, 0.9);
   border: 1.5px solid rgba(255, 209, 102, 0.75);
   color: #ffe9b0;
