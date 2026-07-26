@@ -676,8 +676,12 @@ function buildGoal() {
 // stop, a station, or the final goal.
 function updateBeacon(positions) {
   if (!goalBeacon || !level) return;
-  const tgt = activeTarget(level, stage, positions);
-  goalBeacon.position.set(tgt.x, 23, tgt.z);
+  const ps = positions || bodiesAt(level, simTime);
+  const tgt = activeTarget(level, stage, ps);
+  // stand the column ON the target: it is 46 tall and centred, and targets sit
+  // far down in a well, so a fixed height left its base hanging in space above
+  // whatever it was meant to be pointing at
+  goalBeacon.position.set(tgt.x, surfaceY(tgt.x, tgt.z, ps) + 23, tgt.z);
   const s = Math.max(tgt.r, 1.8) / Math.max(level.goal.r, 0.001);
   goalBeacon.scale.set(s, 1, s);
   goalBeacon.material.color.setHex(tgt.kind === 'goal' ? 0xffd166 : 0x66e0ff);
@@ -2140,7 +2144,10 @@ window.GL = {
       sitRadius: bv.body.radius,
       sitsAt: bv.group.position.y - surfaceY(ps[i].x, ps[i].z, ps),
     }));
+    const tgtNow = activeTarget(level, stage, ps);
     const onSurface = [
+      { what: 'beacon base', y: goalBeacon.position.y - 23,
+        surfaceY: surfaceY(tgtNow.x, tgtNow.z, ps), offset: 0 },
       { what: 'ship', y: shipGroup.position.y, surfaceY: surfaceY(ship.x, ship.z, ps), offset: 1.6 + shipBob },
       { what: 'launch pad', y: padGroup.position.y,
         surfaceY: surfaceY(anchorX(level.ship, ps), anchorZ(level.ship, ps), ps), offset: 0.4 },
