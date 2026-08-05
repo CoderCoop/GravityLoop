@@ -18,7 +18,8 @@ const DEFORM_EPS = 0.12;      // world units a body must move to redraw terrain
 const BODY_SIT = 1.04;        // body centre height above the surface, in radii
 const AIM_SCALE = 1.15;       // drag distance -> launch speed
 const FINE_MAX = 12;          // deepest fine ratio at a near-still pointer
-const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
+const FINE_V_HI = 200;        // px/s — at or above, 1:1 response
+const FINE_LAG_PX = 90;       // furthest the aim handle may trail the pointer
 const MIN_LAUNCH = 6;
 const CAM_ZOOM_MAX = 1.8;     // furthest the camera may pull back
 const SHIP_FOOT = 0.26;       // screen kept clear below the ship to drag into
@@ -1021,6 +1022,12 @@ function gestureShape() {
     my: (p1.y + p2.y) / 2,
   };
 }
+// World units spanned by one screen pixel at the plane the camera looks at.
+function worldPerPixel() {
+  const rect = renderer.domElement.getBoundingClientRect();
+  const dist = level.extent * 1.83 * camZoom;
+  return (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / rect.height;
+}
 function clampPan() {
   const lim = level.extent * 0.9;
   camPan.x = Math.min(Math.max(camPan.x, -lim), lim);
@@ -1146,9 +1153,7 @@ function onPointerMove(e) {
     camYaw = gesture.yaw0 + (s.a - gesture.a0);
     // pan from absolute screen deltas since gesture start — never re-derived
     // through the (still-lerping) camera, so it cannot feed back and jump
-    const rect = renderer.domElement.getBoundingClientRect();
-    const dist = level.extent * 1.83 * camZoom;
-    const wpp = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / rect.height;
+    const wpp = worldPerPixel();
     const wx = (s.mx - gesture.mx0) * wpp;
     const wz = (s.my - gesture.my0) * wpp * 1.35;
     const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
@@ -1201,6 +1206,13 @@ function cancelAim() {
 // 1/FINE_MAX at a near-still crawl, so the last hundredths of a degree are
 // dialable. Fast flicks pull the handle back onto the finger so slow-phase
 // offset never piles up.
+//
+// The gain buys precision by letting the handle lag the pointer, so the lag is
+// bounded: an unbounded one meant a careful, deliberate drag — exactly the
+// kind that engages the finest gain — moved the handle a tenth of its length
+// and could not reach launch power at all, leaving no prediction line and no
+// shot. Past FINE_LAG_PX the handle is towed along 1:1, so full power is
+// always within reach while corrections inside that window stay fine.
 function fineAim(e, p) {
   const now = performance.now();
   if (!aimFinePrev) {
@@ -1220,6 +1232,16 @@ function fineAim(e, p) {
   const k = t * t * 0.3;
   aimFine.x += (p.x - aimFine.x) * k;
   aimFine.z += (p.z - aimFine.z) * k;
+  // cap the accumulated lag, so the handle can never fall so far behind the
+  // pointer that the drag stops being able to reach launch power
+  const maxLag = FINE_LAG_PX * worldPerPixel();
+  const lx = p.x - aimFine.x, lz = p.z - aimFine.z;
+  const lag = Math.hypot(lx, lz);
+  if (lag > maxLag) {
+    const tow = 1 - maxLag / lag;
+    aimFine.x += lx * tow;
+    aimFine.z += lz * tow;
+  }
   aimFinePrev = { sx: e.clientX, sy: e.clientY, wx: p.x, wz: p.z, t: now, v };
   fineActive = gain < 0.6;
   fineGain = gain;
