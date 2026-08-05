@@ -11,6 +11,16 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '1.11.0',
+    date: '2026-08-05',
+    title: 'Install it from the title screen',
+    notes: [
+      'The title screen now offers to install Gravity Loop as an app — one tap for a full-screen icon on your home screen that works offline. On iPhone it tells you where Safari hides the button.',
+      'Dismiss it and it stays dismissed; it never appears once the game is installed.',
+      'Menus that are taller than a small phone screen now scroll instead of running off the top.',
+    ],
+  },
+  {
     v: '1.10.3',
     date: '2026-08-05',
     title: 'Careful aim still reaches full power',

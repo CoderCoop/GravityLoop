@@ -27,7 +27,8 @@ const VIEWPORTS = [
 ];
 
 // Elements that must always sit fully inside the viewport.
-const SELECTORS = ['#hud .pill', '#hud .btn', '#hint', '#set-bar button', '#dot-bar button', '#set-name'];
+const SELECTORS = ['#hud .pill', '#hud .btn', '#hint', '#set-bar button', '#dot-bar button', '#set-name',
+  '#install-banner', '#install-banner button'];
 
 // Levels sampled for the launch-framing check (one per set, plus multi-stop).
 const FRAME_LEVELS = [0, 1, 2, 6, 12, 25, 33, 40, 49];
@@ -100,6 +101,20 @@ for (const vp of VIEWPORTS) {
     JSON.stringify({ unlocked: 50, stars: {}, experimental: true })));
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
+  // Headless Chromium never fires beforeinstallprompt, so synthesize one: it
+  // is what makes the install banner offerable, and the banner has to fit the
+  // viewport like everything else.
+  await page.evaluate(() => {
+    const e = new Event('beforeinstallprompt');
+    e.prompt = () => {};
+    e.userChoice = Promise.resolve({ outcome: 'dismissed' });
+    window.dispatchEvent(e);
+  });
+  await page.waitForTimeout(150);
+  const bannerShown = await page.evaluate(() => !document.getElementById('install-banner').hidden);
+  const bannerIssues = bannerShown ? [] : ['install banner did not appear after beforeinstallprompt'];
+  const bannerBox = await page.evaluate(collectIssues, ['#install-banner', '#install-banner button']);
+  bannerIssues.push(...bannerBox);
   await page.click('#btn-play');
   await page.waitForTimeout(300);
   await page.evaluate(() => window.GL.load(49));
@@ -109,6 +124,7 @@ for (const vp of VIEWPORTS) {
   await page.waitForTimeout(200);
 
   const issues = await page.evaluate(collectIssues, SELECTORS);
+  issues.push(...bannerIssues);
 
   // Launch framing: on every leg start the ship must be on screen, clear of
   // the HUD strip, and with room below it to drag the slingshot into.

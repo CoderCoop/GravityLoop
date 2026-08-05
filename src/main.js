@@ -113,6 +113,8 @@ function init() {
   document.getElementById('btn-home').addEventListener('click', () => { sfx.clickSound(); showMenu(); });
   document.getElementById('btn-retry').addEventListener('click', () => { sfx.clickSound(); if (state !== 'menu') resetLevel(); });
   document.getElementById('btn-mute').addEventListener('click', toggleMute);
+  document.getElementById('btn-install').addEventListener('click', runInstall);
+  document.getElementById('btn-install-no').addEventListener('click', () => { sfx.clickSound(); dismissInstall(); });
   document.getElementById('level-label').addEventListener('click', () => {
     sfx.clickSound();
     setLevelPanel(!levelPanelOpen());
@@ -2008,6 +2010,7 @@ function showMenu() {
   document.getElementById('btn-play').addEventListener('click', () => {
     sfx.clickSound();
     hideOverlay();
+    hideInstallBanner();
     resetLevel();
     state = 'ready';
   });
@@ -2019,6 +2022,7 @@ function showMenu() {
     sfx.clickSound();
     showRebuild();
   });
+  refreshInstallUI();
 }
 
 // The whole game was specified in conversation and built by an AI agent, so
@@ -2074,6 +2078,69 @@ async function showRebuild() {
       }
     });
   }
+}
+
+// --------------------------------------------------------- install prompt
+// Chromium fires beforeinstallprompt and lets us show the real install dialog
+// on demand. iOS Safari never fires it, so there we can only explain the
+// Share -> Add to Home Screen route. Either way: only offer it when the game
+// is not already installed, and never nag twice.
+const INSTALL_KEY = 'gl-install-dismissed';
+let installEvent = null;
+
+function isInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+}
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+function installDismissed() {
+  try { return localStorage.getItem(INSTALL_KEY) === '1'; } catch { return false; }
+}
+function canOfferInstall() {
+  if (isInstalled() || installDismissed()) return false;
+  return !!installEvent || isIOS();
+}
+function dismissInstall() {
+  try { localStorage.setItem(INSTALL_KEY, '1'); } catch { /* private mode */ }
+  hideInstallBanner();
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();          // keep Chrome's own mini-infobar out of the way
+  installEvent = e;
+  if (state === 'menu') refreshInstallUI();
+});
+window.addEventListener('appinstalled', () => { installEvent = null; hideInstallBanner(); });
+
+async function runInstall() {
+  sfx.clickSound();
+  if (installEvent) {
+    installEvent.prompt();
+    const { outcome } = await installEvent.userChoice;
+    installEvent = null;
+    if (outcome === 'accepted') hideInstallBanner();
+    else dismissInstall();
+    return;
+  }
+  // iOS: no programmatic install, so say how
+  toast('📲 Tap Share, then "Add to Home Screen"');
+  dismissInstall();
+}
+
+function hideInstallBanner() {
+  const el = document.getElementById('install-banner');
+  if (el) el.hidden = true;
+  document.documentElement.style.setProperty('--install-h', '0px');
+}
+function refreshInstallUI() {
+  const el = document.getElementById('install-banner');
+  if (!el) return;
+  el.hidden = !(canOfferInstall() && state === 'menu');
+  // Hand the banner's real height to the overlay so the menu panel centres
+  // above it rather than underneath it.
+  const h = el.hidden ? 0 : el.getBoundingClientRect().height + 28;
+  document.documentElement.style.setProperty('--install-h', `${Math.round(h)}px`);
 }
 
 // ------------------------------------------------------------- what's new
