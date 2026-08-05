@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '1.11.1',
+    date: '2026-08-05',
+    title: 'Easier to find, nicer to share',
+    notes: [
+      'The title screen is part of the page itself now, so it appears the moment the page opens instead of waiting for the game to load.',
+      'Sharing a link to Gravity Loop shows a picture of the game and a real description rather than a bare URL.',
+    ],
+  },
+  {
     v: '1.11.0',
     date: '2026-08-05',
     title: 'Install it from the title screen',
