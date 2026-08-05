@@ -3,15 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Gravity Loop — spaceship golf on the curves of spacetime</title>
+  <title>Gravity Loop — free browser game: spaceship golf on the curves of spacetime</title>
+  <meta name="description" content="Free browser game. Slingshot a spaceship across gravity wells rendered as 3D neon terrain — 50 levels of orbital mechanics, gravity assists and fuel budgets. No install, no signup, works offline.">
+  <link rel="canonical" href="https://codercoop.github.io/GravityLoop/">
   <meta name="theme-color" content="#05010f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Gravity Loop">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gravity Loop">
+  <meta property="og:url" content="https://codercoop.github.io/GravityLoop/">
+  <meta property="og:title" content="Gravity Loop — spaceship golf on the curves of spacetime">
+  <meta property="og:description" content="Slingshot a spaceship across gravity wells rendered as 3D neon terrain. 50 levels of orbital mechanics, gravity assists and fuel budgets — free in your browser.">
+  <meta property="og:image" content="https://codercoop.github.io/GravityLoop/icons/social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A spaceship arcing over a glowing blue grid warped into gravity wells by Earth and the Moon.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gravity Loop — spaceship golf on the curves of spacetime">
+  <meta name="twitter:description" content="Slingshot a spaceship across gravity wells rendered as 3D neon terrain. 50 levels, free in your browser.">
+  <meta name="twitter:image" content="https://codercoop.github.io/GravityLoop/icons/social-card.png">
+
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="icons/icon-192.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Gravity Loop",
+    "url": "https://codercoop.github.io/GravityLoop/",
+    "description": "Slingshot a spaceship across gravity wells rendered as 3D neon terrain. 50 levels of orbital mechanics, gravity assists and fuel budgets.",
+    "image": "https://codercoop.github.io/GravityLoop/icons/social-card.png",
+    "genre": ["Puzzle", "Physics", "Arcade"],
+    "gamePlatform": ["Web browser", "Progressive Web App"],
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "playMode": "SinglePlayer",
+    "isAccessibleForFree": true,
+    "inLanguage": "en",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "CoderCoop", "url": "https://github.com/CoderCoop" }
+  }
+  </script>
 </head>
 <body>
   <div id="game"></div>
@@ -58,7 +94,29 @@
   </div>
   <div id="fine-chip" hidden>FINE ×4</div>
   <div id="aim-readout" hidden>0° · 0%</div>
-  <div id="overlay"></div>
+  <!-- The title screen, served as real markup. The game re-renders this same
+       panel once the modules load; until then it is what a visitor on a slow
+       connection sees, and it is the only thing a crawler that does not run
+       JavaScript can read. Keep the copy in step with showMenu() in
+       src/main.js — it must describe the game a player actually gets. -->
+  <div id="overlay" class="show">
+    <div class="panel">
+      <div class="menu-emoji">🌌</div>
+      <h1>GravityLoop</h1>
+      <p class="tagline">Spaceship golf across the curves of spacetime.</p>
+      <p class="howto">
+        Gravity is drawn as 3D terrain: every planet bends the neon grid into a well,
+        antimatter stars bulge it into hills, and black holes tear it into bottomless funnels.
+        <b>Drag back</b> from your ship and release to launch — dive into a well to speed up,
+        ride a ridge to coast, and time your shot so an orbiting world slings you onward.
+        50 levels, from an Earth–Moon hop out to alien suns. Free, no signup, plays offline.
+      </p>
+      <noscript>
+        <p class="howto"><b>Gravity Loop needs JavaScript to run.</b>
+        Enable it and reload to play in your browser.</p>
+      </noscript>
+    </div>
+  </div>
 
   <script type="module" src="src/main.js"></script>
   <script>

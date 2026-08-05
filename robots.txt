@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://codercoop.github.io/GravityLoop/sitemap.xml
