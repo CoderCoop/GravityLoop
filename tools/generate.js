@@ -79,10 +79,15 @@ function pathTurning(pts) {
 //   loop   most of a revolution around a body
 //   ess    bends one way then back the other
 //   cruise a long route that keeps meeting new terrain
+// Thresholds are in radians of heading change and are what a set-1 layout can
+// actually deliver — measured, not guessed. A first pass asked set 1 for 4.2
+// radians of loop and missed by 5+ on every candidate, which just burns the
+// search budget that the other shapes need. SHAPE_RAMP scales these up for
+// the later sets, where the layouts can support it.
 const SHAPES = {
   arc: { absLo: 1.0, absHi: 2.6, netLo: 0.75, interest: 1.0 },
   sling: { absLo: 2.2, absHi: 4.2, netLo: 0.7, interest: 1.0 },
-  loop: { absLo: 4.2, absHi: 99, netLo: 0.8, interest: 1.0 },
+  loop: { absLo: 2.6, absHi: 99, netLo: 0.75, interest: 1.0 },
   ess: { absLo: 2.6, absHi: 99, netHi: 0.45, interest: 1.0 },
   cruise: { absLo: 1.6, absHi: 99, netLo: 0.0, interest: 1.6 },
 };
@@ -206,7 +211,10 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null) {
   let evalMinTurn = Infinity, evalMedTurn = Infinity, shapeFit = 0;
   for (let s = 0; s < legs; s++) {
     const r = solveLeg(level, s, shape);
-    if (shape) { shapeFit = Math.max(shapeFit, r.shapeFit); dist2 += r.shapeFit * 1.5; }
+    // Weighted above the turn floor below: the shape is the level's identity,
+    // the floor only rules out straight shots. Left equal, the search trades
+    // the shape away to shave the floor and every level ends up alike again.
+    if (shape) { shapeFit = Math.max(shapeFit, r.shapeFit); dist2 += r.shapeFit * 3; }
     minWins = Math.min(minWins, r.wins);
     if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
     rates.push(r.rate);
@@ -218,10 +226,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null) {
     // gravity is the point: reject layouts where a straight shot can win —
     // even the straightest winning route must bend by the set's floor, and
     // the typical route should bend well past it
-    if (set.turnMin) {
-      if (r.minTurn < set.turnMin) dist2 += (set.turnMin - r.minTurn) * 3;
-      if (r.medTurn < set.turnMed) dist2 += (set.turnMed - r.medTurn) * 1.5;
-    }
+    if (set.turnMin && r.minTurn < set.turnMin) dist2 += (set.turnMin - r.minTurn) * 2;
     if (s === 0 && needsTiming) {
       conc = r.byT0 ? concentration(r.byT0) : 0;
       if (conc < 0.5) dist2 += (0.5 - conc) * 6;     // demand launch windows
@@ -1092,8 +1097,8 @@ const SETS = [
 // a single per-set median floor made every level in a set play the same.
 // GEN_TIER=A is moderate, C demands curves hard.
 const TIER = process.env.GEN_TIER || 'C';
-const TURNS = { A: [0.7, 1.0, 1.3, 1.6, 2.0], B: [1.0, 1.5, 2.0, 2.5, 3.2], C: [1.3, 1.7, 2.1, 2.5, 3.0] }[TIER];
-SETS.forEach((s, i) => { s.turnMin = TURNS[i]; s.turnMed = 0; });
+const TURNS = { A: [0.6, 0.8, 1.0, 1.2, 1.5], B: [0.8, 1.1, 1.4, 1.7, 2.1], C: [1.1, 1.4, 1.7, 2.0, 2.4] }[TIER];
+SETS.forEach((s, i) => { s.turnMin = TURNS[i]; });
 // blockers + turn gates cut raw win rates: halve the band floors
 SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 
