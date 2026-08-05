@@ -19,6 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { predict, legStart, legCount, bodiesAt, hazardsAt, anchorX, anchorZ } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
+import { sweepPlan, requiredGap, drawRadius, BODY_GAP } from './sweep.mjs';
 
 // Degrees a mid-distance planet sweeps during a 10s flight, per set.
 // Set 5 is untouched (it ships with fast alien orbits already).
@@ -27,7 +28,6 @@ const REF_R = 28;              // orbit radius the sweep target refers to
 const MIN_WINS = 3;            // same coarse floor solve.js --fast enforces
 const BACKOFF = [1, 0.62, 0.38, 0.22, 0.12];
 const HORIZON = 12;            // seconds of flight the solver simulates
-const BODY_GAP = 0.6;          // clear space required between two drawn discs
 const T_SAMPLES = 11;          // launch times the solver tries (matches --fast)
 
 function isSun(b) {
@@ -101,6 +101,16 @@ function orbitFor(level, i, scale, anchors, frozen) {
     const d = Math.hypot(s.dx, s.dz);
     if (Math.abs(d - r) < b.radius + s.r + 1) return null;
   }
+  // Same again for parked obstacles — a derelict, a patrol's line, a comet's
+  // ellipse. A ring that crosses one hits it eventually, which is exact and
+  // cheap to rule out here rather than hoping a time sample lands on it.
+  // Asteroid grains are exempt: the field is a diffuse cloud on the grid, and
+  // a world floats above it.
+  for (const h of level.hazards || []) {
+    if (h.kind === 'asteroid' || h.x == null) continue;
+    const d = Math.hypot(h.x - p.x, h.z - p.z);
+    if (Math.abs(d - r) < b.radius + h.radius + BODY_GAP + 0.5) return null;
+  }
   const set = Math.min(Math.floor(level.difficulty ? level.difficulty - 1 : 0), 3);
   const base = (SWEEP_DEG[set] * Math.PI) / 180 / 10;
   // inner orbits sweep faster (Kepler-ish), moons faster still
@@ -149,23 +159,6 @@ function withOrbits(level, scale, anchors, frozen) {
   return out;
 }
 
-// How long the geometry must be checked for. A fixed window is not enough:
-// the slowest orbits here take twenty minutes to come round, so a 120s sweep
-// used to clear layouts whose bodies collide four minutes later. Sweep the
-// slowest full period present (capped), sampled finely enough that nothing
-// passes through a target between samples.
-function sweepPlan(level) {
-  let slowest = 0;
-  for (const b of level.bodies) {
-    if (b.orbit && b.orbit.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(b.orbit.omega));
-  }
-  for (const h of level.hazards || []) {
-    if (h.orbit && h.orbit.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(h.orbit.omega));
-    if (h.comet && h.comet.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(h.comet.omega));
-  }
-  const T = Math.min(Math.max(slowest * 1.05, 120), 2600);
-  return { T, step: Math.max(T / 1200, 0.4) };
-}
 
 // Backstop for the geometric check above: moons ride a moving parent, and an
 // anchored station must never be swept by a body OTHER than its own.
@@ -177,7 +170,7 @@ function sweepPlan(level) {
 // implicated; empty means the level is clear.
 function offenders(level, anchors) {
   const bad = new Set();
-  const drawR = b => (b.type === 'blackhole' ? Math.max(b.radius, b.horizon || 0) : b.radius);
+  const drawR = drawRadius;
   // Everything the player sees, at time t, with the orbiting bodies each disc
   // depends on. Blaming those is how a collision becomes actionable: freeze
   // the world and the disc stops moving into things.
@@ -186,18 +179,18 @@ function offenders(level, anchors) {
     const hs = hazardsAt(level, t);
     const out = [];
     level.bodies.forEach((b, i) => {
-      out.push({ x: ps[i].x, z: ps[i].z, r: drawR(b), body: i, dust: false, blame: b.orbit ? [i] : [] });
+      out.push({ x: ps[i].x, z: ps[i].z, r: drawR(b), idx: i, dust: false, target: false, blame: b.orbit ? [i] : [] });
     });
     (level.hazards || []).forEach((h, k) => {
       const p = hs[k];
-      if (p) out.push({ x: p.x, z: p.z, r: h.radius, dust: h.kind === 'asteroid', blame: [] });
+      if (p) out.push({ x: p.x, z: p.z, r: h.radius, dust: h.kind === 'asteroid', target: false, blame: [] });
     });
     const station = (spot, r, a, key) => {
       const host = a && level.bodies[a.body].orbit ? a.body : null;
       out.push({
         x: anchorX(host != null ? { ...spot, anchor: a } : spot, ps),
         z: anchorZ(host != null ? { ...spot, anchor: a } : spot, ps),
-        r, dust: false, host, rider: host != null ? key : null,
+        r, dust: false, target: true, host, rider: host != null ? key : null,
         blame: host != null ? [host] : [],
       });
     };
@@ -206,37 +199,13 @@ function offenders(level, anchors) {
     (level.waypoints || []).forEach((wp, i) => station(wp, wp.r + 1, anchors.waypoints[i], `wp${i}`));
     return out;
   };
-  // A moon and its planet are drawn as one system and are meant to be close,
-  // but they must still not intersect — hence a gap of 0 rather than a skip.
-  const kin = (a, b) => {
-    if (a.body == null || b.body == null) return false;
-    const bi = level.bodies[a.body], bj = level.bodies[b.body];
-    const pi = bi.moonOf != null ? bi.moonOf : (bi.orbit && bi.orbit.parent);
-    const pj = bj.moonOf != null ? bj.moonOf : (bj.orbit && bj.orbit.parent);
-    return pi === b.body || pj === a.body || (pi != null && pi === pj);
-  };
-  const gapFor = (a, b) => {
-    // A station parked beside its own world is deliberately close to it.
-    if (a.host != null && a.host === b.body) return -1e9;
-    if (b.host != null && b.host === a.body) return -1e9;
-    // An asteroid field is a cloud of grains by design; requiring clearance
-    // between them would forbid the belt walls entirely.
-    if (a.dust && b.dust) return -1e9;
-    if (kin(a, b)) return 0;
-    return BODY_GAP;
-  };
-  // Collisions a riding station is involved in are reported separately: a
-  // station that sweeps into things can simply stop riding, which costs one
-  // level a moving pad. Freezing its host world instead stops every planet on
-  // the level, which is how belt levels came out completely static.
-  const riders = new Set();
   const { T, step } = sweepPlan(level);
   for (let t = 0; t <= T; t += step) {
     const d = discsAt(t);
     for (let i = 0; i < d.length; i++) {
       for (let j = i + 1; j < d.length; j++) {
-        const gap = gapFor(d[i], d[j]);
-        if (gap < -1e8) continue;
+        const gap = requiredGap(level, d[i], d[j]);
+        if (gap === null) continue;
         if (Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) >= d[i].r + d[j].r + gap) continue;
         if (d[i].rider || d[j].rider) {
           if (d[i].rider) riders.add(d[i].rider);
