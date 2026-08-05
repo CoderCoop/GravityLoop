@@ -33,13 +33,26 @@ export function isSolidVsDust(a, b) {
 }
 
 // Required clearance between two drawn discs, or null when the pair is exempt.
-// `a`/`b`: { r, dust, target, idx, host }
+// `a`/`b`: { r, dust, target, roving, idx, host }
 export function requiredGap(level, a, b) {
   if (a.host != null && a.host === b.idx) return STATION_GAP;
   if (b.host != null && b.host === a.idx) return STATION_GAP;
+  // A comet on its long ellipse, or a patrol on its beat, crosses the whole
+  // map on purpose — that traversal IS the obstacle the player times a launch
+  // around. Requiring it to stay clear of everything would mean deleting the
+  // mechanic, so a roving hazard may pass over anything. What must not
+  // intersect is the scenery: worlds, moons, parked wrecks and rock, and the
+  // fixed structures you launch from and dock at.
+  if (a.roving || b.roving) return null;
   if (a.dust || b.dust) return isSolidVsDust(a, b) ? BODY_GAP : null;
   if (kin(level, a, b)) return 0;      // a moon may touch its planet, not enter it
   return BODY_GAP;
+}
+
+// A hazard that moves under its own script, rather than sitting where it was
+// placed. `bodiesAt`-driven worlds are not roving: they are the scenery.
+export function isRoving(h) {
+  return !!(h.comet || h.patrol || h.orbit);
 }
 
 export function kin(level, a, b) {

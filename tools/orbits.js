@@ -19,7 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { predict, legStart, legCount, bodiesAt, hazardsAt, anchorX, anchorZ } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
-import { sweepPlan, requiredGap, drawRadius, BODY_GAP } from './sweep.mjs';
+import { sweepPlan, requiredGap, drawRadius, isRoving, BODY_GAP } from './sweep.mjs';
 
 // Degrees a mid-distance planet sweeps during a 10s flight, per set.
 // Set 5 is untouched (it ships with fast alien orbits already).
@@ -183,7 +183,7 @@ function offenders(level, anchors) {
     });
     (level.hazards || []).forEach((h, k) => {
       const p = hs[k];
-      if (p) out.push({ x: p.x, z: p.z, r: h.radius, dust: h.kind === 'asteroid', target: false, blame: [] });
+      if (p) out.push({ x: p.x, z: p.z, r: h.radius, dust: h.kind === 'asteroid', target: false, roving: isRoving(h), blame: [] });
     });
     const station = (spot, r, a, key) => {
       const host = a && level.bodies[a.body].orbit ? a.body : null;

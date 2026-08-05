@@ -13,7 +13,7 @@
 // STATION_GAP rather than by the general rule.
 import { LEVELS } from '../src/levels.js';
 import { bodiesAt, anchorX, anchorZ, hazardsAt } from '../src/physics.js';
-import { sweepPlan, requiredGap, drawRadius } from './sweep.mjs';
+import { sweepPlan, requiredGap, drawRadius, isRoving } from './sweep.mjs';
 
 const VERBOSE = process.argv.includes('--verbose');
 
@@ -29,7 +29,7 @@ function discsAt(level, t) {
   (level.hazards || []).forEach((h, k) => {
     const p = hs ? hs[k] : h;
     if (p && p.x != null) {
-      out.push({ x: p.x, z: p.z, r: h.radius, what: `${h.kind || 'hazard'} ${k}`, dust: h.kind === 'asteroid', target: false });
+      out.push({ x: p.x, z: p.z, r: h.radius, what: `${h.kind || 'hazard'} ${k}`, dust: h.kind === 'asteroid', target: false, roving: isRoving(h) });
     }
   });
   out.push({
