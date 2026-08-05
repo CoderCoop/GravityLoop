@@ -20,6 +20,8 @@ const AIM_SCALE = 1.15;       // drag distance -> launch speed
 const FINE_MAX = 12;          // deepest fine ratio at a near-still pointer
 const FINE_V_HI = 320;        // px/s — at or above, 1:1 response
 const MIN_LAUNCH = 6;
+const CAM_ZOOM_MAX = 1.8;     // furthest the camera may pull back
+const SHIP_FOOT = 0.26;       // screen kept clear below the ship to drag into
 const THRUST_ACCEL = 16;
 const CARGO_THRUST_FACTOR = 0.55;
 const TRAIL_MAX = 260;
@@ -1031,7 +1033,7 @@ const _fitV = new THREE.Vector3();
 // Smallest camZoom (= closest camera) that keeps the whole target ring and
 // the ship inside the frame, each with its own edge margin (fraction of the
 // screen). Mirrors updateCamera's settled 'ready'-state transform.
-function fitZoom(tgt, marginTgt, marginShip, flying) {
+function fitZoom(tgt, marginTgt, marginShip, flying, zoomOut = 1, shipFoot = 0) {
   const E = level.extent;
   _fitCam.fov = camera.fov;
   _fitCam.aspect = window.innerWidth / window.innerHeight;
@@ -1040,9 +1042,14 @@ function fitZoom(tgt, marginTgt, marginShip, flying) {
   // mirror updateCamera: in flight the view rides camPan with no follow bias
   const followX = flying ? 0 : ship.x * 0.3, followZ = flying ? 0 : ship.z * 0.18;
   const cos = Math.cos(camYaw), sin = Math.sin(camYaw);
-  const inside = (x, y, z, m) => {
+  // `foot` is an extra bottom-edge margin: the ship is slingshot by dragging
+  // away from the target (which sits up-screen), so it needs clear screen
+  // below it to pull into. project() alone cannot say "on screen" — a point
+  // behind the camera comes back mirrored into range, so check depth too.
+  const inside = (x, y, z, m, foot = 0) => {
     _fitV.set(x, y, z).project(_fitCam);
-    return Math.abs(_fitV.x) <= 1 - m * 2 && Math.abs(_fitV.y) <= 1 - m * 2;
+    return _fitV.z <= 1 && Math.abs(_fitV.x) <= 1 - m * 2
+      && _fitV.y <= 1 - m * 2 && _fitV.y >= -1 + Math.max(m, foot) * 2;
   };
   const test = z => {
     const tx = followX * 0.4 + camPan.x, tz = followZ * 0.4 + camPan.z;
@@ -1054,9 +1061,9 @@ function fitZoom(tgt, marginTgt, marginShip, flying) {
     const r = Math.max(tgt.r, 1.5);
     return inside(tgt.x - r, 0, tgt.z, marginTgt) && inside(tgt.x + r, 0, tgt.z, marginTgt)
       && inside(tgt.x, 0, tgt.z - r, marginTgt) && inside(tgt.x, 0, tgt.z + r, marginTgt)
-      && inside(ship.x, shipY(), ship.z, marginShip);
+      && inside(ship.x, shipY(), ship.z, marginShip, shipFoot);
   };
-  let lo = 0.05, hi = 1;
+  let lo = 0.05, hi = zoomOut;
   if (test(lo)) return lo;
   if (!test(hi)) return hi;
   for (let i = 0; i < 18; i++) {
@@ -1069,6 +1076,10 @@ function resetCamera() {
   camZoom = 1;
   camYaw = 0;
   camPan = { x: 0, z: 0 };
+  // Drop the parked-drift reference too: it holds the *previous* leg's ship
+  // position, and carrying it over shoves the fresh framing sideways by the
+  // whole distance between the two pads on the very first frame.
+  camDriftFrom = null;
   if (!level) return;
   const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
   const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
@@ -1077,13 +1088,19 @@ function resetCamera() {
   const midX = ship.x * 0.55 + tgt.x * 0.45, midZ = ship.z * 0.55 + tgt.z * 0.45;
   camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
   clampPan();
-  // zoom in on the ship as far as possible with the target still on screen:
-  // target ring 3.5% inside the frame, ship 11% (user-picked "maximum zoom")
-  camZoom = Math.min(Math.max(fitZoom(tgt, 0.035, 0.11), 9 / level.extent), 1);
+  // Zoom in on the ship as far as possible with the target still on screen
+  // (user-picked "maximum zoom"), subject to two hard requirements: the ship
+  // must be on screen at all, and it must have room below it to drag into.
+  // Zooming out past 1 is allowed here — on wide levels the pair does not fit
+  // otherwise and the ship used to be framed clean off the bottom of the view.
+  camZoom = Math.min(
+    Math.max(fitZoom(tgt, 0.04, 0.08, false, CAM_ZOOM_MAX, SHIP_FOOT), 9 / level.extent),
+    CAM_ZOOM_MAX,
+  );
 }
 function onWheel(e) {
   e.preventDefault();
-  camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.28), 1.8);
+  camZoom = Math.min(Math.max(camZoom * Math.exp(e.deltaY * 0.0012), 0.28), CAM_ZOOM_MAX);
 }
 
 function levelPanelOpen() {
@@ -1125,7 +1142,7 @@ function onPointerMove(e) {
   if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (gesture && pointers.size === 2) {
     const s = gestureShape();
-    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / s.d), 0.28), 1.8);
+    camZoom = Math.min(Math.max(gesture.zoom0 * (gesture.d0 / s.d), 0.28), CAM_ZOOM_MAX);
     camYaw = gesture.yaw0 + (s.a - gesture.a0);
     // pan from absolute screen deltas since gesture start — never re-derived
     // through the (still-lerping) camera, so it cannot feed back and jump
@@ -1814,7 +1831,7 @@ function updateCamera(dt) {
     // and breathe the zoom so the ship and what it is heading for both stay
     // in frame as the gap between them opens and closes
     const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
-    const want = Math.min(Math.max(fitZoom(tgt, 0.07, 0.15, true), 9 / E), 1.8);
+    const want = Math.min(Math.max(fitZoom(tgt, 0.07, 0.12, true, CAM_ZOOM_MAX), 9 / E), CAM_ZOOM_MAX);
     camZoom += (want - camZoom) * Math.min(dt * 1.6, 1);
   }
   const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
@@ -2210,6 +2227,13 @@ window.GL = {
         return out;
       })(),
     };
+  },
+  // Snap the camera to the position it is lerping toward, so layout tests can
+  // check the settled framing without waiting on the ease-in.
+  settleCamera: () => {
+    updateCamera(1);
+    camera.updateMatrixWorld(true);
+    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
   },
   debugSpots: () => {
     const p = bodiesAt(level, simTime);
