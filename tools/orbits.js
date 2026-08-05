@@ -199,6 +199,11 @@ function offenders(level, anchors) {
     (level.waypoints || []).forEach((wp, i) => station(wp, wp.r + 1, anchors.waypoints[i], `wp${i}`));
     return out;
   };
+  // Collisions a riding station is involved in are reported separately: a
+  // station that sweeps into things can simply stop riding, which costs one
+  // level a moving pad. Freezing its host world instead stops every planet on
+  // the level, which is how belt levels came out completely static.
+  const riders = new Set();
   const { T, step } = sweepPlan(level);
   for (let t = 0; t <= T; t += step) {
     const d = discsAt(t);
