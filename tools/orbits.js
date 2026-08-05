@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { predict, legStart, legCount, bodiesAt, anchorX, anchorZ } from '../src/physics.js';
+import { predict, legStart, legCount, bodiesAt, hazardsAt, anchorX, anchorZ } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
 
 // Degrees a mid-distance planet sweeps during a 10s flight, per set.
@@ -27,6 +27,7 @@ const REF_R = 28;              // orbit radius the sweep target refers to
 const MIN_WINS = 3;            // same coarse floor solve.js --fast enforces
 const BACKOFF = [1, 0.62, 0.38, 0.22, 0.12];
 const HORIZON = 12;            // seconds of flight the solver simulates
+const BODY_GAP = 0.6;          // clear space required between two drawn discs
 const T_SAMPLES = 11;          // launch times the solver tries (matches --fast)
 
 function isSun(b) {
@@ -111,6 +112,22 @@ function orbitFor(level, i, scale, anchors, frozen) {
   };
 }
 
+// A planet and its moons move as one rigid system or not at all. Parking a
+// moon while its planet keeps orbiting leaves the moon behind in empty space
+// and eventually runs the planet straight over it, so freezing either end of
+// that relationship freezes the whole system.
+function freezeKin(level, frozen) {
+  for (let pass = 0; pass < level.bodies.length; pass++) {
+    const before = frozen.size;
+    level.bodies.forEach((b, i) => {
+      if (b.moonOf == null) return;
+      if (frozen.has(i)) frozen.add(b.moonOf);
+      if (frozen.has(b.moonOf)) frozen.add(i);
+    });
+    if (frozen.size === before) return;
+  }
+}
+
 function withOrbits(level, scale, anchors, frozen) {
   const out = { ...level, bodies: level.bodies.map(b => ({ ...b })) };
   for (let i = 0; i < out.bodies.length; i++) {
@@ -132,10 +149,32 @@ function withOrbits(level, scale, anchors, frozen) {
   return out;
 }
 
+// How long the geometry must be checked for. A fixed window is not enough:
+// the slowest orbits here take twenty minutes to come round, so a 120s sweep
+// used to clear layouts whose bodies collide four minutes later. Sweep the
+// slowest full period present (capped), sampled finely enough that nothing
+// passes through a target between samples.
+function sweepPlan(level) {
+  let slowest = 0;
+  for (const b of level.bodies) {
+    if (b.orbit && b.orbit.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(b.orbit.omega));
+  }
+  for (const h of level.hazards || []) {
+    if (h.orbit && h.orbit.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(h.orbit.omega));
+    if (h.comet && h.comet.omega) slowest = Math.max(slowest, (2 * Math.PI) / Math.abs(h.comet.omega));
+  }
+  const T = Math.min(Math.max(slowest * 1.05, 120), 2600);
+  return { T, step: Math.max(T / 1200, 0.4) };
+}
+
 // Backstop for the geometric check above: moons ride a moving parent, and an
 // anchored station must never be swept by a body OTHER than its own.
-// Which orbiting bodies sweep a pad or station they are not carrying. Empty
-// means the level is clear.
+//
+// Everything drawn on the surface is checked against everything else — worlds
+// against worlds, worlds against asteroids, worlds against pads and docking
+// rings. Checking only worlds-against-stations left moons buried in planets
+// and docking rings sitting inside Jupiter. Returns the orbiting bodies
+// implicated; empty means the level is clear.
 function offenders(level, anchors) {
   const bad = new Set();
   const spots = keepOuts(level, anchors);
@@ -144,19 +183,42 @@ function offenders(level, anchors) {
     { spot: level.goal, r: level.goal.r + 1, own: anchors.goal && anchors.goal.body },
     ...(level.waypoints || []).map((wp, i) => ({ spot: wp, r: wp.r + 1, own: anchors.waypoints[i] && anchors.waypoints[i].body })),
   ].filter(x => x.own != null);
-  for (let t = 0; t <= 120; t += 0.5) {
+  const drawR = b => (b.type === 'blackhole' ? Math.max(b.radius, b.horizon || 0) : b.radius);
+  // A moon and its planet are drawn as one system and are meant to be close,
+  // but they must still not intersect.
+  const kin = (i, j) => {
+    const bi = level.bodies[i], bj = level.bodies[j];
+    const pi = bi.moonOf != null ? bi.moonOf : (bi.orbit && bi.orbit.parent);
+    const pj = bj.moonOf != null ? bj.moonOf : (bj.orbit && bj.orbit.parent);
+    return pi === j || pj === i || (pi != null && pi === pj);
+  };
+  const { T, step } = sweepPlan(level);
+  for (let t = 0; t <= T; t += step) {
     const ps = bodiesAt(level, t);
+    const hs = hazardsAt(level, t);
     for (let i = 0; i < ps.length; i++) {
       const b = level.bodies[i];
       if (!b.orbit) continue;
       for (const s of spots) {
-        if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < b.radius + s.r) bad.add(i);
+        if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < drawR(b) + s.r) bad.add(i);
       }
       for (const rd of riders) {
         if (rd.own === i) continue;                       // its own host is fine
         const sx = anchorX(rd.spot, ps), sz = anchorZ(rd.spot, ps);
-        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < b.radius + rd.r) bad.add(i);
+        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < drawR(b) + rd.r) bad.add(i);
       }
+      // worlds must not run over other worlds, moving or parked
+      for (let j = 0; j < ps.length; j++) {
+        if (j === i || kin(i, j)) continue;
+        const need = drawR(b) + drawR(level.bodies[j]) + BODY_GAP;
+        if (Math.hypot(ps[i].x - ps[j].x, ps[i].z - ps[j].z) < need) { bad.add(i); bad.add(j); }
+      }
+      // ... nor over the rocks
+      (level.hazards || []).forEach((h, k) => {
+        const p = hs[k];
+        if (!p) return;
+        if (Math.hypot(ps[i].x - p.x, ps[i].z - p.z) < drawR(b) + h.radius + BODY_GAP) bad.add(i);
+      });
     }
   }
   return bad;
@@ -200,6 +262,7 @@ function solveLevel(index) {
     const bad = offenders(withOrbits(level, 1, anchors, frozen), anchors);
     if (!bad.size) break;
     bad.forEach(i => frozen.add(i));
+    freezeKin(level, frozen);
   }
   for (const scale of BACKOFF) {
     const cand = withOrbits(level, scale, anchors, frozen);
