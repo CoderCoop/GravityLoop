@@ -29,6 +29,13 @@ const VIEWPORTS = [
 // Elements that must always sit fully inside the viewport.
 const SELECTORS = ['#hud .pill', '#hud .btn', '#hint', '#set-bar button', '#dot-bar button', '#set-name'];
 
+// Levels sampled for the launch-framing check (one per set, plus multi-stop).
+const FRAME_LEVELS = [0, 1, 2, 6, 12, 25, 33, 40, 49];
+// Fraction of the viewport height that must stay clear below the ship. The
+// slingshot is a drag away from the target, which the level-start camera puts
+// up-screen, so a ship parked on the bottom edge cannot be pulled to power.
+const FOOT = 0.26;
+
 function serve() {
   return new Promise(resolve => {
     const server = http.createServer((req, res) => {
@@ -102,6 +109,30 @@ for (const vp of VIEWPORTS) {
   await page.waitForTimeout(200);
 
   const issues = await page.evaluate(collectIssues, SELECTORS);
+
+  // Launch framing: on every leg start the ship must be on screen, clear of
+  // the HUD strip, and with room below it to drag the slingshot into.
+  const frameIssues = await page.evaluate(async ({ levels, foot }) => {
+    const out = [];
+    const hudBottom = document.getElementById('hud').getBoundingClientRect().bottom;
+    for (const i of levels) {
+      window.GL.load(i);
+      window.GL.settleCamera();
+      const { x, y } = window.GL.debugSpots().shipScreen;
+      // +1: shipScreen is rounded to whole pixels, and the fit lands exactly
+      // on this boundary, so compare with a pixel of slack.
+      const maxY = innerHeight * (1 - foot) + 1;
+      if (x < 0 || x > innerWidth || y < 0 || y > innerHeight)
+        out.push(`level ${i + 1}: ship off screen at (${x},${y}) in ${innerWidth}x${innerHeight}`);
+      else if (y > maxY)
+        out.push(`level ${i + 1}: ship at y=${y} leaves only ${Math.round(innerHeight - y)}px below it (need ${Math.round(innerHeight - maxY)}px to drag into)`);
+      else if (y < hudBottom)
+        out.push(`level ${i + 1}: ship at y=${y} is behind the HUD strip (bottom ${Math.round(hudBottom)})`);
+    }
+    return out;
+  }, { levels: FRAME_LEVELS, foot: FOOT });
+  issues.push(...frameIssues);
+
   if (pageErrors.length) issues.push(...pageErrors.map(m => `page error: ${m}`));
   if (issues.length) {
     failures++;

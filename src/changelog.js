@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '1.10.2',
+    date: '2026-08-05',
+    title: 'Your ship is where you left it',
+    notes: [
+      'Every leg now opens with your ship in view. On wider levels the camera would frame the pair so tightly that the ship sat off the edge of the screen entirely, and switching levels could shove the view sideways by the whole distance between the two pads.',
+      'The opening view also keeps the lower quarter of the screen clear beneath your ship, so there is somewhere to pull the slingshot into instead of running out of screen mid-drag.',
+    ],
+  },
+  {
     v: '1.10.1',
     date: '2026-07-26',
     title: 'Everything lines up with the ground',
