@@ -39,7 +39,9 @@ function discsAt(level, t) {
   const hs = hazardsAt ? hazardsAt(level, t) : null;
   (level.hazards || []).forEach((h, k) => {
     const p = hs ? hs[k] : h;
-    if (p && p.x != null) out.push({ x: p.x, z: p.z, r: h.radius, what: `${h.kind || 'hazard'} ${k}` });
+    if (p && p.x != null) {
+      out.push({ x: p.x, z: p.z, r: h.radius, what: `${h.kind || 'hazard'} ${k}`, dust: h.kind === 'asteroid' });
+    }
   });
   out.push({
     x: anchorX(level.ship, ps), z: anchorZ(level.ship, ps), r: 1.2,
@@ -59,11 +61,26 @@ function discsAt(level, t) {
 }
 
 // A moon and its planet, or two moons of one planet, are drawn as a system:
-// they are allowed to be close, but never to intersect.
+// they are allowed to be close, but never to intersect. An asteroid field is
+// a cloud of grains by design, so grains may sit against one another — but
+// nothing else may sit inside one. Returns null when the pair is exempt.
+//
+// tools/orbits.js applies the same rules when it decides which worlds to
+// freeze, so what that tool accepts and what this gate accepts agree.
 function requiredGap(level, a, b) {
   if (a.anchor != null && a.anchor === b.idx) return STATION_GAP;
   if (b.anchor != null && b.anchor === a.idx) return STATION_GAP;
+  if (a.dust && b.dust) return null;
+  if (kin(level, a, b)) return 0;
   return GAP;
+}
+
+function kin(level, a, b) {
+  if (a.idx == null || b.idx == null) return false;
+  const bi = level.bodies[a.idx], bj = level.bodies[b.idx];
+  const pi = bi.moonOf != null ? bi.moonOf : (bi.orbit && bi.orbit.parent);
+  const pj = bj.moonOf != null ? bj.moonOf : (bj.orbit && bj.orbit.parent);
+  return pi === b.idx || pj === a.idx || (pi != null && pi === pj);
 }
 
 let worst = [];
@@ -73,8 +90,9 @@ for (const [li, level] of LEVELS.entries()) {
     const d = discsAt(level, t);
     for (let i = 0; i < d.length; i++) {
       for (let j = i + 1; j < d.length; j++) {
-        const need = d[i].r + d[j].r + requiredGap(level, d[i], d[j]);
-        const gap = Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) - need;
+        const req = requiredGap(level, d[i], d[j]);
+        if (req === null) continue;
+        const gap = Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) - (d[i].r + d[j].r + req);
         if (gap >= 0) continue;
         const key = `${d[i].what} | ${d[j].what}`;
         const prev = seen.get(key);
