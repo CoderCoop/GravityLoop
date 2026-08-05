@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '1.10.3',
+    date: '2026-08-05',
+    title: 'Careful aim still reaches full power',
+    notes: [
+      'A slow, deliberate drag now builds power as you would expect. Precision aiming let the handle fall further and further behind your finger, so the most careful shots — the ones that engage the finest control — could end up too weak to launch at all, with no prediction line to show for it.',
+      'Fine control is unchanged where it matters: creeping the pointer still dials the aim down to hundredths of a degree, and now holds your power steady while you do it.',
+    ],
+  },
+  {
     v: '1.10.2',
     date: '2026-08-05',
     title: 'Your ship is where you left it',
