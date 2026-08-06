@@ -57,11 +57,6 @@ html, body {
 .btn:hover { border-color: rgba(120, 200, 255, 0.7); transform: scale(1.08); }
 .btn:active { transform: scale(0.95); }
 
-#btn-exp.on {
-  border-color: #ffd166;
-  background: rgba(255, 209, 102, 0.25);
-  box-shadow: 0 0 10px rgba(255, 209, 102, 0.35);
-}
 .level-dot.exp, .set-btn.exp { border-style: dashed; border-color: rgba(255, 209, 102, 0.6); }
 
 #fuel { display: flex; align-items: center; gap: 8px; }
@@ -486,3 +481,48 @@ html, body {
   .howto { font-size: 12px; }
   .panel button { padding: 14px 22px; }
 }
+
+/* ------------------------------------------------------------- settings */
+.settings { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 4px; }
+.setting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(120, 140, 255, 0.22);
+  border-radius: 14px;
+  padding: 11px 14px;
+  color: #e8ecf8;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.setting:hover { border-color: rgba(120, 200, 255, 0.6); background: rgba(255, 255, 255, 0.07); }
+.s-icon { font-size: 19px; line-height: 1; flex: none; }
+.s-text { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; flex: 1; }
+.s-text b { font-size: 14px; }
+.s-text span { font-size: 11.5px; color: rgba(200, 214, 255, 0.65); }
+.s-toggle {
+  flex: none;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  position: relative;
+  transition: background 0.18s;
+}
+.s-toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #cfd7ee;
+  transition: transform 0.18s, background 0.18s;
+}
+.s-toggle.on { background: linear-gradient(180deg, #6f7dff, #4a56d8); }
+.s-toggle.on::after { transform: translateX(18px); background: #fff; }

@@ -11,6 +11,16 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '2.1.0',
+    date: '2026-08-05',
+    title: 'One place for every setting',
+    notes: [
+      'Sound and Experimental mode are now labelled switches on the title screen, with a line each explaining what they do \u2014 instead of two unlabelled icons in the corner of the HUD that you had to guess at.',
+      'The title screen is the settings screen: everything the game lets you change is in one place, reachable at any time with the \u2302 button or Esc.',
+      'M still mutes, and the switch follows it.',
+    ],
+  },
+  {
     v: '2.0.0',
     date: '2026-08-05',
     title: 'A campaign of fifty different problems',
