@@ -1,9 +1,9 @@
 // GravityLoop — spaceship golf across gravity-well terrain.
 import * as THREE from '../vendor/three.module.js';
 import {
-  STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
+  STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, accelAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
-  anchorX, anchorZ, SHIP_R,
+  anchorX, anchorZ, SHIP_R, VIS,
 } from './physics.js';
 import { LEVELS, SETS } from './levels.js';
 import { CHANGELOG, VERSION } from './changelog.js';
@@ -730,6 +730,7 @@ function buildShip() {
   }));
   trailLine.frustumCulled = false;
   scene.add(trailLine);
+  buildPullVis();
 }
 
 function buildPredict() {
@@ -1769,24 +1770,98 @@ function frame(now) {
   // trail
   if (state === 'flying') {
     const sy = shipY(positions);
-    trailPts.push({ x: ship.x, y: sy, z: ship.z });
+    const g = Math.hypot(...(() => { const a = accelAt(level, ship.x, ship.z, positions); return [a.x, a.z]; })());
+    trailPts.push({ x: ship.x, y: sy, z: ship.z, g });
     if (trailPts.length > TRAIL_MAX) trailPts.shift();
     const pa = trailLine.geometry.getAttribute('position');
     const ca = trailLine.geometry.getAttribute('color');
     for (let i = 0; i < trailPts.length; i++) {
       const p = trailPts[i], t = i / trailPts.length;
       pa.array.set([p.x, p.y, p.z], i * 3);
-      ca.array.set([0.1 * t + 0.05, 0.7 * t + 0.05, t * 0.9 + 0.1], i * 3);
+      if (pullStyle === 'trail') {
+        // hot where gravity is working hardest on you, cool where you coast
+        const h = pullFrac(p.g || 0);
+        ca.array.set([(0.15 + 0.85 * h) * (t * 0.85 + 0.15),
+          (0.7 - 0.5 * h) * (t * 0.85 + 0.15),
+          (0.9 - 0.75 * h) * (t * 0.85 + 0.15)], i * 3);
+      } else {
+        ca.array.set([0.1 * t + 0.05, 0.7 * t + 0.05, t * 0.9 + 0.1], i * 3);
+      }
     }
     pa.needsUpdate = true;
     ca.needsUpdate = true;
     trailLine.geometry.setDrawRange(0, trailPts.length);
   }
+  updatePullVis(positions);
 
 
   updateFx(dt);
   updateCamera(dt);
   renderer.render(scene, camera);
+}
+
+// --------------------------------------------------------- gravity legibility
+// Gravity is what the whole game turns on, but in flight it is invisible: the
+// ship curves and you infer the cause. These make the pull itself visible
+// while you fly.
+//   arrow — a spike off the ship pointing the way gravity is dragging it,
+//           length and colour tracking the strength
+//   trail — the flight trail runs hot where gravity is working hardest
+//   ring  — a ring around the ship that swells and reddens with the pull
+let pullStyle = 'arrow';        // MOCKUP: 'arrow' | 'trail' | 'ring'
+if (typeof window !== 'undefined' && window.PULL_STYLE) pullStyle = window.PULL_STYLE;
+// MOCKUP: well exaggeration. heightAt is visualisation only — nothing in the
+// solver or generator reads it — so depth can be pushed for legibility freely.
+if (typeof window !== 'undefined' && window.WELL_VIS) Object.assign(VIS, window.WELL_VIS);
+// Measured along real flights, gravity spans roughly 0.6 to 15 (and up to ~55
+// right against a sun), so a linear scale wastes almost all of its range: a
+// first cut divided by 26 and mapped the median of an actual flight to 0.05,
+// which drew as nothing at all. A soft knee spreads the useful band instead
+// and never saturates: f = g / (g + PULL_HALF).
+//   g   0.6  1.3  4    8    15    55
+//   f   0.17 0.30 0.57 0.73 0.83  0.95
+const PULL_HALF = 3;
+const pullFrac = g => g / (g + PULL_HALF);
+let pullArrow, pullRing;
+
+function buildPullVis() {
+  pullArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 8, 0xff6b6b, 3.2, 2.0);
+  pullArrow.visible = false;
+  scene.add(pullArrow);
+  pullRing = new THREE.Mesh(
+    new THREE.TorusGeometry(3.2, 0.28, 8, 40),
+    new THREE.MeshBasicMaterial({ color: 0xff6b6b, transparent: true, opacity: 0.8, depthTest: false }),
+  );
+  pullRing.rotation.x = -Math.PI / 2;
+  pullRing.renderOrder = 6;
+  pullRing.visible = false;
+  scene.add(pullRing);
+}
+
+function updatePullVis(positions) {
+  if (!pullArrow) return;
+  const on = state === 'flying';
+  pullArrow.visible = on && pullStyle === 'arrow';
+  pullRing.visible = on && pullStyle === 'ring';
+  if (!on) return;
+  const a = accelAt(level, ship.x, ship.z, positions);
+  const g = Math.hypot(a.x, a.z);
+  const f = pullFrac(g);
+  const y = shipY(positions);
+  // red when gravity has hold of you, cool blue when it barely does
+  const col = new THREE.Color().setHSL(0.58 - 0.62 * f, 0.95, 0.5 + 0.12 * f);
+  if (pullStyle === 'arrow') {
+    if (g > 1e-6) pullArrow.setDirection(new THREE.Vector3(a.x / g, 0, a.z / g));
+    pullArrow.position.set(ship.x, y, ship.z);
+    const len = 4 + 34 * f;
+    pullArrow.setLength(len, len * 0.34, len * 0.22);
+    pullArrow.setColor(col);
+  } else if (pullStyle === 'ring') {
+    pullRing.position.set(ship.x, y, ship.z);
+    pullRing.scale.setScalar(0.7 + 2.2 * f);
+    pullRing.material.color.copy(col);
+    pullRing.material.opacity = 0.3 + 0.6 * f;
+  }
 }
 
 function checkPickups() {
@@ -2350,6 +2425,13 @@ window.GL = {
     updateCamera(1);
     camera.updateMatrixWorld(true);
     camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+  },
+  debugPull: () => {
+    const ps = bodiesAt(level, simTime);
+    const a = accelAt(level, ship.x, ship.z, ps);
+    const g = Math.hypot(a.x, a.z);
+    return { state, style: pullStyle, g: +g.toFixed(2), f: +pullFrac(g).toFixed(3),
+      arrowVis: !!(pullArrow && pullArrow.visible), ringVis: !!(pullRing && pullRing.visible) };
   },
   debugSpots: () => {
     const p = bodiesAt(level, simTime);
