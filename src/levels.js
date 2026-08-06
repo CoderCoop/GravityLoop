@@ -32,34 +32,24 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -7,
-      "z": 12,
-      "anchor": {
-        "body": 3,
-        "dx": 2,
-        "dz": -9
-      }
+      "x": -17,
+      "z": 2
     },
     "goal": {
-      "x": -15,
-      "z": 48,
-      "r": 1.34,
-      "anchor": {
-        "body": 4,
-        "dx": -2,
-        "dz": 9
-      }
+      "x": -53,
+      "z": -13,
+      "r": 1.34
     },
-    "maxLaunch": 51,
-    "fuel": 0.38,
+    "maxLaunch": 48,
+    "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2359,
-        "radius": 12.7,
+        "mass": 2471,
+        "radius": 11.2,
         "color": 0xffd166,
-        "x": 1,
-        "z": -47,
+        "x": 41,
+        "z": 7,
         "type": "sun"
       },
       {
@@ -69,11 +59,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 1,
-          "cz": -47,
-          "radius": 21.024,
-          "phase": 2.6992,
-          "omega": 0.00806
+          "cx": 41,
+          "cz": 7,
+          "radius": 20,
+          "phase": 2.4981,
+          "omega": 0.00826
         }
       },
       {
@@ -83,11 +73,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": 1,
-          "cz": -47,
-          "radius": 46.141,
-          "phase": 0.5218,
-          "omega": 0.00544
+          "cx": 41,
+          "cz": 7,
+          "radius": 42.426,
+          "phase": -2.3562,
+          "omega": 0.00567
         }
       },
       {
@@ -97,11 +87,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 1,
-          "cz": -47,
-          "radius": 68.731,
-          "phase": 1.7168,
-          "omega": 0.00446
+          "cx": 41,
+          "cz": 7,
+          "radius": 67.602,
+          "phase": -3.0081,
+          "omega": 0.00449
         }
       },
       {
@@ -112,18 +102,18 @@ export const LEVELS = [
         "moonOf": 3,
         "orbit": {
           "parent": 3,
-          "cx": -9,
-          "cz": 21,
-          "radius": 18.439,
-          "phase": 1.7895,
-          "omega": 0.01893
+          "cx": -26,
+          "cz": -2,
+          "radius": 19.313,
+          "phase": -2.7707,
+          "omega": 0.01849
         }
       }
     ],
     "homeIdx": 3,
     "targetIdx": 4,
     "legMinCosts": [
-      0.08
+      0.1
     ],
     "name": "Earthrise",
     "hint": "Welcome aboard! Drag back from your ship to launch from Earth to the lunar station.",
@@ -132,34 +122,24 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": 5,
-      "z": -12,
-      "anchor": {
-        "body": 3,
-        "dx": -8,
-        "dz": 6
-      }
+      "x": 3,
+      "z": 15
     },
     "goal": {
-      "x": 34,
-      "z": -34,
-      "r": 1.32,
-      "anchor": {
-        "body": 4,
-        "dx": 8,
-        "dz": -6
-      }
+      "x": 0,
+      "z": 53,
+      "r": 1.32
     },
     "maxLaunch": 51,
     "fuel": 0.38,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2595,
-        "radius": 12.6,
-        "color": 0xff9e6b,
-        "x": -33,
-        "z": 32,
+        "mass": 2247,
+        "radius": 11.9,
+        "color": 0xffd166,
+        "x": 0,
+        "z": -46,
         "type": "sun"
       },
       {
@@ -169,11 +149,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -33,
-          "cz": 32,
-          "radius": 20.616,
-          "phase": -0.6823,
-          "omega": 0.00814
+          "cx": 0,
+          "cz": -46,
+          "radius": 21.541,
+          "phase": 1.9513,
+          "omega": 0.00796
         }
       },
       {
@@ -183,11 +163,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -33,
-          "cz": 32,
-          "radius": 42.107,
-          "phase": 0.0713,
-          "omega": 0.00569
+          "cx": 0,
+          "cz": -46,
+          "radius": 47.76,
+          "phase": 1.9124,
+          "omega": 0.00535
         }
       },
       {
@@ -197,11 +177,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -33,
-          "cz": 32,
-          "radius": 67.941,
-          "phase": -0.827,
-          "omega": 0.00448
+          "cx": 0,
+          "cz": -46,
+          "radius": 71.028,
+          "phase": 1.5426,
+          "omega": 0.00438
         }
       },
       {
@@ -212,11 +192,11 @@ export const LEVELS = [
         "moonOf": 3,
         "orbit": {
           "parent": 3,
-          "cx": 13,
-          "cz": -18,
-          "radius": 16.401,
-          "phase": -0.6557,
-          "omega": 0.02007
+          "cx": 2,
+          "cz": 25,
+          "radius": 19.026,
+          "phase": 1.6234,
+          "omega": 0.01863
         }
       }
     ],
@@ -232,34 +212,24 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": 9,
-      "z": 2,
-      "anchor": {
-        "body": 3,
-        "dx": -10,
-        "dz": -1
-      }
+      "x": 1,
+      "z": 12
     },
     "goal": {
-      "x": 48,
-      "z": 5,
-      "r": 1.28,
-      "anchor": {
-        "body": 4,
-        "dx": 10,
-        "dz": 1
-      }
+      "x": 4,
+      "z": 50,
+      "r": 1.28
     },
     "maxLaunch": 51,
     "fuel": 0.38,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2095,
-        "radius": 12.9,
-        "color": 0xffd166,
-        "x": -48,
-        "z": -9,
+        "mass": 2314,
+        "radius": 12.2,
+        "color": 0xffb703,
+        "x": 6,
+        "z": -45,
         "type": "sun"
       },
       {
@@ -269,11 +239,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -48,
-          "cz": -9,
-          "radius": 21.095,
-          "phase": -1.0222,
-          "omega": 0.00804
+          "cx": 6,
+          "cz": -45,
+          "radius": 20.248,
+          "phase": 2.7886,
+          "omega": 0.00821
         }
       },
       {
@@ -283,11 +253,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -48,
-          "cz": -9,
-          "radius": 44.688,
-          "phase": 0.7062,
-          "omega": 0.00553
+          "cx": 6,
+          "cz": -45,
+          "radius": 41.773,
+          "phase": 1.3781,
+          "omega": 0.00572
         }
       },
       {
@@ -297,11 +267,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -48,
-          "cz": -9,
-          "radius": 68.066,
-          "phase": 0.1772,
-          "omega": 0.00448
+          "cx": 6,
+          "cz": -45,
+          "radius": 67.119,
+          "phase": 1.6304,
+          "omega": 0.00451
         }
       },
       {
@@ -312,10 +282,10 @@ export const LEVELS = [
         "moonOf": 3,
         "orbit": {
           "parent": 3,
-          "cx": 19,
-          "cz": 3,
+          "cx": 2,
+          "cz": 22,
           "radius": 19.026,
-          "phase": 0.0526,
+          "phase": 1.5182,
           "omega": 0.01863
         }
       }
@@ -332,34 +302,29 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -4,
-      "z": -53,
-      "anchor": {
-        "body": 4,
-        "dx": -4,
-        "dz": 0
-      }
+      "x": 42,
+      "z": -44
     },
     "goal": {
-      "x": 19,
-      "z": 59,
+      "x": -10,
+      "z": 67,
       "r": 1.22,
       "anchor": {
         "body": 2,
-        "dx": 2,
-        "dz": 9
+        "dx": -4,
+        "dz": 8
       }
     },
-    "maxLaunch": 49,
-    "fuel": 0.48,
+    "maxLaunch": 51,
+    "fuel": 0.47,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2284,
-        "radius": 11.7,
+        "mass": 2141,
+        "radius": 12,
         "color": 0xffd166,
-        "x": 44,
-        "z": 10,
+        "x": 34,
+        "z": 34,
         "type": "sun"
       },
       {
@@ -369,11 +334,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 44,
-          "cz": 10,
-          "radius": 21.095,
-          "phase": -2.593,
-          "omega": 0.00804
+          "cx": 34,
+          "cz": 34,
+          "radius": 20.1,
+          "phase": -1.6705,
+          "omega": 0.00824
         }
       },
       {
@@ -383,11 +348,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": 44,
-          "cz": 10,
-          "radius": 48.26,
-          "phase": 2.1645,
-          "omega": 0.00532
+          "cx": 34,
+          "cz": 34,
+          "radius": 47.17,
+          "phase": 2.583,
+          "omega": 0.00538
         }
       },
       {
@@ -395,35 +360,23 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 44,
-          "cz": 10,
-          "radius": 70.178,
-          "phase": -2.2856,
-          "omega": 0.00441
-        }
+        "x": 38,
+        "z": -35
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": -2,
-          "cz": -43,
-          "radius": 10.198,
-          "phase": -1.3734,
-          "omega": 0.02545
-        }
+        "x": 49,
+        "z": -33,
+        "moonOf": 3
       }
     ],
     "homeIdx": 3,
     "targetIdx": 2,
     "legMinCosts": [
-      0.18
+      0.17
     ],
     "name": "Venus Bound",
     "hint": "Venus this time — swing past Sol's huge well without falling in.",
@@ -432,34 +385,29 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -28,
-      "z": -34,
-      "anchor": {
-        "body": 3,
-        "dx": -6,
-        "dz": -9
-      }
+      "x": -13,
+      "z": -53
     },
     "goal": {
-      "x": 23,
-      "z": 49,
+      "x": 1,
+      "z": 58,
       "r": 1.2,
       "anchor": {
         "body": 2,
-        "dx": 5,
-        "dz": 9
+        "dx": 1,
+        "dz": 10
       }
     },
     "maxLaunch": 50,
-    "fuel": 0.39,
+    "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2502,
-        "radius": 12.6,
-        "color": 0xffb703,
-        "x": -22,
-        "z": 38,
+        "mass": 2375,
+        "radius": 12,
+        "color": 0xffd166,
+        "x": -40,
+        "z": 21,
         "type": "sun"
       },
       {
@@ -469,11 +417,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -22,
-          "cz": 38,
-          "radius": 21.932,
-          "phase": -0.8176,
-          "omega": 0.00789
+          "cx": -40,
+          "cz": 21,
+          "radius": 21.213,
+          "phase": -0.7854,
+          "omega": 0.00802
         }
       },
       {
@@ -483,11 +431,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -22,
-          "cz": 38,
-          "radius": 40.05,
-          "phase": 0.05,
-          "omega": 0.00584
+          "cx": -40,
+          "cz": 21,
+          "radius": 48.26,
+          "phase": 0.5937,
+          "omega": 0.00532
         }
       },
       {
@@ -495,29 +443,23 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -22,
-          "cz": 38,
-          "radius": 63,
-          "phase": -1.5708,
-          "omega": 0.00465
-        }
+        "x": -12,
+        "z": -43
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -11,
-        "z": -27,
+        "x": -5,
+        "z": -38,
         "moonOf": 3
       }
     ],
     "homeIdx": 3,
     "targetIdx": 2,
     "legMinCosts": [
-      0.09
+      0.17
     ],
     "name": "Morning Star",
     "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
@@ -526,34 +468,29 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -57,
-      "z": 12,
-      "anchor": {
-        "body": 4,
-        "dx": -2,
-        "dz": -4
-      }
+      "x": -61,
+      "z": 0
     },
     "goal": {
-      "x": 60,
-      "z": 11,
+      "x": 54,
+      "z": -36,
       "r": 1.18,
       "anchor": {
         "body": 2,
-        "dx": 9,
-        "dz": 0
+        "dx": 10,
+        "dz": -3
       }
     },
-    "maxLaunch": 51,
+    "maxLaunch": 50,
     "fuel": 0.47,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2456,
+        "mass": 2219,
         "radius": 12.5,
-        "color": 0xffb703,
-        "x": 19,
-        "z": 43,
+        "color": 0xff9e6b,
+        "x": 0,
+        "z": -43,
         "type": "sun"
       },
       {
@@ -563,11 +500,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 19,
-          "cz": 43,
-          "radius": 22.204,
-          "phase": -0.6255,
-          "omega": 0.00784
+          "cx": 0,
+          "cz": -43,
+          "radius": 22.804,
+          "phase": 2.8753,
+          "omega": 0.00774
         }
       },
       {
@@ -577,11 +514,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": 19,
-          "cz": 43,
-          "radius": 45.255,
-          "phase": -0.7854,
-          "omega": 0.00549
+          "cx": 0,
+          "cz": -43,
+          "radius": 45.122,
+          "phase": 0.2235,
+          "omega": 0.0055
         }
       },
       {
@@ -589,29 +526,17 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 19,
-          "cz": 43,
-          "radius": 72.918,
-          "phase": -2.7025,
-          "omega": 0.00433
-        }
+        "x": -51,
+        "z": -3
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": -47,
-          "cz": 12,
-          "radius": 8.944,
-          "phase": 2.6779,
-          "omega": 0.02717
-        }
+        "x": -53,
+        "z": -12,
+        "moonOf": 3
       }
     ],
     "homeIdx": 3,
@@ -626,34 +551,24 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -28,
-      "z": 38,
-      "anchor": {
-        "body": 3,
-        "dx": -8,
-        "dz": 6
-      }
+      "x": 17,
+      "z": 37
     },
     "goal": {
-      "x": 65,
-      "z": -41,
-      "r": 1.16,
-      "anchor": {
-        "body": 5,
-        "dx": 7,
-        "dz": -6
-      }
+      "x": -21,
+      "z": -65,
+      "r": 1.16
     },
-    "maxLaunch": 51,
-    "fuel": 0.47,
+    "maxLaunch": 48,
+    "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2085,
-        "radius": 12.1,
-        "color": 0xffd166,
-        "x": 37,
-        "z": 28,
+        "mass": 2256,
+        "radius": 11.3,
+        "color": 0xff9e6b,
+        "x": 38,
+        "z": -24,
         "type": "sun"
       },
       {
@@ -663,11 +578,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 37,
-          "cz": 28,
-          "radius": 20.881,
-          "phase": -1.2793,
-          "omega": 0.00808
+          "cx": 38,
+          "cz": -24,
+          "radius": 19.416,
+          "phase": 1.7783,
+          "omega": 0.00838
         }
       },
       {
@@ -677,10 +592,182 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": 37,
-          "cz": 28,
-          "radius": 36.715,
-          "phase": -2.0832,
+          "cx": 38,
+          "cz": -24,
+          "radius": 35.511,
+          "phase": -2.9718,
+          "omega": 0.0062
+        }
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 13,
+        "z": 26
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 22,
+        "z": 33,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -18,
+        "z": -57
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "legMinCosts": [
+      0.19
+    ],
+    "name": "Halfway to Mars",
+    "hint": "All the way to Mars station. Plot carefully.",
+    "difficulty": 1
+  },
+  {
+    "extent": 80,
+    "ship": {
+      "x": 17,
+      "z": -46
+    },
+    "goal": {
+      "x": -43,
+      "z": 61,
+      "r": 1.14
+    },
+    "maxLaunch": 50,
+    "fuel": 0.47,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2250,
+        "radius": 11.4,
+        "color": 0xffd166,
+        "x": -40,
+        "z": -13,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": -40,
+          "cz": -13,
+          "radius": 20.248,
+          "phase": -0.5743,
+          "omega": 0.00821
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "orbit": {
+          "parent": 0,
+          "cx": -40,
+          "cz": -13,
+          "radius": 39.051,
+          "phase": 0.2326,
+          "omega": 0.00591
+        }
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 12,
+        "z": -37
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 8,
+        "z": -47,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -39,
+        "z": 54
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "legMinCosts": [
+      0.17
+    ],
+    "name": "Red Planet",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 80,
+    "ship": {
+      "x": -24,
+      "z": -33
+    },
+    "goal": {
+      "x": 49,
+      "z": 47,
+      "r": 1.09
+    },
+    "maxLaunch": 49,
+    "fuel": 0.39,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2036,
+        "radius": 12.3,
+        "color": 0xff9e6b,
+        "x": 38,
+        "z": -23,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": 38,
+          "cz": -23,
+          "radius": 20.396,
+          "phase": 1.3734,
+          "omega": 0.00818
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "orbit": {
+          "parent": 0,
+          "cx": 38,
+          "cz": -23,
+          "radius": 36.674,
+          "phase": 2.0222,
           "omega": 0.0061
         }
       },
@@ -691,11 +778,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 37,
-          "cz": 28,
-          "radius": 57.14,
-          "phase": 3.0715,
-          "omega": 0.00489
+          "cx": 38,
+          "cz": -23,
+          "radius": 54.037,
+          "phase": -3.1046,
+          "omega": 0.00503
         }
       },
       {
@@ -703,8 +790,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -15,
-        "z": 25,
+        "x": -23,
+        "z": -19,
         "moonOf": 3
       },
       {
@@ -712,242 +799,14 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 37,
-          "cz": 28,
-          "radius": 66.408,
-          "phase": -1.249,
-          "omega": 0.00453
-        }
+        "x": 42,
+        "z": 40
       }
     ],
     "homeIdx": 3,
     "targetIdx": 5,
     "legMinCosts": [
-      0.17
-    ],
-    "name": "Halfway to Mars",
-    "hint": "All the way to Mars station. Plot carefully.",
-    "difficulty": 1
-  },
-  {
-    "extent": 80,
-    "ship": {
-      "x": 5,
-      "z": -51,
-      "anchor": {
-        "body": 3,
-        "dx": 3,
-        "dz": -10
-      }
-    },
-    "goal": {
-      "x": -37,
-      "z": 72,
-      "r": 1.14,
-      "anchor": {
-        "body": 5,
-        "dx": -3,
-        "dz": 9
-      }
-    },
-    "maxLaunch": 49,
-    "fuel": 0.48,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2558,
-        "radius": 12.2,
-        "color": 0xff9e6b,
-        "x": -49,
-        "z": -7,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": -49,
-          "cz": -7,
-          "radius": 21.932,
-          "phase": -0.7532,
-          "omega": 0.00789
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -49,
-          "cz": -7,
-          "radius": 39.661,
-          "phase": 0.9828,
-          "omega": 0.00587
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -49,
-          "cz": -7,
-          "radius": 61.294,
-          "phase": -0.588,
-          "omega": 0.00472
-        }
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "x": -5,
-        "z": -33,
-        "moonOf": 3
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -49,
-          "cz": -7,
-          "radius": 71.589,
-          "phase": 1.3597,
-          "omega": 0.00437
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 5,
-    "legMinCosts": [
-      0.18
-    ],
-    "name": "Red Planet",
-    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
-    "difficulty": 1
-  },
-  {
-    "extent": 80,
-    "ship": {
-      "x": -9,
-      "z": 39,
-      "anchor": {
-        "body": 4,
-        "dx": -8,
-        "dz": 1
-      }
-    },
-    "goal": {
-      "x": 5,
-      "z": -67,
-      "r": 1.09,
-      "anchor": {
-        "body": 5,
-        "dx": 1,
-        "dz": -8
-      }
-    },
-    "maxLaunch": 51,
-    "fuel": 0.47,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2145,
-        "radius": 11.2,
-        "color": 0xff9e6b,
-        "x": -43,
-        "z": -14,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": -43,
-          "cz": -14,
-          "radius": 19.105,
-          "phase": 0.8224,
-          "omega": 0.00845
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -43,
-          "cz": -14,
-          "radius": 36.139,
-          "phase": 0.2517,
-          "omega": 0.00615
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -43,
-          "cz": -14,
-          "radius": 55.444,
-          "phase": 0.8876,
-          "omega": 0.00496
-        }
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": -8,
-          "cz": 29,
-          "radius": 11.402,
-          "phase": 0.9098,
-          "omega": 0.02407
-        }
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -43,
-          "cz": -14,
-          "radius": 65.069,
-          "phase": -0.7637,
-          "omega": 0.00458
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 5,
-    "legMinCosts": [
-      0.17
+      0.09
     ],
     "name": "Dusty Landing",
     "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
@@ -956,141 +815,23 @@ export const LEVELS = [
   {
     "extent": 80,
     "ship": {
-      "x": -4,
-      "z": 41,
-      "anchor": {
-        "body": 3,
-        "dx": -1,
-        "dz": 11
-      }
+      "x": 47,
+      "z": -14
     },
     "goal": {
-      "x": 9,
-      "z": -65,
-      "r": 1.07,
-      "anchor": {
-        "body": 5,
-        "dx": 1,
-        "dz": -8
-      }
+      "x": -70,
+      "z": 36,
+      "r": 1.07
     },
-    "maxLaunch": 50,
-    "fuel": 0.47,
+    "maxLaunch": 48,
+    "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2030,
-        "radius": 11.4,
+        "mass": 2217,
+        "radius": 11.9,
         "color": 0xff9e6b,
-        "x": 43,
-        "z": -2,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 43,
-          "cz": -2,
-          "radius": 21.213,
-          "phase": 2.3562,
-          "omega": 0.00802
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 43,
-          "cz": -2,
-          "radius": 40.608,
-          "phase": 2.4784,
-          "omega": 0.0058
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 43,
-          "cz": -2,
-          "radius": 56.036,
-          "phase": 2.5338,
-          "omega": 0.00493
-        }
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "x": -5,
-        "z": 20,
-        "moonOf": 3
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 43,
-          "cz": -2,
-          "radius": 65.192,
-          "phase": -2.1375,
-          "omega": 0.00458
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 5,
-    "legMinCosts": [
-      0.17
-    ],
-    "name": "Escape Velocity",
-    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
-    "difficulty": 1
-  },
-  {
-    "extent": 90,
-    "ship": {
-      "x": 4,
-      "z": -22,
-      "anchor": {
-        "body": 3,
-        "dx": 5,
-        "dz": -9
-      }
-    },
-    "goal": {
-      "x": -31,
-      "z": 39,
-      "r": 1.07,
-      "anchor": {
-        "body": 2,
-        "dx": -4,
-        "dz": 7
-      }
-    },
-    "maxLaunch": 47,
-    "fuel": 0.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2867,
-        "radius": 12.2,
-        "color": 0xffb703,
-        "x": 13,
+        "x": 8,
         "z": 43,
         "type": "sun"
       },
@@ -1101,11 +842,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 13,
+          "cx": 8,
           "cz": 43,
-          "radius": 21.471,
-          "phase": -0.4845,
-          "omega": 0.02192
+          "radius": 21.024,
+          "phase": -2.0132,
+          "omega": 0.00806
         }
       },
       {
@@ -1115,11 +856,102 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": 13,
+          "cx": 8,
           "cz": 43,
-          "radius": 41.485,
-          "phase": -2.8732,
-          "omega": 0.01577
+          "radius": 42.426,
+          "phase": -0.7854,
+          "omega": 0.00567
+        }
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": 37,
+        "z": -10
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 27,
+        "z": -11,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -62,
+        "z": 32
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 5,
+    "legMinCosts": [
+      0.19
+    ],
+    "name": "Escape Velocity",
+    "hint": "You launch from Earth — the whole inner system is out there bending your shot.",
+    "difficulty": 1
+  },
+  {
+    "extent": 90,
+    "ship": {
+      "x": -24,
+      "z": -8
+    },
+    "goal": {
+      "x": 51,
+      "z": -6,
+      "r": 1.14,
+      "anchor": {
+        "body": 2,
+        "dx": 9,
+        "dz": 0
+      }
+    },
+    "maxLaunch": 46,
+    "fuel": 0.4,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2758,
+        "radius": 12.2,
+        "color": 0xffd166,
+        "x": 30,
+        "z": 31,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": 30,
+          "cz": 31,
+          "radius": 20.224,
+          "phase": -1.7197,
+          "omega": 0.02259
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "orbit": {
+          "parent": 0,
+          "cx": 30,
+          "cz": 31,
+          "radius": 38.897,
+          "phase": -1.2572,
+          "omega": 0.01629
         }
       },
       {
@@ -1129,11 +961,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 13,
-          "cz": 43,
-          "radius": 57.723,
-          "phase": -1.8158,
-          "omega": 0.01337
+          "cx": 30,
+          "cz": 31,
+          "radius": 58.796,
+          "phase": -2.4164,
+          "omega": 0.01325
         }
       },
       {
@@ -1141,8 +973,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 2,
-        "z": -4,
+        "x": -11,
+        "z": -17,
         "moonOf": 3
       },
       {
@@ -1150,14 +982,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 13,
-          "cz": 43,
-          "radius": 68.411,
-          "phase": -2.8753,
-          "omega": 0.01228
-        }
+        "x": 51,
+        "z": -35
       }
     ],
     "homeIdx": 3,
@@ -1172,34 +998,29 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": 11,
-      "z": 19,
-      "anchor": {
-        "body": 3,
-        "dx": 9,
-        "dz": 6
-      }
+      "x": -23,
+      "z": 4
     },
     "goal": {
-      "x": -53,
-      "z": -23,
-      "r": 1.05,
+      "x": 43,
+      "z": -39,
+      "r": 1.07,
       "anchor": {
         "body": 2,
-        "dx": -7,
-        "dz": -5
+        "dx": 9,
+        "dz": -6
       }
     },
-    "maxLaunch": 48,
+    "maxLaunch": 47,
     "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2539,
-        "radius": 11.2,
+        "mass": 2985,
+        "radius": 12.7,
         "color": 0xff9e6b,
-        "x": -13,
-        "z": -48,
+        "x": 44,
+        "z": 10,
         "type": "sun"
       },
       {
@@ -1209,11 +1030,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -13,
-          "cz": -48,
-          "radius": 20.224,
-          "phase": 1.7197,
-          "omega": 0.02259
+          "cx": 44,
+          "cz": 10,
+          "radius": 21.84,
+          "phase": -1.8491,
+          "omega": 0.02174
         }
       },
       {
@@ -1223,11 +1044,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -13,
-          "cz": -48,
-          "radius": 44.598,
-          "phase": 2.4038,
-          "omega": 0.01521
+          "cx": 44,
+          "cz": 10,
+          "radius": 44.147,
+          "phase": -1.7993,
+          "omega": 0.01529
         }
       },
       {
@@ -1237,11 +1058,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -13,
-          "cz": -48,
-          "radius": 62.817,
-          "phase": 1.3297,
-          "omega": 0.01282
+          "cx": 44,
+          "cz": 10,
+          "radius": 60.017,
+          "phase": -2.9573,
+          "omega": 0.01311
         }
       },
       {
@@ -1249,8 +1070,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 0,
-        "z": 24,
+        "x": -26,
+        "z": 1,
         "moonOf": 3
       },
       {
@@ -1258,14 +1079,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -13,
-          "cz": -48,
-          "radius": 72.25,
-          "phase": 2.415,
-          "omega": 0.01195
-        }
+        "x": 27,
+        "z": -59
       }
     ],
     "homeIdx": 3,
@@ -1280,34 +1095,29 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": 16,
-      "z": -15,
-      "anchor": {
-        "body": 3,
-        "dx": 10,
-        "dz": -2
-      }
+      "x": 3,
+      "z": -23
     },
     "goal": {
-      "x": -63,
-      "z": 0,
-      "r": 1.07,
+      "x": -46,
+      "z": 20,
+      "r": 1.11,
       "anchor": {
         "body": 2,
-        "dx": -9,
-        "dz": 2
+        "dx": -7,
+        "dz": 6
       }
     },
-    "maxLaunch": 49,
-    "fuel": 0.39,
+    "maxLaunch": 47,
+    "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2996,
-        "radius": 12.7,
+        "mass": 2557,
+        "radius": 11.4,
         "color": 0xffd166,
-        "x": -37,
-        "z": 35,
+        "x": -16,
+        "z": 43,
         "type": "sun"
       },
       {
@@ -1317,11 +1127,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -37,
-          "cz": 35,
-          "radius": 21.024,
-          "phase": 0.4424,
-          "omega": 0.02216
+          "cx": -16,
+          "cz": 43,
+          "radius": 19.647,
+          "phase": -1.3135,
+          "omega": 0.02292
         }
       },
       {
@@ -1331,11 +1141,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -37,
-          "cz": 35,
-          "radius": 40.719,
-          "phase": -2.0015,
-          "omega": 0.01592
+          "cx": -16,
+          "cz": 43,
+          "radius": 37.014,
+          "phase": -2.2413,
+          "omega": 0.0167
         }
       },
       {
@@ -1345,11 +1155,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -37,
-          "cz": 35,
-          "radius": 64.444,
-          "phase": -0.8403,
-          "omega": 0.01265
+          "cx": -16,
+          "cz": 43,
+          "radius": 60.017,
+          "phase": -1.3865,
+          "omega": 0.01311
         }
       },
       {
@@ -1357,8 +1167,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -3,
-        "z": -8,
+        "x": -1,
+        "z": -25,
         "moonOf": 3
       },
       {
@@ -1366,14 +1176,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -37,
-          "cz": 35,
-          "radius": 74.25,
-          "phase": -2.0164,
-          "omega": 0.01179
-        }
+        "x": -59,
+        "z": -12
       }
     ],
     "homeIdx": 3,
@@ -1381,12 +1185,12 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": -5,
-        "z": -18
+        "x": 32,
+        "z": -34
       }
     ],
     "legMinCosts": [
-      0.09
+      0.1
     ],
     "name": "Sunward",
     "hint": "Derelict ships drift in the lanes — one touch and it's over.",
@@ -1396,22 +1200,12 @@ export const LEVELS = [
     "extent": 90,
     "ship": {
       "x": -29,
-      "z": -2,
-      "anchor": {
-        "body": 4,
-        "dx": -2,
-        "dz": 4
-      }
+      "z": -2
     },
     "goal": {
       "x": 54,
       "z": 2,
-      "r": 1.09,
-      "anchor": {
-        "body": 1,
-        "dx": 9,
-        "dz": 0
-      }
+      "r": 1.09
     },
     "maxLaunch": 49,
     "fuel": 0.39,
@@ -1430,14 +1224,8 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 40,
-          "cz": 23,
-          "radius": 21.587,
-          "phase": -1.3371,
-          "omega": 0.02187
-        }
+        "x": 45,
+        "z": 2
       },
       {
         "name": "Venus",
@@ -1472,29 +1260,17 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": -18,
-          "cz": -1,
-          "radius": 10.296,
-          "phase": -2.6345,
-          "omega": 0.06965
-        }
+        "x": -27,
+        "z": -6,
+        "moonOf": 3
       },
       {
         "name": "Mars",
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 40,
-          "cz": 23,
-          "radius": 73.246,
-          "phase": -1.3225,
-          "omega": 0.01187
-        }
+        "x": 58,
+        "z": -48
       }
     ],
     "homeIdx": 3,
@@ -1517,22 +1293,12 @@ export const LEVELS = [
     "extent": 90,
     "ship": {
       "x": -15,
-      "z": -14,
-      "anchor": {
-        "body": 3,
-        "dx": -8,
-        "dz": -6
-      }
+      "z": -14
     },
     "goal": {
       "x": 44,
       "z": 31,
-      "r": 1.16,
-      "anchor": {
-        "body": 1,
-        "dx": 7,
-        "dz": 5
-      }
+      "r": 1.16
     },
     "maxLaunch": 50,
     "fuel": 0.39,
@@ -1551,14 +1317,8 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 21,
-          "cz": 41,
-          "radius": 21.932,
-          "phase": -0.7532,
-          "omega": 0.02169
-        }
+        "x": 37,
+        "z": 26
       },
       {
         "name": "Venus",
@@ -1579,14 +1339,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 21,
-          "cz": 41,
-          "radius": 56.436,
-          "phase": -2.0899,
-          "omega": 0.01352
-        }
+        "x": -7,
+        "z": -8
       },
       {
         "name": "Moon",
@@ -1602,14 +1356,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 21,
-          "cz": 41,
-          "radius": 66.528,
-          "phase": -0.7429,
-          "omega": 0.01246
-        }
+        "x": 70,
+        "z": -4
       }
     ],
     "homeIdx": 3,
@@ -1643,34 +1391,24 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": 18,
-      "z": 19,
-      "anchor": {
-        "body": 3,
-        "dx": 7,
-        "dz": 7
-      }
+      "x": 26,
+      "z": 7
     },
     "goal": {
-      "x": -34,
-      "z": -37,
-      "r": 1.11,
-      "anchor": {
-        "body": 1,
-        "dx": -6,
-        "dz": -7
-      }
+      "x": -51,
+      "z": -13,
+      "r": 1.14
     },
-    "maxLaunch": 49,
-    "fuel": 0.39,
+    "maxLaunch": 47,
+    "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2514,
-        "radius": 12.9,
-        "color": 0xff9e6b,
-        "x": -42,
-        "z": -12,
+        "mass": 2812,
+        "radius": 12.3,
+        "color": 0xffd166,
+        "x": -32,
+        "z": -31,
         "type": "sun"
       },
       {
@@ -1678,14 +1416,8 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": -42,
-          "cz": -12,
-          "radius": 22.804,
-          "phase": -0.9098,
-          "omega": 0.02127
-        }
+        "x": -42,
+        "z": -11
       },
       {
         "name": "Venus",
@@ -1694,11 +1426,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -42,
-          "cz": -12,
-          "radius": 43.829,
-          "phase": 0.607,
-          "omega": 0.01535
+          "cx": -32,
+          "cz": -31,
+          "radius": 42.953,
+          "phase": -0.2111,
+          "omega": 0.0155
         }
       },
       {
@@ -1708,11 +1440,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -42,
-          "cz": -12,
-          "radius": 58.181,
-          "phase": 0.4252,
-          "omega": 0.01332
+          "cx": -32,
+          "cz": -31,
+          "radius": 59.405,
+          "phase": 0.63,
+          "omega": 0.01318
         }
       },
       {
@@ -1720,8 +1452,129 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 5,
-        "z": 21,
+        "x": 16,
+        "z": 15,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -63,
+        "z": 31
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 1,
+    "hazards": [
+      {
+        "radius": 2,
+        "x": 22,
+        "z": 22
+      },
+      {
+        "radius": 2,
+        "x": 39,
+        "z": 4
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -32,
+          "cz": -31,
+          "a": 48.7,
+          "b": 28.2,
+          "rot": 1.88,
+          "omega": -0.055,
+          "phase": 2.72
+        }
+      }
+    ],
+    "legMinCosts": [
+      0.1
+    ],
+    "name": "Solar Wind",
+    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
+    "difficulty": 2
+  },
+  {
+    "extent": 90,
+    "ship": {
+      "x": 37,
+      "z": 43,
+      "anchor": {
+        "body": 3,
+        "dx": 5,
+        "dz": 8
+      }
+    },
+    "goal": {
+      "x": -33,
+      "z": -69,
+      "r": 1.14
+    },
+    "maxLaunch": 49,
+    "fuel": 0.48,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2766,
+        "radius": 11.6,
+        "color": 0xffd166,
+        "x": 38,
+        "z": -29,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": 38,
+          "cz": -29,
+          "radius": 20.591,
+          "phase": -2.6345,
+          "omega": 0.02239
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "orbit": {
+          "parent": 0,
+          "cx": 38,
+          "cz": -29,
+          "radius": 44.553,
+          "phase": 2.3403,
+          "omega": 0.01522
+        }
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "orbit": {
+          "parent": 0,
+          "cx": 38,
+          "cz": -29,
+          "radius": 64.281,
+          "phase": 1.6643,
+          "omega": 0.01267
+        }
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 28,
+        "z": 27,
         "moonOf": 3
       },
       {
@@ -1731,143 +1584,11 @@ export const LEVELS = [
         "color": 0xd1603d,
         "orbit": {
           "parent": 0,
-          "cx": -42,
-          "cz": -12,
-          "radius": 69.203,
-          "phase": -0.9186,
-          "omega": 0.01221
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 1,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": -2,
-        "z": 28
-      },
-      {
-        "radius": 2,
-        "x": 51,
-        "z": 7
-      },
-      {
-        "radius": 1.2,
-        "comet": {
-          "cx": -42,
-          "cz": -12,
-          "a": 57.6,
-          "b": 18.2,
-          "rot": 2.1,
-          "omega": -0.063,
-          "phase": 3.51
-        }
-      }
-    ],
-    "legMinCosts": [
-      0.09
-    ],
-    "name": "Solar Wind",
-    "hint": "The inner system: tight, hot orbits around a heavy Sun.",
-    "difficulty": 2
-  },
-  {
-    "extent": 90,
-    "ship": {
-      "x": 7,
-      "z": 55,
-      "anchor": {
-        "body": 4,
-        "dx": 3,
-        "dz": 3
-      }
-    },
-    "goal": {
-      "x": 7,
-      "z": -73,
-      "r": 1.11,
-      "anchor": {
-        "body": 5,
-        "dx": 0,
-        "dz": -8
-      }
-    },
-    "maxLaunch": 49,
-    "fuel": 0.48,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2988,
-        "radius": 12,
-        "color": 0xffd166,
-        "x": 51,
-        "z": -4,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 51,
-          "cz": -4,
-          "radius": 21.213,
-          "phase": 2.3562,
-          "omega": 0.02206
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 51,
-          "cz": -4,
-          "radius": 44.553,
-          "phase": -2.9838,
-          "omega": 0.01522
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "x": 7,
-        "z": 44
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": 7,
-          "cz": 44,
-          "radius": 8.544,
-          "phase": 1.9296,
-          "omega": 0.07646
-        }
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 51,
-          "cz": -4,
-          "radius": 75.213,
-          "phase": -2.1957,
-          "omega": 0.01171
+          "cx": 38,
+          "cz": -29,
+          "radius": 73.348,
+          "phase": -2.6901,
+          "omega": 0.01186
         }
       }
     ],
@@ -1876,24 +1597,24 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": -49,
-        "z": 20
+        "x": 7,
+        "z": 44
       },
       {
         "radius": 2,
-        "x": -40,
-        "z": 12
+        "x": -30,
+        "z": 10
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 51,
-          "cz": -4,
-          "a": 48.8,
-          "b": 29.5,
-          "rot": 1.6,
-          "omega": -0.058,
-          "phase": 0.11
+          "cx": 38,
+          "cz": -29,
+          "a": 62.1,
+          "b": 27,
+          "rot": 0.94,
+          "omega": -0.055,
+          "phase": 1.91
         }
       }
     ],
@@ -1907,34 +1628,24 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": -24,
-      "z": -44,
-      "anchor": {
-        "body": 3,
-        "dx": -3,
-        "dz": -11
-      }
+      "x": -52,
+      "z": 1
     },
     "goal": {
-      "x": 9,
-      "z": 68,
-      "r": 1.09,
-      "anchor": {
-        "body": 5,
-        "dx": 2,
-        "dz": 8
-      }
+      "x": 66,
+      "z": -34,
+      "r": 1.14
     },
-    "maxLaunch": 50,
-    "fuel": 0.47,
+    "maxLaunch": 49,
+    "fuel": 0.48,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2796,
-        "radius": 12,
-        "color": 0xffb703,
-        "x": -40,
-        "z": 17,
+        "mass": 2414,
+        "radius": 12.9,
+        "color": 0xff9e6b,
+        "x": -6,
+        "z": -43,
         "type": "sun"
       },
       {
@@ -1944,11 +1655,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -40,
-          "cz": 17,
-          "radius": 20.518,
-          "phase": 0.8199,
-          "omega": 0.02243
+          "cx": -6,
+          "cz": -43,
+          "radius": 21.19,
+          "phase": 0.3367,
+          "omega": 0.02207
         }
       },
       {
@@ -1956,36 +1667,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -40,
-          "cz": 17,
-          "radius": 39.825,
-          "phase": -0.8921,
-          "omega": 0.0161
-        }
+        "x": 0,
+        "z": -3
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -40,
-          "cz": 17,
-          "radius": 53.488,
-          "phase": -1.2076,
-          "omega": 0.01389
-        }
+        "x": -42,
+        "z": -2
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -30,
-        "z": -28,
+        "x": -33,
+        "z": -3,
         "moonOf": 3
       },
       {
@@ -1993,14 +1692,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -40,
-          "cz": 17,
-          "radius": 63.702,
-          "phase": 0.741,
-          "omega": 0.01273
-        }
+        "x": 57,
+        "z": -31
       }
     ],
     "homeIdx": 3,
@@ -2008,39 +1701,39 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": -25,
-        "z": 1
+        "x": -53,
+        "z": -15
       },
       {
         "radius": 2,
-        "x": 45,
-        "z": 24
+        "x": -46,
+        "z": -34
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -40,
-          "cz": 17,
-          "a": 53.3,
-          "b": 22.7,
-          "rot": 1.08,
-          "omega": -0.055,
-          "phase": 5.06
+          "cx": -6,
+          "cz": -43,
+          "a": 45.1,
+          "b": 30.4,
+          "rot": 2.67,
+          "omega": 0.06,
+          "phase": 2.94
         }
       },
       {
         "radius": 2,
         "orbit": {
-          "cx": 16,
-          "cz": -2,
-          "radius": 16,
-          "omega": -0.61,
-          "phase": 3.19
+          "cx": 15,
+          "cz": -9,
+          "radius": 10.8,
+          "omega": 0.68,
+          "phase": 2.64
         }
       }
     ],
     "legMinCosts": [
-      0.17
+      0.18
     ],
     "name": "Hot Lap",
     "hint": "The inner system: tight, hot orbits around a heavy Sun.",
@@ -2049,34 +1742,24 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": 43,
-      "z": -5,
-      "anchor": {
-        "body": 3,
-        "dx": 10,
-        "dz": -1
-      }
+      "x": -42,
+      "z": 37
     },
     "goal": {
-      "x": -71,
-      "z": 5,
-      "r": 1.03,
-      "anchor": {
-        "body": 5,
-        "dx": -8,
-        "dz": 1
-      }
+      "x": 42,
+      "z": -67,
+      "r": 1.11
     },
     "maxLaunch": 48,
     "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2739,
-        "radius": 11.9,
-        "color": 0xffd166,
-        "x": -12,
-        "z": -42,
+        "mass": 2548,
+        "radius": 12.9,
+        "color": 0xff9e6b,
+        "x": -37,
+        "z": -37,
         "type": "sun"
       },
       {
@@ -2086,11 +1769,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -12,
-          "cz": -42,
-          "radius": 21.378,
-          "phase": 1.759,
-          "omega": 0.02197
+          "cx": -37,
+          "cz": -37,
+          "radius": 21.541,
+          "phase": 1.9513,
+          "omega": 0.02189
         }
       },
       {
@@ -2100,11 +1783,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -12,
-          "cz": -42,
-          "radius": 40.447,
-          "phase": 1.7197,
-          "omega": 0.01597
+          "cx": -37,
+          "cz": -37,
+          "radius": 45,
+          "phase": 0.9273,
+          "omega": 0.01514
         }
       },
       {
@@ -2112,22 +1795,16 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -42,
-          "radius": 58.898,
-          "phase": 0.7013,
-          "omega": 0.01324
-        }
+        "x": -35,
+        "z": 29
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 24,
-        "z": -7,
+        "x": -39,
+        "z": 20,
         "moonOf": 3
       },
       {
@@ -2135,14 +1812,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -42,
-          "radius": 68.68,
-          "phase": 2.4077,
-          "omega": 0.01226
-        }
+        "x": 36,
+        "z": -60
       }
     ],
     "homeIdx": 3,
@@ -2150,34 +1821,35 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": -26,
-        "z": -32
+        "x": 26,
+        "z": 22
       },
       {
         "radius": 2,
-        "x": 51,
-        "z": -38
+        "x": 24,
+        "z": -36
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -12,
-          "cz": -42,
-          "a": 47.7,
-          "b": 23.7,
-          "rot": 2.57,
-          "omega": -0.052,
-          "phase": 5.6
+          "cx": -37,
+          "cz": -37,
+          "a": 50.9,
+          "b": 23.6,
+          "rot": 2.3,
+          "omega": 0.052,
+          "phase": 4.74
         }
       },
       {
         "radius": 2,
-        "orbit": {
-          "cx": 10,
-          "cz": 10,
-          "radius": 16.8,
-          "omega": -0.51,
-          "phase": 0.29
+        "patrol": {
+          "x1": -8,
+          "z1": -23,
+          "x2": 15,
+          "z2": -38,
+          "period": 6.4,
+          "phase": 0.86
         }
       }
     ],
@@ -2191,34 +1863,24 @@ export const LEVELS = [
   {
     "extent": 90,
     "ship": {
-      "x": 44,
-      "z": 11,
-      "anchor": {
-        "body": 4,
-        "dx": 3,
-        "dz": 5
-      }
+      "x": -12,
+      "z": -42
     },
     "goal": {
-      "x": -75,
-      "z": 9,
-      "r": 1.14,
-      "anchor": {
-        "body": 5,
-        "dx": -9,
-        "dz": 0
-      }
+      "x": 3,
+      "z": 73,
+      "r": 1.14
     },
     "maxLaunch": 48,
     "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2686,
-        "radius": 11.2,
-        "color": 0xffd166,
-        "x": -11,
-        "z": 44,
+        "mass": 2802,
+        "radius": 12.1,
+        "color": 0xff9e6b,
+        "x": -46,
+        "z": 15,
         "type": "sun"
       },
       {
@@ -2228,11 +1890,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -11,
-          "cz": 44,
-          "radius": 19.647,
-          "phase": -0.2573,
-          "omega": 0.02292
+          "cx": -46,
+          "cz": 15,
+          "radius": 20.518,
+          "phase": 0.8199,
+          "omega": 0.02243
         }
       },
       {
@@ -2242,11 +1904,11 @@ export const LEVELS = [
         "color": 0xe8c07d,
         "orbit": {
           "parent": 0,
-          "cx": -11,
-          "cz": 44,
-          "radius": 34.886,
-          "phase": -2.0473,
-          "omega": 0.0172
+          "cx": -46,
+          "cz": 15,
+          "radius": 39.962,
+          "phase": -0.5533,
+          "omega": 0.01607
         }
       },
       {
@@ -2254,37 +1916,25 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "x": 33,
-        "z": 11
+        "x": -11,
+        "z": -32
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 3,
-        "orbit": {
-          "parent": 3,
-          "cx": 33,
-          "cz": 11,
-          "radius": 9.434,
-          "phase": -0.5586,
-          "omega": 0.07277
-        }
+        "x": -6,
+        "z": -23,
+        "moonOf": 3
       },
       {
         "name": "Mars",
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -11,
-          "cz": 44,
-          "radius": 65.192,
-          "phase": -2.5749,
-          "omega": 0.01258
-        }
+        "x": 2,
+        "z": 64
       }
     ],
     "homeIdx": 3,
@@ -2292,35 +1942,35 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": 8,
-        "z": -42
+        "x": 24,
+        "z": 2
       },
       {
         "radius": 2,
-        "x": 50,
-        "z": -42
+        "x": 9,
+        "z": 41
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -11,
-          "cz": 44,
-          "a": 57.9,
-          "b": 19.3,
-          "rot": 0.36,
-          "omega": 0.058,
-          "phase": 1.59
+          "cx": -46,
+          "cz": 15,
+          "a": 57,
+          "b": 26.3,
+          "rot": 1.24,
+          "omega": -0.045,
+          "phase": 5.14
         }
       },
       {
         "radius": 2,
         "patrol": {
-          "x1": -25,
-          "z1": -27,
-          "x2": -44,
-          "z2": -44,
-          "period": 4.4,
-          "phase": 0.37
+          "x1": 17,
+          "z1": -15,
+          "x2": -10,
+          "z2": 2,
+          "period": 7.4,
+          "phase": 0
         }
       }
     ],
@@ -2334,34 +1984,24 @@ export const LEVELS = [
   {
     "extent": 96,
     "ship": {
-      "x": -39,
-      "z": -26,
-      "anchor": {
-        "body": 3,
-        "dx": -8,
-        "dz": -7
-      }
+      "x": 24,
+      "z": -35
     },
     "goal": {
-      "x": 47,
-      "z": 47,
-      "r": 1.09,
-      "anchor": {
-        "body": 9,
-        "dx": 10,
-        "dz": -4
-      }
+      "x": -41,
+      "z": 52,
+      "r": 0.98
     },
     "maxLaunch": 46,
     "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2678,
-        "radius": 10.2,
-        "color": 0xffd166,
-        "x": -30,
-        "z": 22,
+        "mass": 3025,
+        "radius": 10.3,
+        "color": 0xff9e6b,
+        "x": -22,
+        "z": -25,
         "type": "sun"
       },
       {
@@ -2371,11 +2011,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -30,
-          "cz": 22,
-          "radius": 20.125,
-          "phase": 1.1071,
-          "omega": 0.03706
+          "cx": -22,
+          "cz": -25,
+          "radius": 19.849,
+          "phase": 2.4275,
+          "omega": 0.03731
         }
       },
       {
@@ -2383,14 +2023,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -30,
-          "cz": 22,
-          "radius": 30,
-          "phase": 0,
-          "omega": 0.03035
-        }
+        "x": -16,
+        "z": 5
       },
       {
         "name": "Earth",
@@ -2399,11 +2033,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": -30,
-          "cz": 22,
-          "radius": 41.012,
-          "phase": -1.5952,
-          "omega": 0.02596
+          "cx": -22,
+          "cz": -25,
+          "radius": 40.05,
+          "phase": -0.05,
+          "omega": 0.02627
         }
       },
       {
@@ -2411,8 +2045,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -25,
-        "z": -10,
+        "x": 9,
+        "z": -31,
         "moonOf": 3
       },
       {
@@ -2420,67 +2054,43 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -30,
-          "cz": 22,
-          "radius": 50.478,
-          "phase": -0.9828,
-          "omega": 0.0234
-        }
+        "x": 22,
+        "z": -1
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 34,
-        "z": 36
+        "x": -31,
+        "z": 39
       },
       {
         "name": "Io",
-        "mass": 118,
-        "radius": 1,
+        "mass": 111,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 34,
-          "cz": 36,
-          "radius": 10.05,
-          "phase": -3.0419,
-          "omega": 0.11536
-        }
+        "x": -35,
+        "z": 30,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 119,
-        "radius": 1.1,
+        "mass": 82,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 34,
-          "cz": 36,
-          "radius": 12.207,
-          "phase": -0.9601,
-          "omega": 0.10468
-        }
+        "x": -19,
+        "z": 38,
+        "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 91,
-        "radius": 1.2,
+        "mass": 88,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 34,
-          "cz": 36,
-          "radius": 15.297,
-          "phase": 1.3734,
-          "omega": 0.09351
-        }
+        "x": -35,
+        "z": 53,
+        "moonOf": 6
       }
     ],
     "homeIdx": 3,
@@ -2495,34 +2105,24 @@ export const LEVELS = [
   {
     "extent": 96,
     "ship": {
-      "x": 38,
-      "z": 18,
-      "anchor": {
-        "body": 3,
-        "dx": 9,
-        "dz": 5
-      }
+      "x": 19,
+      "z": 42
     },
     "goal": {
-      "x": -61,
-      "z": -35,
-      "r": 1.07,
-      "anchor": {
-        "body": 8,
-        "dx": -2,
-        "dz": -8
-      }
+      "x": -51,
+      "z": -52,
+      "r": 1.03
     },
-    "maxLaunch": 45,
-    "fuel": 0.41,
+    "maxLaunch": 49,
+    "fuel": 0.39,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2696,
-        "radius": 10.7,
+        "mass": 2843,
+        "radius": 11.1,
         "color": 0xffd166,
-        "x": 18,
-        "z": -25,
+        "x": -25,
+        "z": 24,
         "type": "sun"
       },
       {
@@ -2532,11 +2132,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 18,
-          "cz": -25,
-          "radius": 18.788,
-          "phase": -2.7018,
-          "omega": 0.03835
+          "cx": -25,
+          "cz": 24,
+          "radius": 19.849,
+          "phase": -2.2849,
+          "omega": 0.03731
         }
       },
       {
@@ -2544,14 +2144,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -25,
-          "radius": 28.792,
-          "phase": 2.7869,
-          "omega": 0.03098
-        }
+        "x": -19,
+        "z": -4
       },
       {
         "name": "Earth",
@@ -2560,11 +2154,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 18,
-          "cz": -25,
-          "radius": 39.56,
-          "phase": 1.289,
-          "omega": 0.02643
+          "cx": -25,
+          "cz": 24,
+          "radius": 39.294,
+          "phase": 0.2573,
+          "omega": 0.02652
         }
       },
       {
@@ -2572,8 +2166,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 25,
-        "z": 3,
+        "x": 5,
+        "z": 26,
         "moonOf": 3
       },
       {
@@ -2581,52 +2175,49 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -25,
-          "radius": 49.041,
-          "phase": 1.8603,
-          "omega": 0.02374
-        }
+        "x": 20,
+        "z": 6
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": -47,
-        "z": -27
+        "x": -41,
+        "z": -39
       },
       {
         "name": "Io",
-        "mass": 69,
-        "radius": 1,
+        "mass": 74,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": -44,
-        "z": -17,
+        "x": -51,
+        "z": -39,
         "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 70,
-        "radius": 1.2,
+        "mass": 68,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -47,
-          "cz": -27,
-          "radius": 12,
-          "phase": 3.1416,
-          "omega": 0.10557
-        }
+        "x": -35,
+        "z": -50,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 64,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -31,
+        "z": -28,
+        "moonOf": 6
       }
     ],
     "homeIdx": 3,
     "targetIdx": 6,
     "legMinCosts": [
-      0.11
+      0.09
     ],
     "name": "Eye of Jupiter",
     "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
@@ -2635,34 +2226,24 @@ export const LEVELS = [
   {
     "extent": 96,
     "ship": {
-      "x": -37,
-      "z": 16,
-      "anchor": {
-        "body": 3,
-        "dx": -9,
-        "dz": 5
-      }
+      "x": 8,
+      "z": 44
     },
     "goal": {
-      "x": 56,
-      "z": -33,
-      "r": 1.01,
-      "anchor": {
-        "body": 7,
-        "dx": 8,
-        "dz": 1
-      }
+      "x": -9,
+      "z": -67,
+      "r": 1.07
     },
     "maxLaunch": 48,
-    "fuel": 0.4,
+    "fuel": 0.49,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2789,
-        "radius": 10,
+        "mass": 2742,
+        "radius": 10.2,
         "color": 0xffd166,
-        "x": 8,
-        "z": 30,
+        "x": -27,
+        "z": 10,
         "type": "sun"
       },
       {
@@ -2672,11 +2253,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 8,
-          "cz": 30,
-          "radius": 18.788,
-          "phase": -0.4398,
-          "omega": 0.03835
+          "cx": -27,
+          "cz": 10,
+          "radius": 19.698,
+          "phase": -1.989,
+          "omega": 0.03746
         }
       },
       {
@@ -2684,14 +2265,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 8,
-          "cz": 30,
-          "radius": 30.083,
-          "phase": -1.3016,
-          "omega": 0.03031
-        }
+        "x": -13,
+        "z": -16
       },
       {
         "name": "Earth",
@@ -2700,11 +2275,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 8,
-          "cz": 30,
-          "radius": 40.706,
-          "phase": -2.656,
-          "omega": 0.02606
+          "cx": -27,
+          "cz": 10,
+          "radius": 40.224,
+          "phase": 0.6087,
+          "omega": 0.02621
         }
       },
       {
@@ -2712,8 +2287,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -18,
-        "z": 15,
+        "x": 4,
+        "z": 23,
         "moonOf": 3
       },
       {
@@ -2721,74 +2296,49 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 8,
-          "cz": 30,
-          "radius": 49.649,
-          "phase": -2.17,
-          "omega": 0.02359
-        }
+        "x": 23,
+        "z": 11
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 42,
-        "z": -26
+        "x": -7,
+        "z": -52
       },
       {
         "name": "Io",
-        "mass": 103,
-        "radius": 1.2,
+        "mass": 100,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 42,
-          "cz": -26,
-          "radius": 10,
-          "phase": -0.9273,
-          "omega": 0.11565
-        }
+        "x": -3,
+        "z": -61,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 109,
-        "radius": 1.1,
+        "mass": 71,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": 45,
-        "z": -14,
+        "x": 3,
+        "z": -44,
         "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 62,
+        "mass": 73,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 42,
-          "cz": -26,
-          "radius": 14.765,
-          "phase": -2.6477,
-          "omega": 0.09518
-        }
+        "x": -22,
+        "z": -54,
+        "moonOf": 6
       }
     ],
     "homeIdx": 3,
     "targetIdx": 6,
-    "hazards": [
-      {
-        "radius": 2,
-        "x": 34,
-        "z": 11
-      }
-    ],
     "legMinCosts": [
-      0.1
+      0.19
     ],
     "name": "Io Flyby",
     "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
@@ -2797,34 +2347,24 @@ export const LEVELS = [
   {
     "extent": 96,
     "ship": {
-      "x": 32,
-      "z": -22,
-      "anchor": {
-        "body": 3,
-        "dx": 8,
-        "dz": -6
-      }
+      "x": -36,
+      "z": 19
     },
     "goal": {
-      "x": -50,
-      "z": 41,
-      "r": 1.07,
-      "anchor": {
-        "body": 6,
-        "dx": -13,
-        "dz": 10
-      }
+      "x": 60,
+      "z": -21,
+      "r": 0.98
     },
-    "maxLaunch": 45,
-    "fuel": 0.41,
+    "maxLaunch": 46,
+    "fuel": 0.4,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2994,
-        "radius": 10.5,
+        "mass": 2890,
+        "radius": 10.9,
         "color": 0xffd166,
-        "x": -12,
-        "z": -27,
+        "x": 6,
+        "z": 36,
         "type": "sun"
       },
       {
@@ -2834,11 +2374,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -12,
-          "cz": -27,
-          "radius": 18.868,
-          "phase": 2.583,
-          "omega": 0.03827
+          "cx": 6,
+          "cz": 36,
+          "radius": 19.235,
+          "phase": -0.4869,
+          "omega": 0.0379
         }
       },
       {
@@ -2846,36 +2386,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -27,
-          "radius": 28.16,
-          "phase": 1.6775,
-          "omega": 0.03133
-        }
+        "x": 18,
+        "z": 9
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -27,
-          "radius": 37.643,
-          "phase": 0.2965,
-          "omega": 0.02709
-        }
+        "x": -27,
+        "z": 15
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 21,
-        "z": -25,
+        "x": -18,
+        "z": 17,
         "moonOf": 3
       },
       {
@@ -2883,51 +2411,42 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -27,
-          "radius": 48.104,
-          "phase": 0.756,
-          "omega": 0.02397
-        }
+        "x": -17,
+        "z": -7
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": -12,
-          "cz": -27,
-          "radius": 63.159,
-          "phase": 1.9778,
-          "omega": 0.02092
-        }
+        "x": 45,
+        "z": -15
       },
       {
         "name": "Io",
-        "mass": 78,
+        "mass": 108,
         "radius": 1.1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -37,
-          "cz": 31,
-          "radius": 10.05,
-          "phase": 1.6705,
-          "omega": 0.11536
-        }
+        "x": 51,
+        "z": -7,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 102,
-        "radius": 1.2,
+        "mass": 84,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -47,
-        "z": 23,
+        "x": 33,
+        "z": -15,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 108,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 55,
+        "z": -26,
         "moonOf": 6
       }
     ],
@@ -2937,18 +2456,18 @@ export const LEVELS = [
       {
         "radius": 1.2,
         "comet": {
-          "cx": -12,
-          "cz": -27,
-          "a": 49.4,
-          "b": 31.3,
-          "rot": 1.96,
-          "omega": -0.056,
-          "phase": 4.88
+          "cx": 6,
+          "cz": 36,
+          "a": 49.2,
+          "b": 28.4,
+          "rot": 1.81,
+          "omega": 0.04,
+          "phase": 5.21
         }
       }
     ],
     "legMinCosts": [
-      0.11
+      0.1
     ],
     "name": "Europa Run",
     "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
@@ -2957,34 +2476,24 @@ export const LEVELS = [
   {
     "extent": 96,
     "ship": {
-      "x": 3,
-      "z": -46,
-      "anchor": {
-        "body": 3,
-        "dx": 3,
-        "dz": -10
-      }
+      "x": 26,
+      "z": -40
     },
     "goal": {
-      "x": -33,
-      "z": 65,
-      "r": 1.07,
-      "anchor": {
-        "body": 6,
-        "dx": -5,
-        "dz": 15
-      }
+      "x": -32,
+      "z": 64,
+      "r": 1.03
     },
-    "maxLaunch": 46,
-    "fuel": 0.35,
+    "maxLaunch": 48,
+    "fuel": 0.44,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2900,
-        "radius": 10.3,
+        "mass": 2913,
+        "radius": 11.5,
         "color": 0xff9e6b,
-        "x": -32,
-        "z": -14,
+        "x": 28,
+        "z": 10,
         "type": "sun"
       },
       {
@@ -2994,11 +2503,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -32,
-          "cz": -14,
-          "radius": 19.313,
-          "phase": 1.9417,
-          "omega": 0.03783
+          "cx": 28,
+          "cz": 10,
+          "radius": 20.616,
+          "phase": 1.8158,
+          "omega": 0.03661
         }
       },
       {
@@ -3006,35 +2515,23 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -32,
-          "cz": -14,
-          "radius": 29.411,
-          "phase": 0.9545,
-          "omega": 0.03065
-        }
+        "x": -1,
+        "z": 18
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -32,
-          "cz": -14,
-          "radius": 38.833,
-          "phase": -0.6023,
-          "omega": 0.02668
-        }
+        "x": 21,
+        "z": -30
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -2,
+        "x": 29,
         "z": -26,
         "moonOf": 3
       },
@@ -3043,51 +2540,33 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -32,
-          "cz": -14,
-          "radius": 48.26,
-          "phase": -0.1038,
-          "omega": 0.02393
-        }
+        "x": -5,
+        "z": -27
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": -32,
-          "cz": -14,
-          "radius": 64.125,
-          "phase": 1.5084,
-          "omega": 0.02076
-        }
+        "x": -24,
+        "z": 50
       },
       {
         "name": "Io",
-        "mass": 68,
+        "mass": 69,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -28,
-          "cz": 50,
-          "radius": 9.849,
-          "phase": -1.989,
-          "omega": 0.11654
-        }
+        "x": -23,
+        "z": 60,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 70,
-        "radius": 1.3,
+        "mass": 89,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -16,
-        "z": 48,
+        "x": -35,
+        "z": 43,
         "moonOf": 6
       }
     ],
@@ -3095,46 +2574,41 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -18,
-        "z": 23,
+        "x": -6,
+        "z": 32,
         "r": 0.94,
-        "type": "station",
-        "anchor": {
-          "body": 2,
-          "dx": -3,
-          "dz": 13
-        }
+        "type": "station"
       }
     ],
     "hazards": [
       {
         "radius": 2,
-        "x": 11,
+        "x": 3,
         "z": -1
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -32,
-          "cz": -14,
-          "a": 57.7,
-          "b": 29.3,
-          "rot": 2.33,
-          "omega": -0.051,
-          "phase": 0.3
+          "cx": 28,
+          "cz": 10,
+          "a": 58,
+          "b": 26.1,
+          "rot": 0.49,
+          "omega": -0.057,
+          "phase": 1.01
         }
       }
     ],
     "pickups": [
       {
         "x": 10,
-        "z": -31,
+        "z": -30,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.1,
-      0.2
+      0.19,
+      0.1
     ],
     "fuelRequired": false,
     "name": "Callisto Stop",
@@ -3144,29 +2618,29 @@ export const LEVELS = [
   {
     "extent": 106,
     "ship": {
-      "x": -12,
-      "z": 49
+      "x": -5,
+      "z": 42
     },
     "goal": {
-      "x": 38,
-      "z": -72,
-      "r": 1.11,
+      "x": 9,
+      "z": -85,
+      "r": 1.01,
       "anchor": {
         "body": 9,
-        "dx": 5,
-        "dz": -13
+        "dx": 2,
+        "dz": -15
       }
     },
-    "maxLaunch": 44,
-    "fuel": 0.36,
+    "maxLaunch": 47,
+    "fuel": 0.35,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 3044,
-        "radius": 10.2,
-        "color": 0xffb703,
-        "x": 31,
-        "z": 27,
+        "mass": 3070,
+        "radius": 10.3,
+        "color": 0xff9e6b,
+        "x": 33,
+        "z": 13,
         "type": "sun"
       },
       {
@@ -3176,11 +2650,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 31,
-          "cz": 27,
-          "radius": 20.616,
-          "phase": -0.6823,
-          "omega": 0.03661
+          "cx": 33,
+          "cz": 13,
+          "radius": 20.224,
+          "phase": -1.4219,
+          "omega": 0.03697
         }
       },
       {
@@ -3188,30 +2662,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 31,
-          "cz": 27,
-          "radius": 31.401,
-          "phase": -1.7307,
-          "omega": 0.02967
-        }
+        "x": 10,
+        "z": -8
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "x": -8,
-        "z": 39
+        "x": -4,
+        "z": 31
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 2,
-        "z": 39,
+        "x": 7,
+        "z": 34,
         "moonOf": 3
       },
       {
@@ -3219,7 +2687,7 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "x": -17,
+        "x": -19,
         "z": 9
       },
       {
@@ -3227,44 +2695,26 @@ export const LEVELS = [
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": 31,
-          "cz": 27,
-          "radius": 66.528,
-          "phase": -0.8279,
-          "omega": 0.02038
-        }
+        "x": 41,
+        "z": -54
       },
       {
         "name": "Io",
-        "mass": 108,
-        "radius": 1.1,
+        "mass": 97,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 76,
-          "cz": -22,
-          "radius": 10,
-          "phase": -1.5708,
-          "omega": 0.11565
-        }
+        "x": 49,
+        "z": -47,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 80,
-        "radius": 1.2,
+        "mass": 91,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 76,
-          "cz": -22,
-          "radius": 12.042,
-          "phase": 0.7266,
-          "omega": 0.10539
-        }
+        "x": 29,
+        "z": -50,
+        "moonOf": 6
       },
       {
         "name": "Saturn",
@@ -3273,29 +2723,35 @@ export const LEVELS = [
         "color": 0xe3c896,
         "orbit": {
           "parent": 0,
-          "cx": 31,
-          "cz": 27,
-          "radius": 86.023,
-          "phase": -1.5475,
-          "omega": 0.01792
+          "cx": 33,
+          "cz": 13,
+          "radius": 86.977,
+          "phase": -1.8744,
+          "omega": 0.01782
         }
       },
       {
         "name": "Titan",
-        "mass": 108,
+        "mass": 81,
         "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": 29,
-        "z": -68,
-        "moonOf": 9
+        "moonOf": 9,
+        "orbit": {
+          "parent": 9,
+          "cx": 7,
+          "cz": -70,
+          "radius": 9.22,
+          "phase": -0.2187,
+          "omega": 0.12045
+        }
       },
       {
         "name": "Rhea",
-        "mass": 120,
-        "radius": 1,
+        "mass": 89,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": 45,
-        "z": -57,
+        "x": 2,
+        "z": -59,
         "moonOf": 9
       }
     ],
@@ -3303,8 +2759,8 @@ export const LEVELS = [
     "targetIdx": 9,
     "waypoints": [
       {
-        "x": 19,
-        "z": -17,
+        "x": 8,
+        "z": -21,
         "r": 0.94,
         "type": "station"
       }
@@ -3312,26 +2768,215 @@ export const LEVELS = [
     "hazards": [
       {
         "radius": 2,
-        "x": 32,
-        "z": -41
+        "x": -11,
+        "z": -4
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 31,
-          "cz": 27,
-          "a": 64.1,
-          "b": 21.2,
-          "rot": 1.47,
-          "omega": 0.045,
-          "phase": 2.61
+          "cx": 33,
+          "cz": 13,
+          "a": 65.4,
+          "b": 27.1,
+          "rot": 1.09,
+          "omega": -0.048,
+          "phase": 4.65
         }
       }
     ],
     "pickups": [
       {
-        "x": 46,
-        "z": 36,
+        "x": 45,
+        "z": 23,
+        "fuel": 1.5
+      }
+    ],
+    "legMinCosts": [
+      0.1,
+      0.1
+    ],
+    "fuelRequired": true,
+    "name": "Saturn Swing",
+    "hint": "Saturn now. Jupiter is still out there, bending everything.",
+    "difficulty": 3
+  },
+  {
+    "extent": 106,
+    "ship": {
+      "x": -32,
+      "z": -36
+    },
+    "goal": {
+      "x": 35,
+      "z": 83,
+      "r": 1.09
+    },
+    "maxLaunch": 44,
+    "fuel": 0.62,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2903,
+        "radius": 10.9,
+        "color": 0xffd166,
+        "x": -35,
+        "z": 13,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": -35,
+          "cz": 13,
+          "radius": 20.125,
+          "phase": 1.1071,
+          "omega": 0.03706
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": -4,
+        "z": 17
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "x": -27,
+        "z": -27
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -26,
+        "z": -18,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": -3,
+        "z": -25
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "x": -8,
+        "z": 73
+      },
+      {
+        "name": "Io",
+        "mass": 97,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -8,
+        "z": 83,
+        "moonOf": 6
+      },
+      {
+        "name": "Europa",
+        "mass": 72,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": -19,
+        "z": 67,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 77,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 5,
+        "z": 66,
+        "moonOf": 6
+      },
+      {
+        "name": "Saturn",
+        "mass": 1250,
+        "radius": 5.7,
+        "color": 0xe3c896,
+        "orbit": {
+          "parent": 0,
+          "cx": -35,
+          "cz": 13,
+          "radius": 84.959,
+          "phase": 0.7354,
+          "omega": 0.01804
+        }
+      },
+      {
+        "name": "Titan",
+        "mass": 96,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "moonOf": 10,
+        "orbit": {
+          "parent": 10,
+          "cx": 28,
+          "cz": 70,
+          "radius": 9.22,
+          "phase": 0.8622,
+          "omega": 0.12045
+        }
+      },
+      {
+        "name": "Rhea",
+        "mass": 87,
+        "radius": 1.1,
+        "color": 0xd8d8d8,
+        "x": 16,
+        "z": 71,
+        "moonOf": 10
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 10,
+    "waypoints": [
+      {
+        "x": 4,
+        "z": 27,
+        "r": 0.94,
+        "type": "station"
+      }
+    ],
+    "hazards": [
+      {
+        "radius": 2,
+        "x": -43,
+        "z": 41
+      },
+      {
+        "radius": 1.2,
+        "comet": {
+          "cx": -35,
+          "cz": 13,
+          "a": 60.6,
+          "b": 22.6,
+          "rot": 1.61,
+          "omega": 0.087,
+          "phase": 1.81
+        }
+      }
+    ],
+    "pickups": [
+      {
+        "x": -7,
+        "z": -10,
         "fuel": 1.5
       }
     ],
@@ -3340,241 +2985,6 @@ export const LEVELS = [
       0.11
     ],
     "fuelRequired": false,
-    "name": "Saturn Swing",
-    "hint": "Saturn now. Jupiter is still out there, bending everything.",
-    "difficulty": 3
-  },
-  {
-    "extent": 106,
-    "ship": {
-      "x": -9,
-      "z": -46,
-      "anchor": {
-        "body": 3,
-        "dx": 0,
-        "dz": -11
-      }
-    },
-    "goal": {
-      "x": -12,
-      "z": 91,
-      "r": 1.03,
-      "anchor": {
-        "body": 12,
-        "dx": 8,
-        "dz": 6
-      }
-    },
-    "maxLaunch": 47,
-    "fuel": 0.35,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 3101,
-        "radius": 10.1,
-        "color": 0xffd166,
-        "x": -34,
-        "z": -6,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": -34,
-          "cz": -6,
-          "radius": 18.439,
-          "phase": 1.7895,
-          "omega": 0.03871
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -34,
-          "cz": -6,
-          "radius": 28.32,
-          "phase": 0.8354,
-          "omega": 0.03124
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -34,
-          "cz": -6,
-          "radius": 38.288,
-          "phase": -0.8593,
-          "omega": 0.02687
-        }
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "x": -19,
-        "z": -29,
-        "moonOf": 3
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -34,
-          "cz": -6,
-          "radius": 49.041,
-          "phase": -0.354,
-          "omega": 0.02374
-        }
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1500,
-        "radius": 6.5,
-        "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": -34,
-          "cz": -6,
-          "radius": 65.192,
-          "phase": 1.9314,
-          "omega": 0.02059
-        }
-      },
-      {
-        "name": "Io",
-        "mass": 61,
-        "radius": 1.2,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -57,
-          "cz": 55,
-          "radius": 9.849,
-          "phase": -0.4182,
-          "omega": 0.11654
-        }
-      },
-      {
-        "name": "Europa",
-        "mass": 100,
-        "radius": 1.1,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -57,
-          "cz": 55,
-          "radius": 12.042,
-          "phase": 1.6539,
-          "omega": 0.10539
-        }
-      },
-      {
-        "name": "Ganymede",
-        "mass": 93,
-        "radius": 1.1,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -57,
-          "cz": 55,
-          "radius": 14.56,
-          "phase": -2.8633,
-          "omega": 0.09584
-        }
-      },
-      {
-        "name": "Saturn",
-        "mass": 1250,
-        "radius": 5.7,
-        "color": 0xe3c896,
-        "x": -12,
-        "z": 76
-      },
-      {
-        "name": "Titan",
-        "mass": 116,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "x": -3,
-        "z": 78,
-        "moonOf": 10
-      },
-      {
-        "name": "Rhea",
-        "mass": 119,
-        "radius": 1.1,
-        "color": 0xd8d8d8,
-        "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": -12,
-          "cz": 76,
-          "radius": 12.042,
-          "phase": 2.2974,
-          "omega": 0.10539
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 10,
-    "waypoints": [
-      {
-        "x": -21,
-        "z": 26,
-        "r": 0.94,
-        "type": "station",
-        "anchor": {
-          "body": 2,
-          "dx": -6,
-          "dz": 11
-        }
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 1.2,
-        "comet": {
-          "cx": -34,
-          "cz": -6,
-          "a": 69,
-          "b": 21.8,
-          "rot": 2.32,
-          "omega": 0.079,
-          "phase": 1.29
-        }
-      }
-    ],
-    "pickups": [
-      {
-        "x": -48,
-        "z": -13,
-        "fuel": 1.5
-      }
-    ],
-    "legMinCosts": [
-      0.1,
-      0.2
-    ],
-    "fuelRequired": true,
     "name": "Titan Station",
     "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
     "difficulty": 3
@@ -3582,34 +2992,24 @@ export const LEVELS = [
   {
     "extent": 106,
     "ship": {
-      "x": -42,
-      "z": 0,
-      "anchor": {
-        "body": 3,
-        "dx": -11,
-        "dz": -1
-      }
+      "x": 6,
+      "z": 42
     },
     "goal": {
-      "x": 79,
-      "z": 10,
-      "r": 1.01,
-      "anchor": {
-        "body": 11,
-        "dx": 4,
-        "dz": -2
-      }
+      "x": 6,
+      "z": -80,
+      "r": 0.96
     },
     "maxLaunch": 45,
-    "fuel": 0.36,
+    "fuel": 0.46,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 3099,
+        "mass": 3086,
         "radius": 10,
-        "color": 0xffd166,
-        "x": -9,
-        "z": -31,
+        "color": 0xff9e6b,
+        "x": 38,
+        "z": 10,
         "type": "sun"
       },
       {
@@ -3619,11 +3019,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -9,
-          "cz": -31,
-          "radius": 18.028,
-          "phase": -0.0555,
-          "omega": 0.03915
+          "cx": 38,
+          "cz": 10,
+          "radius": 20.025,
+          "phase": -1.6208,
+          "omega": 0.03715
         }
       },
       {
@@ -3631,36 +3031,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -9,
-          "cz": -31,
-          "radius": 27.803,
-          "phase": 0.6579,
-          "omega": 0.03153
-        }
+        "x": 18,
+        "z": -11
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -9,
-          "cz": -31,
-          "radius": 38.833,
-          "phase": 2.1731,
-          "omega": 0.02668
-        }
+        "x": 6,
+        "z": 32
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -32,
-        "z": -10,
+        "x": 11,
+        "z": 22,
         "moonOf": 3
       },
       {
@@ -3668,39 +3056,42 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -9,
-          "cz": -31,
-          "radius": 48.836,
-          "phase": 1.7561,
-          "omega": 0.02379
-        }
+        "x": -10,
+        "z": 13
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 55,
-        "z": -30
+        "x": 38,
+        "z": -53
       },
       {
         "name": "Io",
-        "mass": 86,
-        "radius": 1.1,
+        "mass": 71,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "x": 56,
-        "z": -20,
+        "x": 40,
+        "z": -43,
         "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 114,
-        "radius": 1.3,
+        "mass": 88,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": 44,
-        "z": -36,
+        "x": 26,
+        "z": -55,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 112,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 51,
+        "z": -60,
         "moonOf": 6
       },
       {
@@ -3708,73 +3099,56 @@ export const LEVELS = [
         "mass": 1250,
         "radius": 5.7,
         "color": 0xe3c896,
-        "x": 64,
-        "z": 9
+        "x": 6,
+        "z": -65
       },
       {
         "name": "Titan",
-        "mass": 87,
-        "radius": 1.2,
+        "mass": 70,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "moonOf": 9,
-        "orbit": {
-          "parent": 9,
-          "cx": 64,
-          "cz": 9,
-          "radius": 9.487,
-          "phase": -1.8925,
-          "omega": 0.11874
-        }
+        "x": 15,
+        "z": -61,
+        "moonOf": 10
       },
       {
         "name": "Rhea",
-        "mass": 103,
+        "mass": 97,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 9,
-        "orbit": {
-          "parent": 9,
-          "cx": 64,
-          "cz": 9,
-          "radius": 11.402,
-          "phase": 0.2663,
-          "omega": 0.10831
-        }
+        "x": -4,
+        "z": -58,
+        "moonOf": 10
       }
     ],
     "homeIdx": 3,
-    "targetIdx": 9,
+    "targetIdx": 10,
     "waypoints": [
       {
-        "x": 11,
-        "z": -1,
+        "x": 20,
+        "z": -24,
         "r": 0.94,
-        "type": "station",
-        "anchor": {
-          "body": 2,
-          "dx": -2,
-          "dz": 13
-        }
+        "type": "station"
       }
     ],
     "hazards": [
       {
         "radius": 1.2,
         "comet": {
-          "cx": -9,
-          "cz": -31,
-          "a": 65.4,
-          "b": 34.4,
-          "rot": 1.9,
-          "omega": 0.056,
-          "phase": 5.34
+          "cx": 38,
+          "cz": 10,
+          "a": 59.3,
+          "b": 26.8,
+          "rot": 0.69,
+          "omega": -0.069,
+          "phase": 4.06
         }
       }
     ],
     "pickups": [
       {
-        "x": -33,
-        "z": 10,
+        "x": 6,
+        "z": 25,
         "fuel": 1.5
       }
     ],
@@ -3790,34 +3164,24 @@ export const LEVELS = [
   {
     "extent": 106,
     "ship": {
-      "x": 12,
-      "z": 41,
-      "anchor": {
-        "body": 3,
-        "dx": 3,
-        "dz": 9
-      }
+      "x": -39,
+      "z": -32
     },
     "goal": {
-      "x": -27,
-      "z": -86,
-      "r": 1.07,
-      "anchor": {
-        "body": 12,
-        "dx": -4,
-        "dz": -3
-      }
+      "x": 85,
+      "z": 20,
+      "r": 1.09
     },
-    "maxLaunch": 49,
-    "fuel": 0.34,
+    "maxLaunch": 45,
+    "fuel": 0.46,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2933,
-        "radius": 10.6,
+        "mass": 3071,
+        "radius": 10.5,
         "color": 0xffb703,
-        "x": 32,
-        "z": -2,
+        "x": 8,
+        "z": -40,
         "type": "sun"
       },
       {
@@ -3827,11 +3191,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 32,
-          "cz": -2,
-          "radius": 20.881,
-          "phase": -1.8623,
-          "omega": 0.03638
+          "cx": 8,
+          "cz": -40,
+          "radius": 19.026,
+          "phase": 0.0526,
+          "omega": 0.03811
         }
       },
       {
@@ -3839,14 +3203,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 32,
-          "cz": -2,
-          "radius": 30.887,
-          "phase": -2.6345,
-          "omega": 0.02991
-        }
+        "x": 17,
+        "z": -13
       },
       {
         "name": "Earth",
@@ -3855,11 +3213,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 32,
-          "cz": -2,
-          "radius": 41.049,
-          "phase": 2.1656,
-          "omega": 0.02595
+          "cx": 8,
+          "cz": -40,
+          "radius": 38.897,
+          "phase": 2.828,
+          "omega": 0.02665
         }
       },
       {
@@ -3867,8 +3225,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 19,
-        "z": 32,
+        "x": -21,
+        "z": -35,
         "moonOf": 3
       },
       {
@@ -3876,72 +3234,60 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 32,
-          "cz": -2,
-          "radius": 50.99,
-          "phase": 2.6955,
-          "omega": 0.02328
-        }
+        "x": -24,
+        "z": -4
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": 32,
-          "cz": -2,
-          "radius": 66.91,
-          "phase": -1.7359,
-          "omega": 0.02032
-        }
+        "x": 72,
+        "z": -30
       },
       {
         "name": "Io",
-        "mass": 86,
+        "mass": 82,
         "radius": 1.2,
         "color": 0xd8d8d8,
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 21,
-          "cz": -68,
-          "radius": 10.296,
-          "phase": -0.5071,
-          "omega": 0.11398
+          "cx": 72,
+          "cz": -30,
+          "radius": 9.849,
+          "phase": 1.989,
+          "omega": 0.11654
         }
       },
       {
         "name": "Europa",
-        "mass": 93,
-        "radius": 1.2,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 21,
-          "cz": -68,
-          "radius": 12.042,
-          "phase": 1.4877,
-          "omega": 0.10539
-        }
-      },
-      {
-        "name": "Ganymede",
-        "mass": 98,
+        "mass": 107,
         "radius": 1.1,
         "color": 0xd8d8d8,
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 21,
-          "cz": -68,
-          "radius": 14.765,
-          "phase": -2.6477,
-          "omega": 0.09518
+          "cx": 72,
+          "cz": -30,
+          "radius": 13.038,
+          "phase": -2.1375,
+          "omega": 0.10128
+        }
+      },
+      {
+        "name": "Ganymede",
+        "mass": 103,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "moonOf": 6,
+        "orbit": {
+          "parent": 6,
+          "cx": 72,
+          "cz": -30,
+          "radius": 14.56,
+          "phase": 0.2783,
+          "omega": 0.09584
         }
       },
       {
@@ -3949,90 +3295,78 @@ export const LEVELS = [
         "mass": 1250,
         "radius": 5.7,
         "color": 0xe3c896,
-        "x": -22,
-        "z": -71
+        "x": 72,
+        "z": 15
       },
       {
         "name": "Titan",
-        "mass": 68,
-        "radius": 1.1,
+        "mass": 86,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": -22,
-          "cz": -71,
-          "radius": 9.22,
-          "phase": 2.433,
-          "omega": 0.12045
-        }
+        "x": 79,
+        "z": 9,
+        "moonOf": 10
       },
       {
         "name": "Rhea",
-        "mass": 75,
-        "radius": 1.3,
+        "mass": 118,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": -22,
-          "cz": -71,
-          "radius": 12.042,
-          "phase": -1.6539,
-          "omega": 0.10539
-        }
+        "x": 76,
+        "z": 26,
+        "moonOf": 10
       }
     ],
     "homeIdx": 3,
     "targetIdx": 10,
     "waypoints": [
       {
-        "x": 3,
-        "z": -30,
+        "x": 55,
+        "z": 10,
         "r": 0.94,
-        "type": "station",
-        "anchor": {
-          "body": 2,
-          "dx": -2,
-          "dz": -13
-        }
+        "type": "station"
       }
     ],
     "hazards": [
       {
+        "radius": 2,
+        "x": -16,
+        "z": 11
+      },
+      {
         "radius": 1.2,
         "comet": {
-          "cx": 32,
-          "cz": -2,
-          "a": 61.6,
-          "b": 34.8,
-          "rot": 2.57,
-          "omega": -0.042,
-          "phase": 3.59
+          "cx": 8,
+          "cz": -40,
+          "a": 58.7,
+          "b": 21.5,
+          "rot": 0.98,
+          "omega": 0.063,
+          "phase": 2.17
         }
       },
       {
         "radius": 2,
         "patrol": {
-          "x1": -25,
-          "z1": -6,
-          "x2": -36,
-          "z2": 19,
-          "period": 7.4,
-          "phase": 0.66
+          "x1": -40,
+          "z1": -5,
+          "x2": -52,
+          "z2": 7,
+          "period": 7.7,
+          "phase": 0.15
         }
       }
     ],
     "pickups": [
       {
-        "x": -8,
-        "z": -3,
+        "x": -27,
+        "z": 4,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.09,
-      0.09
+      0.21,
+      0.11
     ],
     "fuelRequired": false,
     "name": "Enceladus Deep",
@@ -4042,34 +3376,24 @@ export const LEVELS = [
   {
     "extent": 106,
     "ship": {
-      "x": -2,
-      "z": -49,
-      "anchor": {
-        "body": 3,
-        "dx": -3,
-        "dz": -9
-      }
+      "x": -34,
+      "z": -24
     },
     "goal": {
-      "x": 43,
-      "z": 85,
-      "r": 0.98,
-      "anchor": {
-        "body": 12,
-        "dx": 9,
-        "dz": 4
-      }
+      "x": 59,
+      "z": 55,
+      "r": 1.09
     },
-    "maxLaunch": 46,
-    "fuel": 0.35,
+    "maxLaunch": 45,
+    "fuel": 0.36,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2983,
-        "radius": 11.2,
-        "color": 0xff9e6b,
-        "x": 36,
-        "z": -18,
+        "mass": 3170,
+        "radius": 10.5,
+        "color": 0xffd166,
+        "x": 12,
+        "z": -30,
         "type": "sun"
       },
       {
@@ -4079,11 +3403,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 36,
-          "cz": -18,
-          "radius": 21.26,
-          "phase": 0.852,
-          "omega": 0.03605
+          "cx": 12,
+          "cz": -30,
+          "radius": 19.105,
+          "phase": 0.7484,
+          "omega": 0.03803
         }
       },
       {
@@ -4091,30 +3415,30 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "x": 20,
-        "z": 9
+        "orbit": {
+          "parent": 0,
+          "cx": 12,
+          "cz": -30,
+          "radius": 29.155,
+          "phase": 1.4677,
+          "omega": 0.03079
+        }
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 36,
-          "cz": -18,
-          "radius": 41.34,
-          "phase": -2.5804,
-          "omega": 0.02585
-        }
+        "x": -25,
+        "z": -17
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 10,
-        "z": -38,
+        "x": -16,
+        "z": -12,
         "moonOf": 3
       },
       {
@@ -4122,153 +3446,117 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 36,
-          "cz": -18,
-          "radius": 52.01,
-          "phase": 3.1224,
-          "omega": 0.02305
-        }
+        "x": -23,
+        "z": 4
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 60,
-        "z": 45
+        "x": 62,
+        "z": 11
       },
       {
         "name": "Io",
-        "mass": 71,
-        "radius": 1.1,
+        "mass": 98,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 60,
-          "cz": 45,
-          "radius": 10.198,
-          "phase": 2.9442,
-          "omega": 0.11452
-        }
+        "x": 72,
+        "z": 10,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 85,
-        "radius": 1,
+        "mass": 84,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": 61,
-        "z": 33,
+        "x": 58,
+        "z": 23,
         "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 108,
-        "radius": 1,
+        "mass": 80,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 60,
-          "cz": 45,
-          "radius": 14.866,
-          "phase": 0.833,
-          "omega": 0.09485
-        }
+        "x": 48,
+        "z": 5,
+        "moonOf": 6
       },
       {
         "name": "Saturn",
         "mass": 1250,
         "radius": 5.7,
         "color": 0xe3c896,
-        "x": 38,
-        "z": 70
+        "x": 48,
+        "z": 46
       },
       {
         "name": "Titan",
-        "mass": 67,
-        "radius": 1.1,
+        "mass": 97,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": 38,
-          "cz": 70,
-          "radius": 9.487,
-          "phase": -0.3218,
-          "omega": 0.11874
-        }
+        "x": 56,
+        "z": 41,
+        "moonOf": 10
       },
       {
         "name": "Rhea",
-        "mass": 77,
-        "radius": 1.1,
+        "mass": 74,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": 38,
-          "cz": 70,
-          "radius": 11.705,
-          "phase": 1.9196,
-          "omega": 0.1069
-        }
+        "x": 50,
+        "z": 58,
+        "moonOf": 10
       }
     ],
     "homeIdx": 3,
     "targetIdx": 10,
     "waypoints": [
       {
-        "x": 34,
-        "z": 14,
+        "x": 19,
+        "z": 11,
         "r": 0.94,
         "type": "station"
       }
     ],
     "hazards": [
       {
-        "radius": 2,
-        "x": 31,
-        "z": 32
-      },
-      {
         "radius": 1.2,
         "comet": {
-          "cx": 36,
-          "cz": -18,
-          "a": 55.1,
-          "b": 34.8,
-          "rot": 2.55,
-          "omega": 0.074,
-          "phase": 0.84
+          "cx": 12,
+          "cz": -30,
+          "a": 62.9,
+          "b": 23.9,
+          "rot": 1.62,
+          "omega": -0.047,
+          "phase": 4.59
         }
       },
       {
         "radius": 2,
-        "patrol": {
-          "x1": -34,
-          "z1": -25,
-          "x2": -23,
-          "z2": -58,
-          "period": 7.5,
-          "phase": 0.68
+        "orbit": {
+          "cx": -32,
+          "cz": 27,
+          "radius": 13.8,
+          "omega": -0.53,
+          "phase": 2.4
         }
       }
     ],
     "pickups": [
       {
-        "x": 23,
-        "z": 3,
+        "x": 16,
+        "z": -44,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.1,
-      0.1
+      0.11,
+      0.11
     ],
-    "fuelRequired": false,
+    "fuelRequired": true,
     "name": "Grand Cruise",
     "hint": "Gas giants ahead: huge wells, huge slingshots — and the whole inner system behind you.",
     "difficulty": 3
@@ -4277,33 +3565,23 @@ export const LEVELS = [
     "extent": 110,
     "ship": {
       "x": 37,
-      "z": -22,
-      "anchor": {
-        "body": 3,
-        "dx": 10,
-        "dz": -5
-      }
+      "z": 20
     },
     "goal": {
-      "x": -71,
-      "z": 33,
-      "r": 1.07,
-      "anchor": {
-        "body": 9,
-        "dx": -5,
-        "dz": -3
-      }
+      "x": -73,
+      "z": -33,
+      "r": 1.07
     },
-    "maxLaunch": 46,
-    "fuel": 0.4,
+    "maxLaunch": 43,
+    "fuel": 0.42,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2519,
-        "radius": 10.9,
-        "color": 0xffb703,
-        "x": 17,
-        "z": 22,
+        "mass": 2455,
+        "radius": 10.3,
+        "color": 0xff9e6b,
+        "x": 16,
+        "z": -22,
         "type": "sun"
       },
       {
@@ -4313,347 +3591,10 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 17,
-          "cz": 22,
-          "radius": 20.591,
-          "phase": 2.6345,
-          "omega": 0.05088
-        }
-      },
-      {
-        "name": "Venus",
-        "mass": 380,
-        "radius": 2.5,
-        "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 17,
-          "cz": 22,
-          "radius": 30.083,
-          "phase": -2.7673,
-          "omega": 0.0421
-        }
-      },
-      {
-        "name": "Earth",
-        "mass": 420,
-        "radius": 2.6,
-        "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 17,
-          "cz": 22,
-          "radius": 40.262,
-          "phase": -1.3198,
-          "omega": 0.03639
-        }
-      },
-      {
-        "name": "Moon",
-        "mass": 60,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "x": 32,
-        "z": -8,
-        "moonOf": 3
-      },
-      {
-        "name": "Mars",
-        "mass": 220,
-        "radius": 1.9,
-        "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 17,
-          "cz": 22,
-          "radius": 50.804,
-          "phase": -1.7489,
-          "omega": 0.03239
-        }
-      },
-      {
-        "name": "Jupiter",
-        "mass": 1500,
-        "radius": 6.5,
-        "color": 0xd9a066,
-        "x": -56,
-        "z": 25
-      },
-      {
-        "name": "Io",
-        "mass": 88,
-        "radius": 1.3,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -56,
-          "cz": 25,
-          "radius": 10.44,
-          "phase": -1.8623,
-          "omega": 0.1572
-        }
-      },
-      {
-        "name": "Europa",
-        "mass": 93,
-        "radius": 1.3,
-        "color": 0xd8d8d8,
-        "x": -44,
-        "z": 25,
-        "moonOf": 6
-      },
-      {
-        "name": "Ganymede",
-        "mass": 74,
-        "radius": 1,
-        "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -56,
-          "cz": 25,
-          "radius": 14.866,
-          "phase": 2.3086,
-          "omega": 0.13174
-        }
-      }
-    ],
-    "homeIdx": 3,
-    "targetIdx": 6,
-    "hazards": [
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -27,
-        "z": -21
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 80,
-        "z": 30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -32,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 23,
-        "z": 83
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -37,
-        "z": 42
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 65,
-        "z": 53
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 11,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -41,
-        "z": 4
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 79,
-        "z": 16
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 15,
-        "z": 80
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -35,
-        "z": -4
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 29,
-        "z": -39
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 71,
-        "z": 54
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 50,
-        "z": 75
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 2,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 5,
-        "z": 84
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -25,
-        "z": -24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -32,
-        "z": -19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 22,
-        "z": -39
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -30,
-        "z": -16
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 27,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 65,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 63,
-        "z": -21
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 74,
-        "z": 10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -1,
-        "z": 78
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 60,
-        "z": -18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 57,
-        "z": 65
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 45,
-        "z": 74
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -3,
-        "z": -33
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 63,
-        "z": 57
-      }
-    ],
-    "legMinCosts": [
-      0.1
-    ],
-    "name": "Into the Belt",
-    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
-    "difficulty": 4
-  },
-  {
-    "extent": 110,
-    "ship": {
-      "x": 37,
-      "z": -13,
-      "anchor": {
-        "body": 3,
-        "dx": 11,
-        "dz": -1
-      }
-    },
-    "goal": {
-      "x": -72,
-      "z": -6,
-      "r": 1.03,
-      "anchor": {
-        "body": 7,
-        "dx": -7,
-        "dz": -2
-      }
-    },
-    "maxLaunch": 47,
-    "fuel": 0.4,
-    "bodies": [
-      {
-        "name": "Sol",
-        "mass": 2457,
-        "radius": 11.2,
-        "color": 0xffb703,
-        "x": 10,
-        "z": 23,
-        "type": "sun"
-      },
-      {
-        "name": "Mercury",
-        "mass": 120,
-        "radius": 1.5,
-        "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 10,
-          "cz": 23,
+          "cx": 16,
+          "cz": -22,
           "radius": 19.925,
-          "phase": 2.8357,
+          "phase": -2.8357,
           "omega": 0.05172
         }
       },
@@ -4662,14 +3603,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 10,
-          "cz": 23,
-          "radius": 28.601,
-          "phase": -2.5051,
-          "omega": 0.04317
-        }
+        "x": -10,
+        "z": -8
       },
       {
         "name": "Earth",
@@ -4678,11 +3613,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 10,
-          "cz": 23,
-          "radius": 38.484,
-          "phase": -1.142,
-          "omega": 0.03722
+          "cx": 16,
+          "cz": -22,
+          "radius": 38.601,
+          "phase": 1.2818,
+          "omega": 0.03716
         }
       },
       {
@@ -4690,8 +3625,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 25,
-        "z": -2,
+        "x": 17,
+        "z": 11,
         "moonOf": 3
       },
       {
@@ -4699,45 +3634,42 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 10,
-          "cz": 23,
-          "radius": 48.26,
-          "phase": -1.6746,
-          "omega": 0.03324
-        }
+        "x": 8,
+        "z": 27
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": -55,
-        "z": -7
+        "x": -58,
+        "z": -26
       },
       {
         "name": "Io",
-        "mass": 61,
-        "radius": 1.2,
+        "mass": 114,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -55,
-          "cz": -7,
-          "radius": 10.44,
-          "phase": 2.8501,
-          "omega": 0.1572
-        }
+        "x": -66,
+        "z": -32,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 118,
-        "radius": 1.1,
+        "mass": 116,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "x": -56,
-        "z": -19,
+        "x": -46,
+        "z": -30,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 66,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": -63,
+        "z": -12,
         "moonOf": 6
       }
     ],
@@ -4746,199 +3678,505 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.45,
-        "x": -15,
-        "z": -29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 28,
-        "z": -29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -13,
-        "z": 76
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 60,
-        "z": -8
+        "radius": 0.29,
+        "x": -31,
+        "z": -64
       },
       {
         "kind": "asteroid",
         "radius": 0.28,
-        "x": -41,
-        "z": -6
+        "x": -32,
+        "z": 15
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": 18,
-        "z": -39
+        "radius": 0.38,
+        "x": -37,
+        "z": -41
       },
       {
         "kind": "asteroid",
         "radius": 0.22,
-        "x": -29,
-        "z": 64
+        "x": 49,
+        "z": -68
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -16,
-        "z": -33
+        "radius": 0.25,
+        "x": -41,
+        "z": -45
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": 67,
+        "radius": 0.44,
+        "x": -35,
+        "z": -49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": 28,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.45,
+        "x": 37,
+        "z": -83
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": 26,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 72,
-        "z": 27
+        "radius": 0.41,
+        "x": 50,
+        "z": -72
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -44,
-        "z": 47
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 57,
-        "z": 62
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -47,
-        "z": 17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -41,
-        "z": 57
+        "radius": 0.35,
+        "x": -28,
+        "z": 26
       },
       {
         "kind": "asteroid",
         "radius": 0.34,
-        "x": 20,
-        "z": -33
+        "x": -27,
+        "z": -70
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": -47,
-        "z": 38
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 51,
-        "z": -12
+        "radius": 0.44,
+        "x": -10,
+        "z": -77
       },
       {
         "kind": "asteroid",
         "radius": 0.25,
-        "x": -40,
-        "z": -12
+        "x": -6,
+        "z": -81
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": -34,
-        "z": 66
+        "radius": 0.26,
+        "x": -12,
+        "z": -75
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": 12,
-        "z": -38
+        "radius": 0.33,
+        "x": 28,
+        "z": -85
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 39,
+        "z": -81
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": -26,
-        "z": -28
+        "x": -33,
+        "z": -62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -42,
+        "z": -21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.45,
+        "x": 18,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": 71,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 62,
+        "z": -64
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": 37,
+        "z": -81
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": -23,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": 69,
+        "z": -39
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -44,
+        "z": -4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -42,
+        "z": -16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -40,
+        "z": -26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 32,
+        "z": -79
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 60,
+        "z": -57
+      }
+    ],
+    "legMinCosts": [
+      0.12
+    ],
+    "name": "Into the Belt",
+    "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
+    "difficulty": 4
+  },
+  {
+    "extent": 110,
+    "ship": {
+      "x": -10,
+      "z": -42
+    },
+    "goal": {
+      "x": 34,
+      "z": 72,
+      "r": 1.01
+    },
+    "maxLaunch": 44,
+    "fuel": 0.52,
+    "bodies": [
+      {
+        "name": "Sol",
+        "mass": 2418,
+        "radius": 11,
+        "color": 0xffb703,
+        "x": -25,
+        "z": 3,
+        "type": "sun"
+      },
+      {
+        "name": "Mercury",
+        "mass": 120,
+        "radius": 1.5,
+        "color": 0xb5a642,
+        "orbit": {
+          "parent": 0,
+          "cx": -25,
+          "cz": 3,
+          "radius": 20.025,
+          "phase": 1.5208,
+          "omega": 0.0516
+        }
+      },
+      {
+        "name": "Venus",
+        "mass": 380,
+        "radius": 2.5,
+        "color": 0xe8c07d,
+        "x": 1,
+        "z": 16
+      },
+      {
+        "name": "Earth",
+        "mass": 420,
+        "radius": 2.6,
+        "color": 0x4d9de0,
+        "orbit": {
+          "parent": 0,
+          "cx": -25,
+          "cz": 3,
+          "radius": 39.825,
+          "phase": -1.0735,
+          "omega": 0.03659
+        }
+      },
+      {
+        "name": "Moon",
+        "mass": 60,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": -9,
+        "z": -24,
+        "moonOf": 3
+      },
+      {
+        "name": "Mars",
+        "mass": 220,
+        "radius": 1.9,
+        "color": 0xd1603d,
+        "x": 19,
+        "z": -20
+      },
+      {
+        "name": "Jupiter",
+        "mass": 1500,
+        "radius": 6.5,
+        "color": 0xd9a066,
+        "orbit": {
+          "parent": 0,
+          "cx": -25,
+          "cz": 3,
+          "radius": 74.953,
+          "phase": 0.7854,
+          "omega": 0.02667
+        }
+      },
+      {
+        "name": "Io",
+        "mass": 80,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "moonOf": 6,
+        "orbit": {
+          "parent": 6,
+          "cx": 28,
+          "cz": 56,
+          "radius": 10.296,
+          "phase": 2.0779,
+          "omega": 0.1583
+        }
+      },
+      {
+        "name": "Europa",
+        "mass": 77,
+        "radius": 1,
+        "color": 0xd8d8d8,
+        "x": 20,
+        "z": 46,
+        "moonOf": 6
+      }
+    ],
+    "homeIdx": 3,
+    "targetIdx": 6,
+    "hazards": [
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": -73,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -64,
+        "z": 45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -81,
+        "z": -25
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -63,
+        "z": -40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": 18,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -49,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -12,
+        "z": 65
       },
       {
         "kind": "asteroid",
         "radius": 0.34,
-        "x": 43,
+        "x": -70,
+        "z": -41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": -81,
+        "z": -15
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": 33,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": -72,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 32,
+        "z": 4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": 36,
+        "z": 9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.34,
+        "x": -83,
         "z": -22
       },
       {
         "kind": "asteroid",
         "radius": 0.28,
-        "x": -17,
-        "z": 72
+        "x": -29,
+        "z": 66
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -50,
-        "z": 30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -27,
-        "z": -19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 61,
+        "radius": 0.37,
+        "x": -84,
         "z": 4
       },
       {
         "kind": "asteroid",
         "radius": 0.31,
-        "x": -49,
-        "z": 43
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 44,
-        "z": 65
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -45,
-        "z": 23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 25,
-        "z": -32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -21,
-        "z": 68
+        "x": 12,
+        "z": -39
       },
       {
         "kind": "asteroid",
         "radius": 0.42,
-        "x": 65,
-        "z": 15
+        "x": -55,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.34,
+        "x": -22,
+        "z": 62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -87,
+        "z": -14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -75,
+        "z": -24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -34,
+        "z": 66
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": -36,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -16,
+        "z": 64
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": -23,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -69,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": 36,
+        "z": -19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -29,
+        "z": 61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -84,
+        "z": -18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -22,
+        "z": -57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 36,
+        "z": -8
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -13,
+        "z": -61
       }
     ],
     "legMinCosts": [
-      0.1
+      0.22
     ],
     "name": "Rock Hopping",
     "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
@@ -4947,34 +4185,29 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": -14,
-      "z": -34,
+      "x": -25,
+      "z": 31,
       "anchor": {
         "body": 3,
-        "dx": -6,
-        "dz": -8
+        "dx": -8,
+        "dz": 6
       }
     },
     "goal": {
-      "x": 54,
-      "z": 51,
-      "r": 1.09,
-      "anchor": {
-        "body": 6,
-        "dx": 11,
-        "dz": 14
-      }
+      "x": 65,
+      "z": -35,
+      "r": 1.05
     },
-    "maxLaunch": 47,
-    "fuel": 0.4,
+    "maxLaunch": 44,
+    "fuel": 0.41,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2554,
-        "radius": 10.2,
+        "mass": 2475,
+        "radius": 11.4,
         "color": 0xffb703,
         "x": -23,
-        "z": 9,
+        "z": -15,
         "type": "sun"
       },
       {
@@ -4985,10 +4218,10 @@ export const LEVELS = [
         "orbit": {
           "parent": 0,
           "cx": -23,
-          "cz": 9,
-          "radius": 18.868,
-          "phase": 1.0122,
-          "omega": 0.05315
+          "cz": -15,
+          "radius": 21.095,
+          "phase": -0.5485,
+          "omega": 0.05027
         }
       },
       {
@@ -4999,10 +4232,10 @@ export const LEVELS = [
         "orbit": {
           "parent": 0,
           "cx": -23,
-          "cz": 9,
-          "radius": 28.018,
-          "phase": 0.0357,
-          "omega": 0.04362
+          "cz": -15,
+          "radius": 30.414,
+          "phase": 0.1651,
+          "omega": 0.04187
         }
       },
       {
@@ -5013,10 +4246,10 @@ export const LEVELS = [
         "orbit": {
           "parent": 0,
           "cx": -23,
-          "cz": 9,
-          "radius": 38.079,
-          "phase": -1.1659,
-          "omega": 0.03742
+          "cz": -15,
+          "radius": 40.447,
+          "phase": 1.4219,
+          "omega": 0.0363
         }
       },
       {
@@ -5024,8 +4257,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -3,
-        "z": -17,
+        "x": -11,
+        "z": 18,
         "moonOf": 3
       },
       {
@@ -5036,10 +4269,10 @@ export const LEVELS = [
         "orbit": {
           "parent": 0,
           "cx": -23,
-          "cz": 9,
-          "radius": 47.508,
-          "phase": -0.7109,
-          "omega": 0.0335
+          "cz": -15,
+          "radius": 51.4,
+          "phase": 0.9234,
+          "omega": 0.0322
         }
       },
       {
@@ -5047,44 +4280,26 @@ export const LEVELS = [
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": -23,
-          "cz": 9,
-          "radius": 71.694,
-          "phase": 0.4012,
-          "omega": 0.02727
-        }
+        "x": 52,
+        "z": -26
       },
       {
         "name": "Io",
-        "mass": 109,
-        "radius": 1.1,
+        "mass": 95,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 43,
-          "cz": 37,
-          "radius": 10.198,
-          "phase": -2.9442,
-          "omega": 0.15906
-        }
+        "x": 52,
+        "z": -36,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 63,
-        "radius": 1.1,
+        "mass": 94,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 43,
-          "cz": 37,
-          "radius": 12.042,
-          "phase": -0.7266,
-          "omega": 0.14638
-        }
+        "x": 63,
+        "z": -20,
+        "moonOf": 6
       }
     ],
     "homeIdx": 3,
@@ -5092,223 +4307,223 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": 34,
-        "z": 22
+        "radius": 0.44,
+        "x": 8,
+        "z": 39
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": -83,
-        "z": 14
+        "radius": 0.4,
+        "x": 28,
+        "z": -51
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -27,
-        "z": -48
+        "radius": 0.27,
+        "x": 42,
+        "z": -5
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": -80,
-        "z": 19
+        "radius": 0.37,
+        "x": -30,
+        "z": -79
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 17,
-        "z": -36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -17,
-        "z": 63
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -80,
-        "z": 2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -47,
-        "z": 61
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -77,
-        "z": 33
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 21,
-        "z": -22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 27,
-        "z": -20
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -69,
-        "z": 40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -40,
-        "z": -43
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 13,
-        "z": -42
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -78,
-        "z": 26
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 33,
-        "z": -19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -75,
-        "z": -18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 29,
-        "z": -15
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -55,
-        "z": 63
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -62,
-        "z": -39
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -49,
-        "z": 66
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -75,
-        "z": 22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -53,
-        "z": 55
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -52,
-        "z": -46
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -76,
-        "z": 30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -74,
+        "radius": 0.43,
+        "x": 40,
         "z": -12
       },
       {
         "kind": "asteroid",
         "radius": 0.25,
-        "x": 31,
-        "z": 3
+        "x": -74,
+        "z": 19
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -15,
-        "z": 68
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -83,
-        "z": -4
+        "radius": 0.33,
+        "x": -70,
+        "z": 29
       },
       {
         "kind": "asteroid",
         "radius": 0.25,
-        "x": -41,
-        "z": -48
+        "x": -27,
+        "z": -74
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": 20,
-        "z": 42
+        "radius": 0.24,
+        "x": -75,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": 34,
+        "z": 3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 32,
+        "z": -50
       },
       {
         "kind": "asteroid",
         "radius": 0.39,
-        "x": -74,
-        "z": 39
+        "x": -12,
+        "z": -75
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -69,
-        "z": -20
+        "radius": 0.33,
+        "x": -83,
+        "z": 1
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -20,
+        "z": -78
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": 27,
+        "z": 23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": 29,
+        "z": 21
       },
       {
         "kind": "asteroid",
         "radius": 0.31,
-        "x": -64,
-        "z": 54
+        "x": 34,
+        "z": 0
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -5,
+        "z": -72
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": 40,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -75,
+        "z": 12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -1,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": -55,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -14,
+        "z": -80
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -35,
+        "z": -81
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -86,
+        "z": -28
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -36,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -61,
+        "z": -62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": 21,
+        "z": -61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": -52,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": 1,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -74,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": 40,
+        "z": 2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -50,
+        "z": 44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": -86,
+        "z": 3
       },
       {
         "radius": 1.2,
         "comet": {
           "cx": -23,
-          "cz": 9,
-          "a": 71.7,
-          "b": 32.1,
-          "rot": 2.7,
-          "omega": -0.041,
-          "phase": 1.7
+          "cz": -15,
+          "a": 60.1,
+          "b": 33.4,
+          "rot": 1.39,
+          "omega": -0.047,
+          "phase": 1.03
         }
       }
     ],
     "legMinCosts": [
-      0.1
+      0.11
     ],
     "name": "Ceres Approach",
     "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
@@ -5318,25 +4533,15 @@ export const LEVELS = [
     "extent": 110,
     "ship": {
       "x": 2,
-      "z": 43,
-      "anchor": {
-        "body": 3,
-        "dx": 1,
-        "dz": 10
-      }
+      "z": 43
     },
     "goal": {
       "x": -6,
       "z": -75,
-      "r": 1.03,
-      "anchor": {
-        "body": 7,
-        "dx": 3,
-        "dz": -6
-      }
+      "r": 1.03
     },
     "maxLaunch": 45,
-    "fuel": 1.58,
+    "fuel": 0.81,
     "bodies": [
       {
         "name": "Sol",
@@ -5352,42 +4557,24 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "orbit": {
-          "parent": 0,
-          "cx": 27,
-          "cz": 4,
-          "radius": 18.974,
-          "phase": -1.249,
-          "omega": 0.05301
-        }
+        "x": 33,
+        "z": -14
       },
       {
         "name": "Venus",
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 27,
-          "cz": 4,
-          "radius": 28.425,
-          "phase": -2.4559,
-          "omega": 0.04331
-        }
+        "x": 5,
+        "z": -14
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 27,
-          "cz": 4,
-          "radius": 38.949,
-          "phase": 2.3017,
-          "omega": 0.037
-        }
+        "x": 1,
+        "z": 33
       },
       {
         "name": "Moon",
@@ -5419,15 +4606,9 @@ export const LEVELS = [
         "mass": 69,
         "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -5,
-          "cz": -60,
-          "radius": 9.849,
-          "phase": -1.989,
-          "omega": 0.16186
-        }
+        "x": -9,
+        "z": -69,
+        "moonOf": 6
       },
       {
         "name": "Europa",
@@ -5446,29 +4627,19 @@ export const LEVELS = [
         "x": 45,
         "z": -9,
         "r": 0.94,
-        "type": "cargo",
-        "anchor": {
-          "body": 1,
-          "dx": 12,
-          "dz": 5
-        }
+        "type": "cargo"
       },
       {
         "x": -7,
         "z": -19,
         "r": 0.94,
-        "type": "dropoff",
-        "anchor": {
-          "body": 2,
-          "dx": -12,
-          "dz": -5
-        }
+        "type": "dropoff"
       }
     ],
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.42,
+        "radius": 0.43,
         "x": 82,
         "z": 24
       },
@@ -5480,7 +4651,7 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
+        "radius": 0.24,
         "x": 78,
         "z": 29
       },
@@ -5492,7 +4663,7 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
+        "radius": 0.32,
         "x": 36,
         "z": 60
       },
@@ -5504,7 +4675,7 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
+        "radius": 0.41,
         "x": 41,
         "z": -51
       },
@@ -5516,7 +4687,7 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
+        "radius": 0.3,
         "x": -27,
         "z": -7
       },
@@ -5528,19 +4699,19 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
+        "radius": 0.3,
         "x": 87,
         "z": -12
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
+        "radius": 0.37,
         "x": 80,
         "z": -28
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
+        "radius": 0.29,
         "x": 51,
         "z": 56
       },
@@ -5552,13 +4723,13 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
+        "radius": 0.37,
         "x": -33,
         "z": -5
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
+        "radius": 0.35,
         "x": 30,
         "z": -54
       },
@@ -5588,7 +4759,7 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
+        "radius": 0.24,
         "x": 81,
         "z": -15
       },
@@ -5600,9 +4771,33 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
+        "radius": 0.34,
+        "x": 78,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": 18,
+        "z": 61
+      },
+      {
+        "kind": "asteroid",
         "radius": 0.36,
         "x": 41,
         "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -18,
+        "z": -34
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": 77,
+        "z": -26
       },
       {
         "kind": "asteroid",
@@ -5612,25 +4807,43 @@ export const LEVELS = [
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
+        "radius": 0.37,
         "x": 40,
         "z": 63
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
+        "radius": 0.31,
+        "x": 79,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": 18,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
         "x": 7,
         "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
+        "radius": 0.41,
         "x": -17,
         "z": 48
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
+        "radius": 0.23,
+        "x": 33,
+        "z": 60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
         "x": -8,
         "z": -44
       },
@@ -5641,74 +4854,32 @@ export const LEVELS = [
         "z": 9
       },
       {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 40,
-        "z": -55
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 83,
-        "z": -1
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -14,
-        "z": -41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 11,
-        "z": -50
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -24,
-        "z": -16
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -34,
-        "z": 13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -34,
-        "z": 5
-      },
-      {
         "radius": 1.2,
         "comet": {
           "cx": 27,
           "cz": 4,
-          "a": 67,
-          "b": 24,
-          "rot": 2.52,
-          "omega": -0.081,
-          "phase": 5.68
+          "a": 74,
+          "b": 32.5,
+          "rot": 2.07,
+          "omega": 0.065,
+          "phase": 5.19
         }
       }
     ],
     "pickups": [
       {
-        "x": 28,
-        "z": 20,
+        "x": 37,
+        "z": 27,
         "fuel": 1.5
       },
       {
-        "x": 7,
-        "z": -22,
+        "x": 5,
+        "z": -23,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.21,
+      0.11,
       0.11,
       0.11
     ],
@@ -5720,29 +4891,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": -45,
-      "z": -2,
-      "anchor": {
-        "body": 3,
-        "dx": -11,
-        "dz": 0
-      }
+      "x": -36,
+      "z": 14
     },
     "goal": {
-      "x": 77,
-      "z": -2,
-      "r": 1.07
+      "x": 48,
+      "z": -48,
+      "r": 1.09
     },
-    "maxLaunch": 44,
-    "fuel": 0.5,
+    "maxLaunch": 47,
+    "fuel": 0.8,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2506,
-        "radius": 10.4,
+        "mass": 2989,
+        "radius": 10.3,
         "color": 0xff9e6b,
-        "x": -7,
-        "z": 27,
+        "x": 7,
+        "z": 25,
         "type": "sun"
       },
       {
@@ -5752,11 +4918,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": -7,
-          "cz": 27,
-          "radius": 18.974,
-          "phase": 0.3218,
-          "omega": 0.05301
+          "cx": 7,
+          "cz": 25,
+          "radius": 18.028,
+          "phase": -0.588,
+          "omega": 0.05438
         }
       },
       {
@@ -5764,36 +4930,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -7,
-          "cz": 27,
-          "radius": 28.601,
-          "phase": -0.6365,
-          "omega": 0.04317
-        }
+        "x": 14,
+        "z": -2
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -7,
-          "cz": 27,
-          "radius": 39.623,
-          "phase": -2.3205,
-          "omega": 0.03668
-        }
+        "x": -27,
+        "z": 7
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -23,
-        "z": -3,
+        "x": -16,
+        "z": 5,
         "moonOf": 3
       },
       {
@@ -5801,39 +4955,33 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "x": -16,
-        "z": -22
+        "x": -23,
+        "z": -13
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 61,
-        "z": -2
+        "x": 36,
+        "z": -39
       },
       {
         "name": "Io",
-        "mass": 72,
-        "radius": 1.1,
+        "mass": 117,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 61,
-          "cz": -2,
-          "radius": 10,
-          "phase": 2.4981,
-          "omega": 0.16063
-        }
+        "x": 31,
+        "z": -30,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 94,
-        "radius": 1,
+        "mass": 106,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "x": 59,
-        "z": -14,
+        "x": 29,
+        "z": -49,
         "moonOf": 6
       }
     ],
@@ -5841,19 +4989,14 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": 42,
-        "z": 10,
+        "x": -2,
+        "z": -4,
         "r": 0.94,
-        "type": "cargo",
-        "anchor": {
-          "body": 7,
-          "dx": -11,
-          "dz": 6
-        }
+        "type": "cargo"
       },
       {
-        "x": 44,
-        "z": -13,
+        "x": 39,
+        "z": -18,
         "r": 0.94,
         "type": "dropoff"
       }
@@ -5861,256 +5004,256 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 46,
-        "z": 52
-      },
-      {
-        "kind": "asteroid",
         "radius": 0.45,
-        "x": 43,
-        "z": -4
+        "x": -40,
+        "z": 56
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -63,
-        "z": 58
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 5,
-        "z": 86
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 18,
-        "z": 82
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -55,
-        "z": -9
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -70,
-        "z": 14
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -55,
-        "z": -13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -70,
-        "z": 27
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 56,
-        "z": 40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 13,
-        "z": 82
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 51,
-        "z": 41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 51,
-        "z": 25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -7,
-        "z": -31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 32,
-        "z": -23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
+        "radius": 0.38,
         "x": 7,
-        "z": -28
+        "z": -36
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -62,
-        "z": -4
+        "radius": 0.27,
+        "x": -47,
+        "z": 2
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": -3,
-        "z": 87
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -54,
-        "z": 63
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 55,
-        "z": 28
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 32,
-        "z": 68
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 55,
-        "z": 18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -67,
-        "z": 38
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -64,
-        "z": 7
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -39,
-        "z": 83
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 20,
-        "z": -22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -2,
-        "z": -32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -50,
-        "z": -9
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 31,
-        "z": 78
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -13,
+        "radius": 0.41,
+        "x": -5,
         "z": 84
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": 50,
-        "z": 36
+        "radius": 0.45,
+        "x": 35,
+        "z": -29
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -36,
-        "z": 77
+        "radius": 0.43,
+        "x": -40,
+        "z": 52
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": -59,
+        "radius": 0.26,
+        "x": -43,
         "z": -9
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -67,
-        "z": 51
+        "radius": 0.38,
+        "x": -26,
+        "z": 75
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": -51,
-        "z": 68
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -57,
-        "z": 51
+        "radius": 0.37,
+        "x": -48,
+        "z": 32
       },
       {
         "kind": "asteroid",
         "radius": 0.39,
-        "x": 11,
-        "z": 87
+        "x": -4,
+        "z": 79
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
+        "radius": 0.42,
+        "x": 26,
+        "z": 76
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -32,
+        "z": 66
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -22,
+        "z": -25
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": 45,
+        "z": 67
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -13,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -7,
+        "z": 81
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": -29,
+        "z": -20
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": -40,
+        "z": -2
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 25,
+        "z": -28
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": 2,
+        "z": 82
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 58,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -30,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": -12,
+        "z": 79
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -44,
+        "z": 43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": -46,
+        "z": 0
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": 20,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -11,
+        "z": -26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -49,
+        "z": 50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -51,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": -42,
+        "z": -4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -35,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": 6,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": -23,
+        "z": 78
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 36,
+        "z": 72
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 0,
+        "z": 80
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
         "x": -50,
-        "z": 75
+        "z": 12
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -28,
+        "z": 72
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": 24,
+        "z": 78
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -7,
-          "cz": 27,
-          "a": 61.1,
-          "b": 32.6,
-          "rot": 0.59,
-          "omega": 0.083,
-          "phase": 3.44
+          "cx": 7,
+          "cz": 25,
+          "a": 57.6,
+          "b": 35.9,
+          "rot": 0.84,
+          "omega": -0.052,
+          "phase": 2.24
         }
       }
     ],
     "pickups": [
       {
-        "x": -28,
-        "z": 3,
+        "x": 26,
+        "z": -56,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.11,
-      0.11,
-      0.11
+      0.1,
+      0.1,
+      0.1
     ],
     "fuelRequired": true,
     "name": "Cargo Convoy",
@@ -6120,34 +5263,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": 25,
-      "z": -33,
-      "anchor": {
-        "body": 3,
-        "dx": 7,
-        "dz": -8
-      }
+      "x": -11,
+      "z": -45
     },
     "goal": {
-      "x": -53,
-      "z": 55,
-      "r": 1.01,
-      "anchor": {
-        "body": 6,
-        "dx": -10,
-        "dz": 11
-      }
+      "x": 18,
+      "z": 76,
+      "r": 1.03
     },
-    "maxLaunch": 44,
-    "fuel": 0.71,
+    "maxLaunch": 43,
+    "fuel": 0.83,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2925,
-        "radius": 10.5,
+        "mass": 2406,
+        "radius": 10.4,
         "color": 0xffb703,
-        "x": 22,
-        "z": 14,
+        "x": -31,
+        "z": 0,
         "type": "sun"
       },
       {
@@ -6155,16 +5288,22 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "x": 7,
-        "z": 27
+        "orbit": {
+          "parent": 0,
+          "cx": -31,
+          "cz": 0,
+          "radius": 20.025,
+          "phase": 1.5208,
+          "omega": 0.0516
+        }
       },
       {
         "name": "Venus",
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "x": -7,
-        "z": 11
+        "x": -4,
+        "z": 14
       },
       {
         "name": "Earth",
@@ -6173,11 +5312,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 22,
-          "cz": 14,
-          "radius": 39.205,
-          "phase": -1.673,
-          "omega": 0.03687
+          "cx": -31,
+          "cz": 0,
+          "radius": 41.049,
+          "phase": -0.976,
+          "omega": 0.03604
         }
       },
       {
@@ -6185,8 +5324,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 9,
-        "z": -18,
+        "x": -8,
+        "z": -25,
         "moonOf": 3
       },
       {
@@ -6194,54 +5333,48 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 22,
-          "cz": 14,
-          "radius": 49.396,
-          "phase": -2.1251,
-          "omega": 0.03285
-        }
+        "x": 17,
+        "z": -17
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": 22,
-          "cz": 14,
-          "radius": 71.589,
-          "phase": 2.7092,
-          "omega": 0.02729
-        }
+        "x": 14,
+        "z": 59
       },
       {
         "name": "Io",
-        "mass": 97,
-        "radius": 1.2,
+        "mass": 86,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": -50,
-        "z": 37,
-        "moonOf": 6
+        "moonOf": 6,
+        "orbit": {
+          "parent": 6,
+          "cx": 14,
+          "cz": 59,
+          "radius": 9.899,
+          "phase": -0.7854,
+          "omega": 0.16144
+        }
       },
       {
         "name": "Europa",
-        "mass": 92,
+        "mass": 108,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": -32,
-        "z": 39,
+        "x": 21,
+        "z": 70,
         "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 109,
+        "mass": 69,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": -42,
-        "z": 59,
+        "x": 0,
+        "z": 53,
         "moonOf": 6
       }
     ],
@@ -6249,14 +5382,14 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -18,
-        "z": 4,
+        "x": -15,
+        "z": 22,
         "r": 0.94,
         "type": "cargo"
       },
       {
-        "x": 13,
-        "z": 38,
+        "x": 23,
+        "z": 40,
         "r": 0.94,
         "type": "dropoff"
       }
@@ -6264,284 +5397,283 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": 83,
-        "z": 3
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -5,
-        "z": -41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 62,
-        "z": 53
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -18,
-        "z": 58
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 24,
-        "z": 74
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 84,
-        "z": 8
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 84,
-        "z": 19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 30,
-        "z": 73
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 4,
-        "z": 67
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 10,
-        "z": -47
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 28,
-        "z": 70
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 65,
-        "z": 58
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 82,
-        "z": 13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 73,
-        "z": 51
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 33,
-        "z": 76
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 14,
-        "z": 76
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 8,
-        "z": -40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 61,
-        "z": -36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -25,
-        "z": 52
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -32,
-        "z": -12
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 7,
-        "z": 72
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 67,
-        "z": -30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 32,
-        "z": -46
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 43,
-        "z": -44
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -23,
-        "z": -22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
+        "radius": 0.41,
         "x": -28,
-        "z": 42
+        "z": -59
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": -10,
+        "radius": 0.29,
+        "x": 13,
+        "z": 46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -24,
         "z": 64
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": -27,
-        "z": 49
+        "radius": 0.42,
+        "x": 26,
+        "z": -15
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 25,
-        "z": -42
+        "radius": 0.34,
+        "x": -77,
+        "z": 37
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": 30,
-        "z": -42
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 74,
-        "z": 36
+        "radius": 0.22,
+        "x": -33,
+        "z": -62
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": 78,
-        "z": 9
+        "x": -51,
+        "z": -55
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 25,
+        "radius": 0.38,
+        "x": 33,
+        "z": -3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 30,
+        "z": -5
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -9,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -48,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -74,
+        "z": 40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -31,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -74,
         "z": -48
       },
       {
         "kind": "asteroid",
+        "radius": 0.3,
+        "x": 32,
+        "z": 7
+      },
+      {
+        "kind": "asteroid",
         "radius": 0.34,
-        "x": -27,
-        "z": -19
+        "x": -89,
+        "z": -23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -33,
+        "z": 62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -38,
+        "z": -60
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -67,
+        "z": -50
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -31,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": -46,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -21,
+        "z": -63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -55,
+        "z": -54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 10,
+        "z": -50
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": 47,
+        "x": -64,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -50,
+        "z": 59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 18,
         "z": -38
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -13,
-        "z": 66
+        "radius": 0.42,
+        "x": -95,
+        "z": -2
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": 73,
-        "z": -9
+        "radius": 0.31,
+        "x": 29,
+        "z": -7
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": -38,
-        "z": 23
+        "radius": 0.45,
+        "x": -31,
+        "z": 58
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 68,
-        "z": -24
+        "radius": 0.26,
+        "x": 30,
+        "z": 17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -15,
+        "z": -62
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -93,
+        "z": 10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -20,
+        "z": -59
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": -26,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -74,
+        "z": 45
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": -11,
-        "z": -31
+        "x": 11,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 20,
+        "z": -29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -91,
+        "z": 14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -76,
+        "z": 45
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 22,
-          "cz": 14,
-          "a": 60,
-          "b": 32.3,
-          "rot": 0.05,
-          "omega": 0.047,
-          "phase": 5.72
+          "cx": -31,
+          "cz": 0,
+          "a": 74.8,
+          "b": 25.6,
+          "rot": 1.82,
+          "omega": -0.072,
+          "phase": 4.99
         }
       },
       {
         "radius": 2,
-        "patrol": {
-          "x1": 11,
-          "z1": -6,
-          "x2": 25,
-          "z2": -2,
-          "period": 4.8,
-          "phase": 0.19
+        "orbit": {
+          "cx": 19,
+          "cz": -12,
+          "radius": 13.3,
+          "omega": 0.52,
+          "phase": 3.83
         }
       }
     ],
     "pickups": [
       {
-        "x": 12,
+        "x": -15,
         "z": -30,
         "fuel": 1.5
       },
       {
-        "x": -5,
-        "z": 20,
+        "x": 1,
+        "z": 68,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.11,
-      0.11,
-      0.11
+      0.12,
+      0.12,
+      0.12
     ],
     "fuelRequired": true,
     "name": "Rubble Wall",
@@ -6551,34 +5683,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": -8,
-      "z": 38,
-      "anchor": {
-        "body": 3,
-        "dx": -3,
-        "dz": 10
-      }
+      "x": -31,
+      "z": -30
     },
     "goal": {
-      "x": 26,
-      "z": -69,
-      "r": 1.05,
-      "anchor": {
-        "body": 8,
-        "dx": -5,
-        "dz": -8
-      }
+      "x": 54,
+      "z": 55,
+      "r": 1.05
     },
-    "maxLaunch": 47,
-    "fuel": 0.67,
+    "maxLaunch": 42,
+    "fuel": 0.72,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2566,
-        "radius": 10.3,
+        "mass": 2596,
+        "radius": 10.5,
         "color": 0xffd166,
-        "x": -30,
-        "z": -2,
+        "x": -26,
+        "z": 17,
         "type": "sun"
       },
       {
@@ -6586,44 +5708,32 @@ export const LEVELS = [
         "mass": 120,
         "radius": 1.5,
         "color": 0xb5a642,
-        "x": -23,
-        "z": -20
+        "x": -17,
+        "z": 34
       },
       {
         "name": "Venus",
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": -30,
-          "cz": -2,
-          "radius": 28.636,
-          "phase": -0.4324,
-          "omega": 0.04315
-        }
+        "x": 4,
+        "z": 19
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -30,
-          "cz": -2,
-          "radius": 39.051,
-          "phase": 0.8761,
-          "omega": 0.03695
-        }
+        "x": -24,
+        "z": -23
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": -14,
-        "z": 23,
+        "x": -30,
+        "z": -14,
         "moonOf": 3
       },
       {
@@ -6631,69 +5741,57 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "x": 13,
-        "z": 21
+        "x": 0,
+        "z": -26
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": 21,
-        "z": -54
+        "x": 43,
+        "z": 44
       },
       {
         "name": "Io",
-        "mass": 110,
-        "radius": 1.2,
+        "mass": 104,
+        "radius": 1.3,
         "color": 0xd8d8d8,
-        "x": 12,
-        "z": -58,
+        "x": 41,
+        "z": 54,
         "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 87,
-        "radius": 1.1,
+        "mass": 78,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 21,
-          "cz": -54,
-          "radius": 12.207,
-          "phase": -0.6107,
-          "omega": 0.14539
-        }
+        "x": 34,
+        "z": 35,
+        "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 85,
-        "radius": 1,
+        "mass": 71,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 21,
-          "cz": -54,
-          "radius": 14.56,
-          "phase": 1.8491,
-          "omega": 0.13312
-        }
+        "x": 53,
+        "z": 33,
+        "moonOf": 6
       }
     ],
     "homeIdx": 3,
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -36,
-        "z": -22,
+        "x": -45,
+        "z": 4,
         "r": 0.94,
         "type": "cargo"
       },
       {
-        "x": 4,
-        "z": -42,
+        "x": 7,
+        "z": 32,
         "r": 0.94,
         "type": "dropoff"
       }
@@ -6701,295 +5799,296 @@ export const LEVELS = [
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.45,
-        "x": -44,
-        "z": -60
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -83,
-        "z": -16
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -52,
-        "z": 53
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 26,
-        "z": -31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -64,
-        "z": -45
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -20,
-        "z": -64
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -26,
-        "z": -65
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -13,
-        "z": -58
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -66,
-        "z": 49
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -38,
-        "z": -58
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -76,
-        "z": -37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 11,
-        "z": 41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 28,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -27,
-        "z": 53
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -83,
-        "z": 18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -81,
-        "z": -36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -85,
-        "z": -6
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -86,
-        "z": 25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -64,
-        "z": -52
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": -18,
-        "z": -56
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -27,
-        "z": 59
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -9,
-        "z": -59
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 8,
-        "z": -50
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -69,
+        "radius": 0.4,
+        "x": 27,
         "z": 38
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -77,
-        "z": 31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -86,
-        "z": -23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -30,
-        "z": -63
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 5,
-        "z": -55
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -12,
-        "z": 54
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 26,
-        "z": 13
-      },
-      {
-        "kind": "asteroid",
         "radius": 0.39,
-        "x": -89,
-        "z": -5
+        "x": 12,
+        "z": -27
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -56,
-        "z": 47
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -71,
-        "z": -49
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 28,
-        "z": 2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -89,
-        "z": 15
+        "radius": 0.29,
+        "x": 23,
+        "z": -16
       },
       {
         "kind": "asteroid",
         "radius": 0.31,
-        "x": -84,
-        "z": -32
+        "x": 7,
+        "z": 65
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
+        "radius": 0.31,
         "x": 27,
-        "z": -20
+        "z": -17
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -72,
+        "radius": 0.41,
+        "x": 30,
+        "z": -6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -23,
+        "z": 73
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 25,
+        "z": 57
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": 12,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -17,
+        "z": 74
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": -78,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": 29,
+        "z": 3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": 30,
         "z": 42
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": -14,
-        "z": 59
+        "radius": 0.24,
+        "x": -51,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -90,
+        "z": 16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -84,
+        "z": 6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -28,
+        "z": 81
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": 19,
+        "z": -21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -6,
+        "z": 77
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": -7,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -84,
+        "z": -12
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": 18,
-        "z": -32
+        "x": 26,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -72,
+        "z": 58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": 16,
+        "z": 65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": -87,
+        "z": 22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": 9,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 26,
+        "z": -19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": 4,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 38,
+        "z": 11
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -30,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": -77,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": -13,
+        "z": -40
       },
       {
         "kind": "asteroid",
         "radius": 0.25,
-        "x": -55,
-        "z": -54
+        "x": 35,
+        "z": 20
       },
       {
         "kind": "asteroid",
-        "radius": 0.25,
-        "x": 2,
-        "z": -50
+        "radius": 0.32,
+        "x": -20,
+        "z": -47
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -21,
+        "z": 79
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": 3,
+        "z": 65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -70,
+        "z": 54
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -20,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.22,
+        "x": -20,
+        "z": -40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -39,
+        "z": -40
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": 7,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": 36,
+        "z": 30
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": -30,
-          "cz": -2,
-          "a": 67.8,
-          "b": 35.8,
-          "rot": 2.03,
-          "omega": -0.061,
-          "phase": 3.16
+          "cx": -26,
+          "cz": 17,
+          "a": 70.4,
+          "b": 36.1,
+          "rot": 1.48,
+          "omega": 0.044,
+          "phase": 0.99
         }
       },
       {
         "radius": 2,
-        "orbit": {
-          "cx": 25,
-          "cz": -15,
-          "radius": 18.2,
-          "omega": 0.61,
-          "phase": 3.24
+        "patrol": {
+          "x1": 66,
+          "z1": -37,
+          "x2": 41,
+          "z2": -60,
+          "period": 7.9,
+          "phase": 0.64
         }
       }
     ],
     "pickups": [
       {
-        "x": -33,
-        "z": 15,
+        "x": -54,
+        "z": -26,
         "fuel": 1.5
       },
       {
-        "x": -20,
-        "z": -31,
+        "x": -32,
+        "z": 31,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.1,
-      0.2,
-      0.1
+      0.12,
+      0.12,
+      0.12
     ],
     "fuelRequired": true,
     "name": "The Passage",
@@ -6999,34 +6098,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": 37,
-      "z": 14,
-      "anchor": {
-        "body": 3,
-        "dx": 10,
-        "dz": 1
-      }
+      "x": -11,
+      "z": 43
     },
     "goal": {
-      "x": -72,
-      "z": 7,
-      "r": 1.78,
-      "anchor": {
-        "body": 6,
-        "dx": -15,
-        "dz": -1
-      }
+      "x": 4,
+      "z": -78,
+      "r": 1.05
     },
-    "maxLaunch": 46,
-    "fuel": 0.59,
+    "maxLaunch": 47,
+    "fuel": 0.67,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2524,
-        "radius": 11.4,
+        "mass": 2797,
+        "radius": 10.8,
         "color": 0xffd166,
-        "x": 9,
-        "z": -22,
+        "x": 23,
+        "z": 9,
         "type": "sun"
       },
       {
@@ -7036,11 +6125,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 9,
-          "cz": -22,
-          "radius": 20,
-          "phase": 3.1416,
-          "omega": 0.05163
+          "cx": 23,
+          "cz": 9,
+          "radius": 19.026,
+          "phase": -1.5182,
+          "omega": 0.05293
         }
       },
       {
@@ -7048,36 +6137,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 9,
-          "cz": -22,
-          "radius": 29.069,
-          "phase": 2.4292,
-          "omega": 0.04282
-        }
+        "x": 5,
+        "z": -14
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 9,
-          "cz": -22,
-          "radius": 39.357,
-          "phase": 1.0958,
-          "omega": 0.0368
-        }
+        "x": -10,
+        "z": 32
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 30,
-        "z": 3,
+        "x": -6,
+        "z": 22,
         "moonOf": 3
       },
       {
@@ -7085,39 +6162,33 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "x": 11,
-        "z": 27
+        "x": -27,
+        "z": 15
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": 9,
-          "cz": -22,
-          "radius": 72.498,
-          "phase": 2.715,
-          "omega": 0.02712
-        }
+        "x": 2,
+        "z": -61
       },
       {
         "name": "Io",
-        "mass": 96,
+        "mass": 97,
         "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": -51,
-        "z": 0,
+        "x": 1,
+        "z": -71,
         "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 66,
-        "radius": 1.1,
+        "mass": 113,
+        "radius": 1,
         "color": 0xd8d8d8,
-        "x": -53,
-        "z": 20,
+        "x": 14,
+        "z": -57,
         "moonOf": 6
       }
     ],
@@ -7125,317 +6196,323 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -40,
-        "z": -5,
-        "r": 1.61,
+        "x": 40,
+        "z": -9,
+        "r": 0.94,
         "type": "cargo"
       },
       {
-        "x": -39,
-        "z": 15,
-        "r": 1.61,
+        "x": -5,
+        "z": -22,
+        "r": 0.94,
         "type": "dropoff"
       }
     ],
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": -45,
-        "z": 3
+        "radius": 0.27,
+        "x": 19,
+        "z": 66
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": 61,
-        "z": -56
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 20,
-        "z": -79
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -51,
-        "z": -34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -42,
+        "radius": 0.3,
+        "x": 12,
         "z": -48
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": -3,
-        "z": 35
+        "radius": 0.24,
+        "x": 84,
+        "z": 1
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": 36,
-        "z": 29
+        "radius": 0.3,
+        "x": -26,
+        "z": -22
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -39,
-        "z": 6
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 19,
-        "z": 40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 35,
-        "z": -76
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -40,
-        "z": -55
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 70,
-        "z": -17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 16,
-        "z": -81
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 27,
-        "z": 36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -50,
-        "z": -42
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -32,
-        "z": -62
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 67,
-        "z": -25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 26,
-        "z": 31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -48,
-        "z": -17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 64,
-        "z": -13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -36,
-        "z": -66
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 49,
-        "z": 17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 67,
-        "z": 3
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 68,
-        "z": -5
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -23,
-        "z": -69
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -34,
-        "z": 23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 24,
-        "z": 40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -45,
-        "z": -41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 62,
-        "z": -41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 2,
-        "z": 36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 4,
-        "z": -78
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -47,
-        "z": -13
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 19,
-        "z": 33
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -1,
-        "z": -77
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 70,
-        "z": -29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 54,
-        "z": 19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": 32,
+        "radius": 0.37,
+        "x": -31,
         "z": 30
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": 23,
-        "z": -84
+        "radius": 0.32,
+        "x": 81,
+        "z": 6
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": 61,
+        "radius": 0.33,
+        "x": 45,
+        "z": 64
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 29,
+        "z": 71
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": 57,
+        "z": -44
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": 12,
+        "z": -46
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": 54,
+        "z": -45
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.34,
+        "x": -37,
+        "z": -10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 24,
+        "z": 70
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 78,
+        "z": -6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -30,
+        "z": 36
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": 76,
+        "z": -14
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.44,
+        "x": 7,
+        "z": 65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": 37,
+        "z": 68
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": -31,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": 51,
+        "z": -43
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.34,
+        "x": 70,
+        "z": 53
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -37,
+        "z": -7
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": 24,
+        "z": -48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -36,
+        "z": 6
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -36,
+        "z": 15
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": 9,
         "z": -50
       },
       {
         "kind": "asteroid",
+        "radius": 0.31,
+        "x": -13,
+        "z": -42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -32,
+        "z": -21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": 61,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.22,
+        "x": 74,
+        "z": -20
+      },
+      {
+        "kind": "asteroid",
         "radius": 0.36,
-        "x": -16,
-        "z": 31
+        "x": 11,
+        "z": 64
       },
       {
         "kind": "asteroid",
-        "radius": 0.39,
-        "x": -54,
-        "z": -24
+        "radius": 0.41,
+        "x": 41,
+        "z": 70
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": 26,
-        "z": -79
+        "radius": 0.3,
+        "x": 28,
+        "z": 69
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": 43,
+        "radius": 0.44,
+        "x": 76,
+        "z": -25
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -33,
         "z": 25
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": -51,
-        "z": -11
+        "radius": 0.37,
+        "x": 66,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -12,
+        "z": -38
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -33,
+        "z": 21
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -35,
+        "z": -16
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 80,
+        "z": 0
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -8,
+        "z": -38
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -37,
+        "z": 24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 76,
+        "z": 42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": 66,
+        "z": -35
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 9,
-          "cz": -22,
-          "a": 64.8,
-          "b": 31,
-          "rot": 2.93,
-          "omega": 0.06,
-          "phase": 5.52
+          "cx": 23,
+          "cz": 9,
+          "a": 75.1,
+          "b": 36.2,
+          "rot": 2.19,
+          "omega": 0.056,
+          "phase": 3.66
         }
       },
       {
         "radius": 2,
-        "orbit": {
-          "cx": -15,
-          "cz": 18,
-          "radius": 11.2,
-          "omega": -0.35,
-          "phase": 1.71
+        "patrol": {
+          "x1": -25,
+          "z1": -39,
+          "x2": -35,
+          "z2": -74,
+          "period": 4.4,
+          "phase": 0.75
         }
       }
     ],
     "pickups": [
       {
-        "x": 23,
-        "z": 7,
+        "x": 27,
+        "z": 27,
+        "fuel": 1.5
+      },
+      {
+        "x": 10,
+        "z": 17,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.2,
       0.1,
-      0.1
+      0.1,
+      0.2
     ],
     "fuelRequired": true,
     "name": "Vesta Run",
@@ -7445,29 +6522,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": 34,
-      "z": 22,
-      "anchor": {
-        "body": 3,
-        "dx": 9,
-        "dz": 4
-      }
+      "x": -38,
+      "z": -20
     },
     "goal": {
-      "x": -73,
-      "z": -24,
-      "r": 1.07
+      "x": 71,
+      "z": 34,
+      "r": 1.01
     },
-    "maxLaunch": 43,
-    "fuel": 2.3,
+    "maxLaunch": 48,
+    "fuel": 0.54,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2816,
-        "radius": 11.2,
-        "color": 0xff9e6b,
-        "x": 18,
-        "z": -22,
+        "mass": 2837,
+        "radius": 11.1,
+        "color": 0xffd166,
+        "x": -15,
+        "z": 21,
         "type": "sun"
       },
       {
@@ -7477,11 +6549,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 18,
-          "cz": -22,
-          "radius": 19.925,
-          "phase": -2.8357,
-          "omega": 0.05172
+          "cx": -15,
+          "cz": 21,
+          "radius": 19.416,
+          "phase": 0.6023,
+          "omega": 0.0524
         }
       },
       {
@@ -7489,36 +6561,24 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -22,
-          "radius": 30.364,
-          "phase": 2.8407,
-          "omega": 0.0419
-        }
+        "x": 11,
+        "z": 8
       },
       {
         "name": "Earth",
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -22,
-          "radius": 40.608,
-          "phase": 1.3976,
-          "omega": 0.03623
-        }
+        "x": -29,
+        "z": -15
       },
       {
         "name": "Moon",
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 17,
-        "z": 12,
+        "x": -28,
+        "z": -4,
         "moonOf": 3
       },
       {
@@ -7526,60 +6586,42 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -22,
-          "radius": 51.264,
-          "phase": 1.9296,
-          "omega": 0.03225
-        }
+        "x": -5,
+        "z": -26
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "orbit": {
-          "parent": 0,
-          "cx": 18,
-          "cz": -22,
-          "radius": 76.105,
-          "phase": 3.089,
-          "omega": 0.02647
-        }
+        "x": 57,
+        "z": 27
       },
       {
         "name": "Io",
-        "mass": 118,
-        "radius": 1.1,
+        "mass": 74,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -58,
-          "cz": -18,
-          "radius": 10.44,
-          "phase": 1.8623,
-          "omega": 0.1572
-        }
+        "x": 49,
+        "z": 33,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 94,
-        "radius": 1.2,
+        "mass": 109,
+        "radius": 1.1,
         "color": 0xd8d8d8,
-        "x": -67,
-        "z": -27,
+        "x": 53,
+        "z": 15,
         "moonOf": 6
       },
       {
         "name": "Ganymede",
-        "mass": 77,
-        "radius": 1.1,
+        "mass": 87,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": -47,
-        "z": -28,
+        "x": 67,
+        "z": 38,
         "moonOf": 6
       }
     ],
@@ -7587,335 +6629,331 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -48,
-        "z": -4,
+        "x": -5,
+        "z": -2,
         "r": 0.94,
-        "type": "cargo",
-        "anchor": {
-          "body": 6,
-          "dx": 10,
-          "dz": 14
-        }
+        "type": "cargo"
       },
       {
-        "x": 1,
-        "z": -5,
+        "x": 19,
+        "z": 22,
         "r": 0.94,
-        "type": "dropoff",
-        "anchor": {
-          "body": 2,
-          "dx": 12,
-          "dz": 8
-        }
+        "type": "dropoff"
       }
     ],
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": 20,
-        "z": -87
+        "radius": 0.45,
+        "x": -35,
+        "z": 80
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -41,
+        "z": -30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -40,
+        "z": 76
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.41,
+        "x": -36,
+        "z": -32
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
+        "x": 38,
+        "z": 48
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": 27,
+        "z": -15
       },
       {
         "kind": "asteroid",
         "radius": 0.39,
-        "x": 63,
-        "z": 16
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 54,
-        "z": 30
+        "x": 44,
+        "z": 41
       },
       {
         "kind": "asteroid",
         "radius": 0.34,
-        "x": 7,
-        "z": 37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -40,
+        "x": -63,
         "z": -17
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": -28,
-        "z": -59
+        "radius": 0.41,
+        "x": 21,
+        "z": 72
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": -37,
-        "z": -59
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -18,
-        "z": 24
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -41,
-        "z": -36
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 1,
-        "z": -85
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 66,
-        "z": -55
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -35,
-        "z": -62
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -25,
-        "z": 18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 23,
-        "z": -79
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 13,
-        "z": -88
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 70,
-        "z": -61
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -7,
-        "z": -81
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -6,
-        "z": 35
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": -29,
-        "z": 17
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -29,
-        "z": 11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 54,
-        "z": -71
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -16,
-        "z": -70
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 80,
-        "z": -18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 75,
-        "z": -25
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 40,
-        "z": -80
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -20,
-        "z": 30
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -2,
-        "z": 41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": -41,
-        "z": -47
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 36,
+        "radius": 0.3,
+        "x": 42,
         "z": 34
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": -36,
-        "z": 5
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 83,
-        "z": -19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 40,
-        "z": -75
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 16,
-        "z": 38
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 29,
-        "z": 41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 3,
-        "z": 34
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": -38,
+        "radius": 0.4,
+        "x": -73,
         "z": -3
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -38,
-        "z": -43
+        "radius": 0.41,
+        "x": 2,
+        "z": -37
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": 71,
-        "z": -50
+        "radius": 0.37,
+        "x": -17,
+        "z": 81
       },
       {
         "kind": "asteroid",
-        "radius": 0.22,
-        "x": -4,
-        "z": -82
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -33,
-        "z": -52
+        "radius": 0.41,
+        "x": -53,
+        "z": -30
       },
       {
         "kind": "asteroid",
         "radius": 0.36,
-        "x": -10,
-        "z": -79
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 65,
-        "z": 19
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 7,
-        "z": 42
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.42,
-        "x": 79,
+        "x": -21,
         "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
-        "x": -1,
-        "z": 36
+        "radius": 0.31,
+        "x": -70,
+        "z": 29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 3,
+        "z": -31
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -12,
+        "z": -35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": 7,
+        "z": 79
       },
       {
         "kind": "asteroid",
         "radius": 0.31,
-        "x": 71,
-        "z": 11
+        "x": 42,
+        "z": 30
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -60,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 10,
+        "z": -35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": -5,
+        "z": 76
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 26,
+        "z": 65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -50,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -69,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": -47,
+        "z": -32
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -66,
+        "z": 56
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.3,
+        "x": 23,
+        "z": -19
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -23,
+        "z": 80
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 37,
+        "z": -9
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -59,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": 29,
+        "z": -24
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 30,
+        "z": 63
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.42,
+        "x": -62,
+        "z": -20
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.31,
+        "x": 9,
+        "z": 79
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": 29,
+        "z": -15
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -66,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 17,
+        "z": 72
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": -61,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -63,
+        "z": -10
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -8,
+        "z": -41
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.27,
+        "x": -41,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": 3,
+        "z": -35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.39,
+        "x": 14,
+        "z": 70
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -66,
+        "z": -7
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 18,
-          "cz": -22,
-          "a": 75.9,
-          "b": 35.9,
-          "rot": 0.99,
-          "omega": -0.087,
-          "phase": 5.5
+          "cx": -15,
+          "cz": 21,
+          "a": 71.4,
+          "b": 36.5,
+          "rot": 2.13,
+          "omega": -0.047,
+          "phase": 1.79
         }
       },
       {
         "radius": 2,
-        "patrol": {
-          "x1": 51,
-          "z1": 41,
-          "x2": 35,
-          "z2": 66,
-          "period": 6.3,
-          "phase": 0.22
+        "orbit": {
+          "cx": 24,
+          "cz": -23,
+          "radius": 15.6,
+          "omega": -0.46,
+          "phase": 2.83
         }
       }
     ],
-    "legMinCosts": [
-      0.39,
-      0.12,
-      0.23
+    "pickups": [
+      {
+        "x": 8,
+        "z": -14,
+        "fuel": 1.5
+      }
     ],
-    "fuelRequired": false,
+    "legMinCosts": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "fuelRequired": true,
     "name": "Dense Cluster",
     "hint": "A wall of rock rings the Sun between Mars and Jupiter. Find the passages — or go around.",
     "difficulty": 4
@@ -7923,29 +6961,24 @@ export const LEVELS = [
   {
     "extent": 110,
     "ship": {
-      "x": 38,
-      "z": 20,
-      "anchor": {
-        "body": 3,
-        "dx": 9,
-        "dz": 5
-      }
+      "x": -41,
+      "z": -12
     },
     "goal": {
-      "x": -67,
-      "z": -35,
-      "r": 1.05
+      "x": 70,
+      "z": 30,
+      "r": 1.07
     },
-    "maxLaunch": 43,
-    "fuel": 1.97,
+    "maxLaunch": 47,
+    "fuel": 0.67,
     "bodies": [
       {
         "name": "Sol",
-        "mass": 2969,
-        "radius": 10.6,
-        "color": 0xffb703,
-        "x": 20,
-        "z": -23,
+        "mass": 2518,
+        "radius": 11,
+        "color": 0xff9e6b,
+        "x": 4,
+        "z": -29,
         "type": "sun"
       },
       {
@@ -7955,11 +6988,11 @@ export const LEVELS = [
         "color": 0xb5a642,
         "orbit": {
           "parent": 0,
-          "cx": 20,
-          "cz": -23,
-          "radius": 19.105,
-          "phase": -2.3192,
-          "omega": 0.03275
+          "cx": 4,
+          "cz": -29,
+          "radius": 20.881,
+          "phase": 0.2915,
+          "omega": 0.05053
         }
       },
       {
@@ -7967,14 +7000,8 @@ export const LEVELS = [
         "mass": 380,
         "radius": 2.5,
         "color": 0xe8c07d,
-        "orbit": {
-          "parent": 0,
-          "cx": 20,
-          "cz": -23,
-          "radius": 28.862,
-          "phase": 2.8966,
-          "omega": 0.02665
-        }
+        "x": 15,
+        "z": -1
       },
       {
         "name": "Earth",
@@ -7983,11 +7010,11 @@ export const LEVELS = [
         "color": 0x4d9de0,
         "orbit": {
           "parent": 0,
-          "cx": 20,
-          "cz": -23,
-          "radius": 39.051,
-          "phase": 1.3382,
-          "omega": 0.02291
+          "cx": 4,
+          "cz": -29,
+          "radius": 39.962,
+          "phase": 2.5883,
+          "omega": 0.03652
         }
       },
       {
@@ -7995,8 +7022,8 @@ export const LEVELS = [
         "mass": 60,
         "radius": 1,
         "color": 0xd8d8d8,
-        "x": 29,
-        "z": 5,
+        "x": -19,
+        "z": -6,
         "moonOf": 3
       },
       {
@@ -8004,45 +7031,42 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 20,
-          "cz": -23,
-          "radius": 49.041,
-          "phase": 1.8603,
-          "omega": 0.02044
-        }
+        "x": -20,
+        "z": 15
       },
       {
         "name": "Jupiter",
         "mass": 1500,
         "radius": 6.5,
         "color": 0xd9a066,
-        "x": -53,
-        "z": -28
+        "x": 56,
+        "z": 25
       },
       {
         "name": "Io",
-        "mass": 84,
+        "mass": 107,
         "radius": 1.2,
         "color": 0xd8d8d8,
-        "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": -53,
-          "cz": -28,
-          "radius": 10.198,
-          "phase": 0.1974,
-          "omega": 0.09862
-        }
+        "x": 66,
+        "z": 28,
+        "moonOf": 6
       },
       {
         "name": "Europa",
-        "mass": 103,
-        "radius": 1.1,
+        "mass": 98,
+        "radius": 1.2,
         "color": 0xd8d8d8,
-        "x": -59,
-        "z": -17,
+        "x": 47,
+        "z": 34,
+        "moonOf": 6
+      },
+      {
+        "name": "Ganymede",
+        "mass": 115,
+        "radius": 1.2,
+        "color": 0xd8d8d8,
+        "x": 46,
+        "z": 14,
         "moonOf": 6
       }
     ],
@@ -8050,346 +7074,347 @@ export const LEVELS = [
     "targetIdx": 6,
     "waypoints": [
       {
-        "x": -47,
+        "x": 26,
         "z": -8,
         "r": 0.94,
         "type": "cargo"
       },
       {
-        "x": -21,
-        "z": -11,
+        "x": 3,
+        "z": 3,
         "r": 0.94,
-        "type": "dropoff",
-        "anchor": {
-          "body": 2,
-          "dx": -13,
-          "dz": 5
-        }
+        "type": "dropoff"
       }
     ],
     "hazards": [
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": -1,
-        "z": -81
+        "radius": 0.44,
+        "x": -49,
+        "z": -52
       },
       {
         "kind": "asteroid",
-        "radius": 0.42,
+        "radius": 0.36,
+        "x": 35,
+        "z": 26
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 9,
+        "z": -90
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 65,
+        "z": -49
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.45,
+        "x": 56,
+        "z": -58
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": 62,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": 61,
+        "z": -17
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
         "x": -34,
+        "z": -82
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": -51,
+        "z": -42
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": 41,
+        "z": 23
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 41,
+        "z": -78
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -46,
+        "z": 4
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": 47,
+        "z": -68
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 38,
+        "z": -82
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -29,
+        "z": -82
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -50,
+        "z": -65
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.33,
+        "x": -56,
+        "z": -20
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.25,
+        "x": 60,
+        "z": 0
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.23,
+        "x": -52,
+        "z": 3
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": 67,
         "z": -33
       },
       {
         "kind": "asteroid",
         "radius": 0.39,
-        "x": -22,
-        "z": -60
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -39,
-        "z": -41
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 82,
-        "z": -10
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 25,
-        "z": 40
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -32,
-        "z": -60
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 40,
-        "z": 29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -26,
-        "z": 11
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -43,
-        "z": -32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 73,
-        "z": -45
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -38,
-        "z": -8
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -4,
-        "z": 31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
         "x": 46,
-        "z": 31
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 60,
         "z": 20
       },
       {
         "kind": "asteroid",
-        "radius": 0.45,
-        "x": 76,
-        "z": -35
+        "radius": 0.38,
+        "x": 60,
+        "z": -39
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": 8,
-        "z": 36
+        "radius": 0.23,
+        "x": -21,
+        "z": -81
       },
       {
         "kind": "asteroid",
-        "radius": 0.34,
-        "x": 67,
-        "z": 14
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.39,
-        "x": -34,
-        "z": -2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 24,
-        "z": 35
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 67,
-        "z": -56
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": -32,
-        "z": 8
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 77,
-        "z": -22
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 9,
-        "z": 32
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -36,
-        "z": -38
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 59,
-        "z": -72
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 35,
-        "z": 33
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 42,
-        "z": 32
+        "radius": 0.41,
+        "x": -54,
+        "z": -1
       },
       {
         "kind": "asteroid",
         "radius": 0.28,
-        "x": 31,
-        "z": -79
+        "x": -20,
+        "z": -83
       },
       {
         "kind": "asteroid",
-        "radius": 0.36,
-        "x": 61,
-        "z": -64
+        "radius": 0.23,
+        "x": 58,
+        "z": -6
       },
       {
         "kind": "asteroid",
-        "radius": 0.31,
-        "x": 50,
-        "z": -79
+        "radius": 0.33,
+        "x": 38,
+        "z": 18
       },
       {
         "kind": "asteroid",
-        "radius": 0.28,
-        "x": -38,
-        "z": -20
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": 8,
-        "z": -86
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 26,
-        "z": -86
+        "radius": 0.24,
+        "x": -45,
+        "z": 9
       },
       {
         "kind": "asteroid",
         "radius": 0.28,
-        "x": -24,
-        "z": -69
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": 9,
-        "z": -80
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 61,
-        "z": -59
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 43,
-        "z": 29
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.45,
-        "x": 76,
-        "z": -14
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": -38,
-        "z": -2
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.25,
-        "x": 74,
-        "z": -4
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.36,
-        "x": 81,
-        "z": -18
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.28,
-        "x": -11,
-        "z": 26
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.22,
-        "x": 51,
-        "z": 23
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.34,
-        "x": 33,
-        "z": 37
-      },
-      {
-        "kind": "asteroid",
-        "radius": 0.31,
-        "x": -33,
+        "x": 58,
         "z": -54
       },
       {
         "kind": "asteroid",
+        "radius": 0.41,
+        "x": -13,
+        "z": -91
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": -47,
+        "z": 0
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.35,
+        "x": -6,
+        "z": 35
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.43,
+        "x": -53,
+        "z": -61
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 11,
+        "z": -92
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.34,
+        "x": 41,
+        "z": 18
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.37,
+        "x": 41,
+        "z": -83
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.24,
+        "x": 55,
+        "z": 1
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.32,
+        "x": -2,
+        "z": -86
+      },
+      {
+        "kind": "asteroid",
         "radius": 0.36,
-        "x": 60,
-        "z": 26
+        "x": 64,
+        "z": -13
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": 67,
+        "z": -14
       },
       {
         "kind": "asteroid",
         "radius": 0.25,
+        "x": -55,
+        "z": -22
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.26,
+        "x": -55,
+        "z": -29
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.28,
+        "x": -5,
+        "z": -93
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.38,
+        "x": -22,
+        "z": -84
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -56,
+        "z": -33
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.36,
         "x": -24,
-        "z": -57
+        "z": -82
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.29,
+        "x": -8,
+        "z": 27
+      },
+      {
+        "kind": "asteroid",
+        "radius": 0.4,
+        "x": -35,
+        "z": -72
       },
       {
         "radius": 1.2,
         "comet": {
-          "cx": 20,
-          "cz": -23,
-          "a": 61.6,
-          "b": 37,
-          "rot": 2.31,
-          "omega": 0.054,
-          "phase": 2.18
+          "cx": 4,
+          "cz": -29,
+          "a": 70.2,
+          "b": 34.5,
+          "rot": 1.13,
+          "omega": 0.089,
+          "phase": 2.63
         }
       },
       {
         "radius": 2,
-        "orbit": {
-          "cx": -18,
-          "cz": 18,
-          "radius": 11.8,
-          "omega": 0.41,
-          "phase": 4.55
+        "patrol": {
+          "x1": -40,
+          "z1": 31,
+          "x2": -2,
+          "z2": 58,
+          "period": 4.9,
+          "phase": 0.01
         }
       }
     ],
     "pickups": [
       {
-        "x": -49,
-        "z": -41,
+        "x": -25,
+        "z": -3,
+        "fuel": 1.5
+      },
+      {
+        "x": -3,
+        "z": -43,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      1.72,
-      0.12,
-      0.23
+      0.1,
+      0.1,
+      0.1
     ],
     "fuelRequired": true,
     "name": "Belt Baron",
@@ -8483,362 +7508,336 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 73,
+    "extent": 75,
     "ship": {
-      "x": 18,
-      "z": 53
+      "x": 26,
+      "z": 54
     },
     "goal": {
-      "x": -20,
-      "z": -53,
+      "x": -16,
+      "z": -55,
       "r": 0.91
     },
-    "maxLaunch": 41,
-    "fuel": 0.83,
+    "maxLaunch": 43,
+    "fuel": 0.78,
     "bodies": [
       {
-        "name": "Helios",
-        "mass": 3534,
-        "radius": 10.3,
+        "name": "Kestrel",
+        "mass": 3231,
+        "radius": 10.8,
         "color": 0xff9e6b,
-        "x": -13,
-        "z": -6,
+        "x": -11,
+        "z": -12,
         "type": "sun"
       },
       {
         "name": "Lumen",
-        "mass": 406,
+        "mass": 479,
         "radius": 2.3,
-        "color": 0x8ecae6,
+        "color": 0xffc8dd,
         "orbit": {
-          "cx": -13,
-          "cz": -6,
-          "radius": 20.4,
-          "omega": -0.5,
-          "phase": 2.42
+          "cx": -11,
+          "cz": -12,
+          "radius": 19.1,
+          "omega": 0.38,
+          "phase": 4.58
         }
       },
       {
-        "name": "Pip",
-        "mass": 463,
-        "radius": 2.4,
-        "color": 0xffd166,
-        "orbit": {
-          "cx": -13,
-          "cz": -6,
-          "radius": 34.4,
-          "omega": -0.34,
-          "phase": 0.41
-        }
-      },
-      {
-        "name": "Gulp",
-        "mass": 4511,
+        "name": "Jasper",
+        "mass": 368,
         "radius": 3,
-        "horizon": 6.1,
+        "color": 0xf4a261,
+        "orbit": {
+          "cx": -11,
+          "cz": -12,
+          "radius": 33.1,
+          "omega": 0.42,
+          "phase": 5.62
+        }
+      },
+      {
+        "name": "Abyss",
+        "mass": 4158,
+        "radius": 3,
+        "horizon": 5.7,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": 20,
+        "x": 18,
         "z": 31
-      },
-      {
-        "name": "Inverse",
-        "mass": -848,
-        "radius": 4.2,
-        "color": 0xc77dff,
-        "x": 17,
-        "z": -52
-      }
-    ],
-    "hazards": [
-      {
-        "radius": 1.2,
-        "comet": {
-          "cx": -13,
-          "cz": -6,
-          "a": 50.6,
-          "b": 14.6,
-          "rot": 2.53,
-          "omega": -0.061,
-          "phase": 3.93
-        }
       }
     ],
     "legMinCosts": [
-      0.42
+      0.23
     ],
     "name": "Star System",
     "hint": "Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.",
     "difficulty": 5
   },
   {
-    "extent": 73,
+    "extent": 79,
     "ship": {
-      "x": 28,
-      "z": 53
+      "x": -24,
+      "z": 57
     },
     "goal": {
-      "x": 24,
-      "z": -53,
-      "r": 0.88
+      "x": -7,
+      "z": -58,
+      "r": 0.93
     },
-    "maxLaunch": 42,
-    "fuel": 1.74,
+    "maxLaunch": 39,
+    "fuel": 0.9,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 3730,
-        "radius": 11.3,
+        "name": "Tsuki",
+        "mass": 2805,
+        "radius": 10.2,
         "color": 0xffb703,
-        "x": 20,
-        "z": -4,
+        "x": -12,
+        "z": -18,
         "type": "sun"
       },
       {
-        "name": "Lumen",
-        "mass": 403,
-        "radius": 2.1,
-        "color": 0x8ecae6,
+        "name": "Dune",
+        "mass": 399,
+        "radius": 3,
+        "color": 0x7ae582,
         "orbit": {
-          "cx": 20,
-          "cz": -4,
-          "radius": 21.9,
-          "omega": -0.23,
-          "phase": 0.49
+          "cx": -12,
+          "cz": -18,
+          "radius": 19.2,
+          "omega": 0.54,
+          "phase": 4.96
         }
       },
       {
         "name": "Echo",
-        "mass": 1221,
-        "radius": 5.4,
-        "color": 0x90e0ef,
+        "mass": 342,
+        "radius": 2.4,
+        "color": 0xc8b6ff,
         "orbit": {
-          "cx": 20,
-          "cz": -4,
-          "radius": 35.9,
-          "omega": -0.37,
-          "phase": 0.49
+          "cx": -12,
+          "cz": -18,
+          "radius": 33.2,
+          "omega": -0.41,
+          "phase": 1.73
         }
       },
       {
-        "name": "Abyss",
-        "mass": 4567,
+        "name": "Hush",
+        "mass": 4585,
         "radius": 3,
         "horizon": 5.7,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": 33,
-        "z": 47
+        "x": -22,
+        "z": 33
       }
     ],
     "hazards": [
       {
         "radius": 2,
         "patrol": {
-          "x1": -37,
-          "z1": -3,
-          "x2": -61,
-          "z2": -20,
-          "period": 4.8,
-          "phase": 0.34
+          "x1": 33,
+          "z1": 1,
+          "x2": 45,
+          "z2": 17,
+          "period": 4,
+          "phase": 0.99
         }
       }
     ],
     "legMinCosts": [
-      1.44
+      0.28
     ],
     "name": "Dark Passage",
     "hint": "Your engine can't brute-force this one. Wait for a planet to swing by and steal its momentum.",
     "difficulty": 5
   },
   {
-    "extent": 74,
+    "extent": 75,
     "ship": {
-      "x": 29,
-      "z": 53
+      "x": -30,
+      "z": 54
     },
     "goal": {
-      "x": -15,
-      "z": -54,
-      "r": 0.88
+      "x": -7,
+      "z": -55,
+      "r": 0.93
     },
-    "maxLaunch": 44,
-    "fuel": 0.42,
+    "maxLaunch": 39,
+    "fuel": 0.48,
     "bodies": [
       {
-        "name": "Helios",
-        "mass": 3719,
-        "radius": 10.4,
-        "color": 0xff9e6b,
-        "x": 12,
-        "z": 5,
+        "name": "Rana",
+        "mass": 2851,
+        "radius": 10.1,
+        "color": 0xffd166,
+        "x": -12,
+        "z": 10,
         "type": "sun"
       },
       {
-        "name": "Vesta",
-        "mass": 542,
-        "radius": 2.5,
-        "color": 0x90e0ef,
+        "name": "Rhea",
+        "mass": 431,
+        "radius": 2.6,
+        "color": 0xf4a261,
         "orbit": {
-          "cx": 12,
-          "cz": 5,
-          "radius": 21.2,
-          "omega": 0.5,
-          "phase": 0.51
+          "cx": -12,
+          "cz": 10,
+          "radius": 20.1,
+          "omega": 0.27,
+          "phase": 5.6
         }
       },
       {
-        "name": "Zephyr",
-        "mass": 385,
-        "radius": 2.2,
-        "color": 0x90e0ef,
+        "name": "Lumen",
+        "mass": 1009,
+        "radius": 5.2,
+        "color": 0x95d5b2,
         "orbit": {
-          "cx": 12,
-          "cz": 5,
-          "radius": 35.2,
-          "omega": 0.34,
-          "phase": 1.63
+          "cx": -12,
+          "cz": 10,
+          "radius": 34.1,
+          "omega": -0.36,
+          "phase": 0.65
         }
       },
       {
-        "name": "Gulp",
-        "mass": 4085,
+        "name": "Hush",
+        "mass": 3846,
         "radius": 3,
         "horizon": 6.5,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": 13,
-        "z": -44
+        "x": 3,
+        "z": -42
+      },
+      {
+        "name": "Umbra",
+        "mass": -636,
+        "radius": 4.1,
+        "color": 0xc77dff,
+        "x": 29,
+        "z": 45
       }
     ],
     "hazards": [
       {
         "radius": 2,
         "patrol": {
-          "x1": -20,
-          "z1": -25,
-          "x2": -37,
-          "z2": -7,
-          "period": 7.4,
-          "phase": 0.3
+          "x1": -45,
+          "z1": -26,
+          "x2": -38,
+          "z2": -47,
+          "period": 5.8,
+          "phase": 0.54
         }
       }
     ],
     "legMinCosts": [
-      0.11
+      0.14
     ],
     "name": "Planetfall",
     "hint": "Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.",
     "difficulty": 5
   },
   {
-    "extent": 75,
+    "extent": 76,
     "ship": {
-      "x": 6,
-      "z": 54
+      "x": 8,
+      "z": 55
     },
     "goal": {
-      "x": 9,
+      "x": -20,
       "z": -55,
       "r": 0.91
     },
     "maxLaunch": 45,
-    "fuel": 1.51,
+    "fuel": 2.17,
     "bodies": [
       {
-        "name": "Aurum",
-        "mass": 3568,
-        "radius": 11.4,
-        "color": 0xffd166,
-        "x": -18,
-        "z": -9,
+        "name": "Vera",
+        "mass": 2964,
+        "radius": 10.4,
+        "color": 0xffb703,
+        "x": -7,
+        "z": 16,
         "type": "sun"
       },
       {
-        "name": "Echo",
-        "mass": 442,
-        "radius": 2.9,
-        "color": 0xf4a261,
+        "name": "Mica",
+        "mass": 429,
+        "radius": 2.3,
+        "color": 0xc8b6ff,
         "orbit": {
-          "cx": -18,
-          "cz": -9,
-          "radius": 21.3,
-          "omega": 0.55,
-          "phase": 5.72
+          "cx": -7,
+          "cz": 16,
+          "radius": 19.5,
+          "omega": 0.38,
+          "phase": 3.67
         }
       },
       {
-        "name": "Lumen",
-        "mass": 480,
-        "radius": 2,
-        "color": 0xf4a261,
+        "name": "Atlas",
+        "mass": 351,
+        "radius": 2.7,
+        "color": 0xffd166,
         "orbit": {
-          "cx": -18,
-          "cz": -9,
-          "radius": 35.3,
-          "omega": 0.44,
-          "phase": 1.11
+          "cx": -7,
+          "cz": 16,
+          "radius": 33.5,
+          "omega": -0.5,
+          "phase": 0.13
         }
       },
       {
         "name": "Hush",
-        "mass": 4740,
+        "mass": 4346,
         "radius": 3,
-        "horizon": 6.2,
+        "horizon": 6.3,
         "color": 0x1a1a2e,
         "type": "blackhole",
-        "x": 0,
-        "z": -54
+        "x": 8,
+        "z": -30
       }
     ],
     "waypoints": [
       {
-        "x": -50,
-        "z": 23,
+        "x": 38,
+        "z": 28,
         "r": 0.8,
         "type": "cargo"
       },
       {
-        "x": -47,
-        "z": -43,
+        "x": 27,
+        "z": -11,
         "r": 0.8,
         "type": "dropoff"
       }
     ],
     "hazards": [
       {
-        "radius": 1.2,
-        "comet": {
-          "cx": -18,
-          "cz": -9,
-          "a": 51.4,
-          "b": 15.1,
-          "rot": 1.31,
-          "omega": -0.074,
-          "phase": 0.73
-        }
-      },
-      {
         "radius": 2,
         "patrol": {
-          "x1": 37,
-          "z1": 14,
-          "x2": 51,
-          "z2": 18,
-          "period": 6.4,
-          "phase": 0.41
+          "x1": -45,
+          "z1": -28,
+          "x2": -22,
+          "z2": -38,
+          "period": 5.2,
+          "phase": 0.16
         }
       }
     ],
     "pickups": [
       {
-        "x": -23,
+        "x": 25,
         "z": 41,
         "fuel": 1.5
       },
       {
-        "x": -61,
-        "z": -12,
+        "x": 34,
+        "z": 6,
         "fuel": 1.5
       }
     ],
@@ -8847,89 +7846,71 @@ export const LEVELS = [
       0.11,
       0.11
     ],
-    "fuelRequired": false,
+    "fuelRequired": true,
     "name": "The Gauntlet",
     "hint": "Cargo runs in a moving system, and stops never refuel. Plan the whole route.",
     "difficulty": 5
   },
   {
-    "extent": 75,
+    "extent": 78,
     "ship": {
-      "x": -22,
-      "z": 54
+      "x": -27,
+      "z": 56
     },
     "goal": {
-      "x": -23,
-      "z": -55,
+      "x": 10,
+      "z": -57,
       "r": 0.91
     },
-    "maxLaunch": 44,
-    "fuel": 0.97,
+    "maxLaunch": 45,
+    "fuel": 0.81,
     "bodies": [
       {
         "name": "Rana",
-        "mass": 3738,
-        "radius": 10.9,
-        "color": 0xffb703,
-        "x": 13,
-        "z": -10,
+        "mass": 3179,
+        "radius": 10.2,
+        "color": 0xff9e6b,
+        "x": -19,
+        "z": 8,
         "type": "sun"
       },
       {
-        "name": "Frost",
-        "mass": 508,
-        "radius": 3,
-        "color": 0x7ae582,
-        "orbit": {
-          "cx": 13,
-          "cz": -10,
-          "radius": 21.7,
-          "omega": 0.48,
-          "phase": 4.03
-        }
-      },
-      {
-        "name": "Pip",
-        "mass": 450,
+        "name": "Cinder",
+        "mass": 391,
         "radius": 2.1,
         "color": 0xc8b6ff,
         "orbit": {
-          "cx": 13,
-          "cz": -10,
-          "radius": 35.7,
-          "omega": 0.5,
-          "phase": 4.53
+          "cx": -19,
+          "cz": 8,
+          "radius": 19.8,
+          "omega": -0.41,
+          "phase": 4.37
         }
       },
       {
-        "name": "Hush",
-        "mass": 4569,
-        "radius": 3,
-        "horizon": 6.3,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": 4,
-        "z": 42
-      },
-      {
-        "name": "Antara",
-        "mass": -926,
-        "radius": 4.1,
-        "color": 0xc77dff,
-        "x": -25,
-        "z": -43
+        "name": "Opal",
+        "mass": 1494,
+        "radius": 5.5,
+        "color": 0x7ae582,
+        "orbit": {
+          "cx": -19,
+          "cz": 8,
+          "radius": 33.8,
+          "omega": -0.32,
+          "phase": 2.98
+        }
       }
     ],
     "waypoints": [
       {
-        "x": 54,
-        "z": 18,
+        "x": 22,
+        "z": 32,
         "r": 0.8,
         "type": "cargo"
       },
       {
-        "x": 51,
-        "z": -37,
+        "x": 28,
+        "z": 10,
         "r": 0.8,
         "type": "dropoff"
       }
@@ -8938,31 +7919,31 @@ export const LEVELS = [
       {
         "radius": 2,
         "patrol": {
-          "x1": -28,
-          "z1": -28,
-          "x2": -39,
-          "z2": -5,
-          "period": 6.1,
-          "phase": 0.12
+          "x1": 31,
+          "z1": -13,
+          "x2": 55,
+          "z2": -31,
+          "period": 7.4,
+          "phase": 0.64
         }
       }
     ],
     "pickups": [
       {
-        "x": 17,
-        "z": 58,
+        "x": 13,
+        "z": 55,
         "fuel": 1.5
       },
       {
-        "x": 55,
-        "z": -10,
+        "x": 24,
+        "z": 22,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
+      0.21,
       0.11,
-      0.22,
-      0.22
+      0.21
     ],
     "fuelRequired": true,
     "name": "Singularity",
@@ -8970,103 +7951,95 @@ export const LEVELS = [
     "difficulty": 5
   },
   {
-    "extent": 76,
+    "extent": 77,
     "ship": {
-      "x": 7,
+      "x": -26,
       "z": 55
     },
     "goal": {
-      "x": 15,
-      "z": -55,
-      "r": 0.91
+      "x": -27,
+      "z": -56,
+      "r": 0.93
     },
-    "maxLaunch": 46,
-    "fuel": 0.7,
+    "maxLaunch": 43,
+    "fuel": 0.83,
     "bodies": [
       {
-        "name": "Tsuki",
-        "mass": 3338,
-        "radius": 11.9,
+        "name": "Rana",
+        "mass": 2885,
+        "radius": 11.5,
         "color": 0xffd166,
-        "x": 14,
-        "z": 6,
+        "x": -14,
+        "z": 10,
         "type": "sun"
       },
       {
-        "name": "Lyra",
-        "mass": 421,
-        "radius": 3.2,
-        "color": 0x90e0ef,
-        "orbit": {
-          "cx": 14,
-          "cz": 6,
-          "radius": 21.6,
-          "omega": 0.4,
-          "phase": 3.9
-        }
-      },
-      {
-        "name": "Atlas",
-        "mass": 387,
+        "name": "Jasper",
+        "mass": 314,
         "radius": 2.1,
         "color": 0xf4a261,
         "orbit": {
-          "cx": 14,
-          "cz": 6,
-          "radius": 35.6,
-          "omega": -0.5,
-          "phase": 4.14
+          "cx": -14,
+          "cz": 10,
+          "radius": 20.8,
+          "omega": -0.52,
+          "phase": 5.89
         }
       },
       {
-        "name": "Maw",
-        "mass": 4153,
-        "radius": 3,
-        "horizon": 6.4,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": -3,
-        "z": -43
+        "name": "Iris",
+        "mass": 1157,
+        "radius": 5.1,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": -14,
+          "cz": 10,
+          "radius": 35,
+          "omega": -0.24,
+          "phase": 0.3
+        }
       },
       {
-        "name": "Inverse",
-        "mass": -879,
-        "radius": 4.3,
-        "color": 0xc77dff,
-        "x": -41,
-        "z": 23
+        "name": "Void",
+        "mass": 4169,
+        "radius": 3,
+        "horizon": 5.6,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": 25,
+        "z": -25
       }
     ],
     "waypoints": [
       {
-        "x": -28,
-        "z": 31,
+        "x": 31,
+        "z": 28,
         "r": 0.8,
         "type": "cargo"
       },
       {
-        "x": -23,
-        "z": -27,
+        "x": 30,
+        "z": -5,
         "r": 0.8,
         "type": "dropoff"
       }
     ],
     "pickups": [
       {
-        "x": -34,
-        "z": 38,
+        "x": 4,
+        "z": -32,
         "fuel": 1.5
       },
       {
-        "x": -29,
-        "z": 10,
+        "x": 46,
+        "z": 33,
         "fuel": 1.5
       }
     ],
     "legMinCosts": [
-      0.1,
-      0.34,
-      0.1
+      0.12,
+      0.12,
+      0.12
     ],
     "fuelRequired": true,
     "name": "Far Shore",
@@ -9076,73 +8049,163 @@ export const LEVELS = [
   {
     "extent": 73,
     "ship": {
-      "x": -26,
+      "x": 10,
       "z": 53
     },
     "goal": {
-      "x": 26,
+      "x": -16,
       "z": -53,
-      "r": 0.91
+      "r": 0.93
     },
-    "maxLaunch": 45,
-    "fuel": 2.8,
+    "maxLaunch": 40,
+    "fuel": 4,
     "bodies": [
       {
-        "name": "Tsuki",
-        "mass": 3186,
-        "radius": 11.1,
-        "color": 0xffd166,
-        "x": -16,
-        "z": 7,
+        "name": "Rana",
+        "mass": 2848,
+        "radius": 11.5,
+        "color": 0xffb703,
+        "x": 16,
+        "z": 8,
         "type": "sun"
       },
       {
-        "name": "Cinder",
-        "mass": 432,
-        "radius": 2.5,
+        "name": "Nova",
+        "mass": 507,
+        "radius": 2.8,
+        "color": 0xc8b6ff,
+        "orbit": {
+          "cx": 16,
+          "cz": 8,
+          "radius": 21.4,
+          "omega": 0.51,
+          "phase": 4.05
+        }
+      },
+      {
+        "name": "Zephyr",
+        "mass": 473,
+        "radius": 2.2,
         "color": 0xffc8dd,
         "orbit": {
-          "cx": -16,
-          "cz": 7,
-          "radius": 19.9,
-          "omega": 0.24,
-          "phase": 2.61
+          "cx": 16,
+          "cz": 8,
+          "radius": 35.4,
+          "omega": -0.4,
+          "phase": 2.86
         }
       },
       {
-        "name": "Onyx",
-        "mass": 1165,
-        "radius": 5.2,
-        "color": 0xbde0fe,
-        "orbit": {
-          "cx": -16,
-          "cz": 7,
-          "radius": 33.9,
-          "omega": 0.49,
-          "phase": 1.26
-        }
-      },
-      {
-        "name": "Gulp",
-        "mass": 4719,
-        "radius": 3,
-        "horizon": 6.2,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": 0,
-        "z": -42
+        "name": "Nulla",
+        "mass": -859,
+        "radius": 4.1,
+        "color": 0xc77dff,
+        "x": -31,
+        "z": 21
       }
     ],
     "waypoints": [
       {
-        "x": -61,
-        "z": 11,
+        "x": 58,
+        "z": 21,
         "r": 0.8,
         "type": "cargo"
       },
       {
-        "x": -41,
-        "z": -31,
+        "x": 40,
+        "z": -33,
+        "r": 0.8,
+        "type": "dropoff"
+      }
+    ],
+    "legMinCosts": [
+      0.14,
+      0.14,
+      0.14
+    ],
+    "fuelRequired": false,
+    "name": "Last Light",
+    "hint": "Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.",
+    "difficulty": 5
+  },
+  {
+    "extent": 78,
+    "ship": {
+      "x": 11,
+      "z": 56
+    },
+    "goal": {
+      "x": -12,
+      "z": -57,
+      "r": 0.94
+    },
+    "maxLaunch": 42,
+    "fuel": 0.84,
+    "bodies": [
+      {
+        "name": "Vera",
+        "mass": 3014,
+        "radius": 10.2,
+        "color": 0xffb703,
+        "x": 19,
+        "z": -2,
+        "type": "sun"
+      },
+      {
+        "name": "Onyx",
+        "mass": 506,
+        "radius": 2.4,
+        "color": 0x95d5b2,
+        "orbit": {
+          "cx": 19,
+          "cz": -2,
+          "radius": 19.2,
+          "omega": 0.31,
+          "phase": 2.1
+        }
+      },
+      {
+        "name": "Frost",
+        "mass": 546,
+        "radius": 3.2,
+        "color": 0xbde0fe,
+        "orbit": {
+          "cx": 19,
+          "cz": -2,
+          "radius": 33.2,
+          "omega": -0.43,
+          "phase": 3.83
+        }
+      },
+      {
+        "name": "Gulp",
+        "mass": 3642,
+        "radius": 3,
+        "horizon": 5.9,
+        "color": 0x1a1a2e,
+        "type": "blackhole",
+        "x": -13,
+        "z": -35
+      },
+      {
+        "name": "Umbra",
+        "mass": -653,
+        "radius": 3.5,
+        "color": 0xc77dff,
+        "x": -13,
+        "z": 41
+      }
+    ],
+    "waypoints": [
+      {
+        "x": 61,
+        "z": 19,
+        "r": 0.8,
+        "type": "cargo"
+      },
+      {
+        "x": 49,
+        "z": -35,
         "r": 0.8,
         "type": "dropoff"
       }
@@ -9151,113 +8214,28 @@ export const LEVELS = [
       {
         "radius": 2,
         "patrol": {
-          "x1": 27,
-          "z1": -14,
-          "x2": 47,
-          "z2": -27,
+          "x1": -41,
+          "z1": -17,
+          "x2": -44,
+          "z2": 5,
           "period": 4.1,
-          "phase": 0.28
+          "phase": 0.18
         }
       }
     ],
-    "legMinCosts": [
-      0.11,
-      0.11,
-      0.11
-    ],
-    "fuelRequired": false,
-    "name": "Last Light",
-    "hint": "Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.",
-    "difficulty": 5
-  },
-  {
-    "extent": 76,
-    "ship": {
-      "x": 28,
-      "z": 55
-    },
-    "goal": {
-      "x": 22,
-      "z": -55,
-      "r": 0.94
-    },
-    "maxLaunch": 43,
-    "fuel": 3.7,
-    "bodies": [
+    "pickups": [
       {
-        "name": "Helios",
-        "mass": 3522,
-        "radius": 11.6,
-        "color": 0xff9e6b,
-        "x": -11,
-        "z": -14,
-        "type": "sun"
-      },
-      {
-        "name": "Dune",
-        "mass": 473,
-        "radius": 2.1,
-        "color": 0xffc8dd,
-        "orbit": {
-          "cx": -11,
-          "cz": -14,
-          "radius": 20.9,
-          "omega": 0.32,
-          "phase": 4.46
-        }
-      },
-      {
-        "name": "Zephyr",
-        "mass": 411,
-        "radius": 2.9,
-        "color": 0xff8fa3,
-        "orbit": {
-          "cx": -11,
-          "cz": -14,
-          "radius": 34.9,
-          "omega": -0.36,
-          "phase": 0.28
-        }
-      },
-      {
-        "name": "Gulp",
-        "mass": 4629,
-        "radius": 3,
-        "horizon": 5.7,
-        "color": 0x1a1a2e,
-        "type": "blackhole",
-        "x": -24,
-        "z": 32
-      },
-      {
-        "name": "Inverse",
-        "mass": -790,
-        "radius": 4.1,
-        "color": 0xc77dff,
-        "x": 16,
-        "z": 28
-      }
-    ],
-    "waypoints": [
-      {
-        "x": -48,
-        "z": 14,
-        "r": 0.8,
-        "type": "cargo"
-      },
-      {
-        "x": -37,
-        "z": -51,
-        "r": 0.8,
-        "type": "dropoff"
+        "x": -6,
+        "z": 44,
+        "fuel": 1.5
       }
     ],
     "legMinCosts": [
       0.12,
-      0.39,
-      0.23
+      0.12,
+      0.12
     ],
-    "fuelRequired": false,
+    "fuelRequired": true,
     "name": "GravityLoop",
     "hint": "Alien systems: antimatter stars, black holes, weak engines. Ride the orbits — launch windows matter.",
     "difficulty": 5

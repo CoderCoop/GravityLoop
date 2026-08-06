@@ -11,6 +11,18 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '2.0.0',
+    date: '2026-08-05',
+    title: 'A campaign of fifty different problems',
+    notes: [
+      'All 50 levels are rebuilt. Every one of your old routes is gone — the geometry is new, so this is a fresh campaign rather than a patch.',
+      'Levels no longer solve alike. Each one is built to demand a particular shape of flight: a long sustained arc, a hard slingshot past something heavy, an S-curve that bends one way then back, most of a loop around a world, or a cruise that keeps meeting new terrain. Neighbouring levels never ask for the same one.',
+      'You can no longer skip a level by flying wide around the outside of the system. Every winning route now has to work the terrain, not just the least interesting one.',
+      'Nothing overlaps any more. Moons no longer sit inside their planet, docking rings no longer hide inside a gas giant, and stations no longer drift through worlds as they orbit — checked across each level’s full orbital period rather than a snapshot.',
+      'Worlds move on 47 of the 50 levels, and docking targets are back to half size on every one.',
+    ],
+  },
+  {
     v: '1.11.1',
     date: '2026-08-05',
     title: 'Easier to find, nicer to share',

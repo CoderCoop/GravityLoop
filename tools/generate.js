@@ -43,10 +43,16 @@ function isDynamic(level) {
     (level.hazards || []).some(h => h.orbit || h.patrol || h.comet);
 }
 
-// Total heading change along a trajectory: ~0 for a straight shot, ~pi for
-// a strong slingshot curve, ~2pi for a full loop around a body.
+// Heading change along a trajectory, both ways of counting it:
+//   abs — total turning regardless of direction: ~0 for a straight shot,
+//         ~pi for a strong slingshot curve, ~2pi for a full loop.
+//   net — signed total. A loop keeps net ~= abs; an S-curve that bends one
+//         way and then back cancels out to a small net despite a large abs.
+// The pair is what separates one route shape from another, so levels in a
+// set can be made to demand genuinely different flying instead of all
+// converging on "bend as hard as possible".
 function pathTurning(pts) {
-  let turn = 0, pang = 0, have = false;
+  let abs = 0, net = 0, pang = 0, have = false;
   let px = pts[0].x, pz = pts[0].z;
   for (let i = 4; i < pts.length; i += 4) {
     const dx = pts[i].x - px, dz = pts[i].z - pz;
@@ -56,15 +62,61 @@ function pathTurning(pts) {
       let d = a - pang;
       while (d > Math.PI) d -= 2 * Math.PI;
       while (d < -Math.PI) d += 2 * Math.PI;
-      turn += Math.abs(d);
+      abs += Math.abs(d);
+      net += d;
     }
     pang = a; have = true;
     px = pts[i].x; pz = pts[i].z;
   }
-  return turn;
+  return { abs, net: Math.abs(net) };
 }
 
-function solveLeg(level, stage) {
+// Route shapes a level can be built to demand. Slots cycle through these so
+// consecutive levels in a set cannot all be solved the same way — the
+// complaint that levels 1-3 play as one level with the furniture moved.
+//   arc    a single sustained bend
+//   sling  a hard slingshot past something heavy
+//   loop   most of a revolution around a body
+//   ess    bends one way then back the other
+//   cruise a long route that keeps meeting new terrain
+// Thresholds are in radians of heading change and are what a set-1 layout can
+// actually deliver — measured, not guessed. A first pass asked set 1 for 4.2
+// radians of loop and missed by 5+ on every candidate, which just burns the
+// search budget that the other shapes need. SHAPE_RAMP scales these up for
+// the later sets, where the layouts can support it.
+const SHAPES = {
+  arc: { absLo: 1.0, absHi: 2.6, netLo: 0.75, interest: 1.0 },
+  sling: { absLo: 2.2, absHi: 4.2, netLo: 0.7, interest: 1.0 },
+  loop: { absLo: 2.6, absHi: 99, netLo: 0.75, interest: 1.0 },
+  ess: { absLo: 2.6, absHi: 99, netHi: 0.45, interest: 1.0 },
+  cruise: { absLo: 1.6, absHi: 99, netLo: 0.0, interest: 1.6 },
+};
+// Which shape each slot of a set must satisfy. Rotated by set so the same
+// slot number is not the same shape campaign-wide.
+const SHAPE_ORDER = ['arc', 'sling', 'ess', 'loop', 'cruise', 'sling', 'arc', 'loop', 'ess', 'cruise'];
+// Later sets demand more of whatever shape they are asking for. This is the
+// difficulty ramp that used to live in a single per-set turning floor — which
+// pushed every level in a set toward "bend as hard as possible" and so made
+// them all play alike.
+const SHAPE_RAMP = [1, 1.15, 1.3, 1.45, 1.6];
+function shapeFor(setIdx, slot) {
+  const base = SHAPES[SHAPE_ORDER[(slot + setIdx) % SHAPE_ORDER.length]];
+  const k = SHAPE_RAMP[Math.min(setIdx, SHAPE_RAMP.length - 1)];
+  return { ...base, absLo: +(base.absLo * k).toFixed(2), absHi: base.absHi > 90 ? base.absHi : +(base.absHi * k).toFixed(2) };
+}
+
+// How far a winning route strays from the shape asked for. Zero when it fits.
+function shapeMiss(shape, t) {
+  let miss = 0;
+  if (t.abs < shape.absLo) miss += (shape.absLo - t.abs) * 3;
+  if (t.abs > shape.absHi) miss += (t.abs - shape.absHi) * 0.6;
+  const ratio = t.abs > 1e-6 ? t.net / t.abs : 1;
+  if (shape.netLo != null && ratio < shape.netLo) miss += (shape.netLo - ratio) * 4;
+  if (shape.netHi != null && ratio > shape.netHi) miss += (ratio - shape.netHi) * 4;
+  return miss;
+}
+
+function solveLeg(level, stage, shape) {
   const dynamic = isDynamic(level);
   const times = dynamic ? Array.from({ length: 11 }, (_, i) => i * 0.9) : [0];
   const start = legStart(level, stage);
@@ -72,6 +124,7 @@ function solveLeg(level, stage) {
   const byT0 = dynamic ? new Array(times.length).fill(0) : null;
   const winners = [];
   const turns = [];
+  const misses = [];
   for (let ti = 0; ti < times.length; ti++) {
     const t0 = times[ti];
     for (let ang = 0; ang < 360; ang += 3) {
@@ -84,8 +137,9 @@ function solveLeg(level, stage) {
           wins++;
           if (byT0) byT0[ti]++;
           const turn = pathTurning(r.points);
-          turns.push(turn);
-          if (winners.length < 40) winners.push({ ang, sp, t0, turn });
+          turns.push(turn.abs);
+          if (shape) misses.push(shapeMiss(shape, turn));
+          if (winners.length < 40) winners.push({ ang, sp, t0, turn: turn.abs });
         }
       }
     }
@@ -93,7 +147,13 @@ function solveLeg(level, stage) {
   turns.sort((a, b) => a - b);
   const minTurn = turns.length ? turns[0] : 0;
   const medTurn = turns.length ? turns[Math.floor(turns.length / 2)] : 0;
-  return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn };
+  // The player finds the easiest way through, so the route that fits the
+  // level's shape best is what decides whether the level really has that
+  // shape — but every winner still has to bend (minTurn), or a straight shot
+  // sneaks past.
+  misses.sort((a, b) => a - b);
+  const shapeFit = misses.length ? misses[0] : Infinity;
+  return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn, shapeFit };
 }
 
 // Gravity-assist timing sensitivity: how much of the leg's wins concentrate
@@ -130,23 +190,31 @@ function legInterest(level, stage, legWinners) {
     }
     vals.push(near + Math.min(len / straight - 1, 1));
   }
-  if (!vals.length) return 0;
+  if (!vals.length) return { med: 0, min: 0 };
   vals.sort((a, b) => a - b);
-  return vals[Math.floor(vals.length / 2)];
+  // The median says what a typical winning route sweeps; the minimum says
+  // what the laziest one does. A level where you can simply fly wide around
+  // the whole system and skip the terrain has a fine median and a floor of
+  // nearly zero — so the floor is what has to be gated on.
+  return { med: vals[Math.floor(vals.length / 2)], min: vals[0] };
 }
 
 // Per-leg verdict: every leg in band, legs of comparable difficulty, route
 // interest above the set's floor, and (when required) timing-window
 // sensitivity on the first launch. Aborts early once a candidate cannot beat
 // the best found so far.
-function evaluate(set, needsTiming, level, bestDist = Infinity) {
+function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null) {
   const legs = legCount(level);
   const low = set.band[0], high = set.band[1] * (legs > 1 ? 2.2 : 1);
   const rates = [], winners = [];
   let dist2 = 0, minWins = Infinity, conc = 0;
-  let evalMinTurn = Infinity, evalMedTurn = Infinity;
+  let evalMinTurn = Infinity, evalMedTurn = Infinity, shapeFit = 0;
   for (let s = 0; s < legs; s++) {
-    const r = solveLeg(level, s);
+    const r = solveLeg(level, s, shape);
+    // Weighted above the turn floor below: the shape is the level's identity,
+    // the floor only rules out straight shots. Left equal, the search trades
+    // the shape away to shave the floor and every level ends up alike again.
+    if (shape) { shapeFit = Math.max(shapeFit, r.shapeFit); dist2 += r.shapeFit * 3; }
     minWins = Math.min(minWins, r.wins);
     if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
     rates.push(r.rate);
@@ -158,10 +226,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity) {
     // gravity is the point: reject layouts where a straight shot can win —
     // even the straightest winning route must bend by the set's floor, and
     // the typical route should bend well past it
-    if (set.turnMin) {
-      if (r.minTurn < set.turnMin) dist2 += (set.turnMin - r.minTurn) * 3;
-      if (r.medTurn < set.turnMed) dist2 += (set.turnMed - r.medTurn) * 1.5;
-    }
+    if (set.turnMin && r.minTurn < set.turnMin) dist2 += (set.turnMin - r.minTurn) * 2;
     if (s === 0 && needsTiming) {
       conc = r.byT0 ? concentration(r.byT0) : 0;
       if (conc < 0.5) dist2 += (0.5 - conc) * 6;     // demand launch windows
@@ -172,13 +237,21 @@ function evaluate(set, needsTiming, level, bestDist = Infinity) {
     const ratio = Math.max(...rates) / Math.max(Math.min(...rates), 1e-9);
     if (ratio > 2.5) dist2 += ratio - 2.5;           // legs must be comparable
   }
-  let interest = 0;
+  let interest = 0, interestMin = Infinity;
   if (set.interest) {
-    for (let s = 0; s < legs; s++) interest += legInterest(level, s, winners[s]);
+    for (let s = 0; s < legs; s++) {
+      const iv = legInterest(level, s, winners[s]);
+      interest += iv.med;
+      interestMin = Math.min(interestMin, iv.min);
+    }
     interest /= legs;
     if (interest < set.interest) dist2 += (set.interest - interest) * 1.2;
+    // and no leg may offer a way through that meets nothing
+    const floor = set.interestMin != null ? set.interestMin : Math.max(set.interest - 1.4, 1);
+    if (interestMin < floor) dist2 += (floor - interestMin) * 2.5;
   }
-  return { minWins, rates, dist: dist2, conc, legs, winners, interest, minTurn: evalMinTurn, medTurn: evalMedTurn };
+  return { minWins, rates, dist: dist2, conc, legs, winners, interest, interestMin,
+    shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn };
 }
 
 // ---------------------------------------------------------------------------
@@ -1018,16 +1091,14 @@ const SETS = [
 // ---------------------------------------------------------------------------
 // Generate
 // ---------------------------------------------------------------------------
-// Turning thresholds per set: [every winner must bend >=, median winner
-// should bend >=] in radians. GEN_TIER=A is moderate, B (default) demands
-// loops-and-curves hard, scaling with difficulty.
+// Floor on the STRAIGHTEST winning route, per set, in radians: gravity is the
+// point, so no level may offer a way through that barely bends. How much a
+// level bends beyond that, and in what shape, is the per-slot job of SHAPES —
+// a single per-set median floor made every level in a set play the same.
+// GEN_TIER=A is moderate, C demands curves hard.
 const TIER = process.env.GEN_TIER || 'C';
-const TURNS = {
-  A: [[0.7, 1.2], [1.0, 1.5], [1.3, 1.8], [1.6, 2.2], [2.0, 2.8]],
-  B: [[1.0, 1.8], [1.5, 2.3], [2.0, 2.8], [2.5, 3.3], [3.2, 4.0]],
-  C: [[1.3, 2.2], [2.0, 2.9], [2.6, 3.5], [3.2, 4.2], [4.0, 5.0]],
-}[TIER];
-SETS.forEach((s, i) => { s.turnMin = TURNS[i][0]; s.turnMed = TURNS[i][1]; });
+const TURNS = { A: [0.6, 0.8, 1.0, 1.2, 1.5], B: [0.8, 1.1, 1.4, 1.7, 2.1], C: [1.1, 1.4, 1.7, 2.0, 2.4] }[TIER];
+SETS.forEach((s, i) => { s.turnMin = TURNS[i]; });
 // blockers + turn gates cut raw win rates: halve the band floors
 SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 
@@ -1066,6 +1137,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     return { level: original.level, found: true, attempt: -1, dist: 0 };
   }
   const needsTiming = set.timing != null && slot >= set.timing;
+  const shape = shapeFor(s, slot);
   let best = null;
   let found = null;
   let geoOk = 0, solvable = 0;
@@ -1075,7 +1147,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     if (!lv) continue;
     scaleGoals(lv);
     geoOk++;
-    const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity);
+    const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity, shape);
     if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
     solvable++;
     if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng, attempt };
@@ -1094,7 +1166,8 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   console.log(
     `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
-    `${r.interest != null ? ` interest ${r.interest.toFixed(2)}` : ''}` +
+    ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
+    `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +

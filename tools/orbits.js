@@ -17,8 +17,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { predict, legStart, legCount, bodiesAt, anchorX, anchorZ } from '../src/physics.js';
+import { predict, legStart, legCount, bodiesAt, hazardsAt, anchorX, anchorZ } from '../src/physics.js';
 import { LEVELS, SETS } from '../src/levels.js';
+import { sweepPlan, requiredGap, drawRadius, isRoving, BODY_GAP } from './sweep.mjs';
 
 // Degrees a mid-distance planet sweeps during a 10s flight, per set.
 // Set 5 is untouched (it ships with fast alien orbits already).
@@ -100,6 +101,16 @@ function orbitFor(level, i, scale, anchors, frozen) {
     const d = Math.hypot(s.dx, s.dz);
     if (Math.abs(d - r) < b.radius + s.r + 1) return null;
   }
+  // Same again for parked obstacles — a derelict, a patrol's line, a comet's
+  // ellipse. A ring that crosses one hits it eventually, which is exact and
+  // cheap to rule out here rather than hoping a time sample lands on it.
+  // Asteroid grains are exempt: the field is a diffuse cloud on the grid, and
+  // a world floats above it.
+  for (const h of level.hazards || []) {
+    if (h.kind === 'asteroid' || h.x == null) continue;
+    const d = Math.hypot(h.x - p.x, h.z - p.z);
+    if (Math.abs(d - r) < b.radius + h.radius + BODY_GAP + 0.5) return null;
+  }
   const set = Math.min(Math.floor(level.difficulty ? level.difficulty - 1 : 0), 3);
   const base = (SWEEP_DEG[set] * Math.PI) / 180 / 10;
   // inner orbits sweep faster (Kepler-ish), moons faster still
@@ -109,6 +120,22 @@ function orbitFor(level, i, scale, anchors, frozen) {
     parent: pi, cx: p.x, cz: p.z, radius: +r.toFixed(3),
     phase: +Math.atan2(dz, dx).toFixed(4), omega: +omega.toFixed(5),
   };
+}
+
+// A planet and its moons move as one rigid system or not at all. Parking a
+// moon while its planet keeps orbiting leaves the moon behind in empty space
+// and eventually runs the planet straight over it, so freezing either end of
+// that relationship freezes the whole system.
+function freezeKin(level, frozen) {
+  for (let pass = 0; pass < level.bodies.length; pass++) {
+    const before = frozen.size;
+    level.bodies.forEach((b, i) => {
+      if (b.moonOf == null) return;
+      if (frozen.has(i)) frozen.add(b.moonOf);
+      if (frozen.has(b.moonOf)) frozen.add(i);
+    });
+    if (frozen.size === before) return;
+  }
 }
 
 function withOrbits(level, scale, anchors, frozen) {
@@ -132,34 +159,70 @@ function withOrbits(level, scale, anchors, frozen) {
   return out;
 }
 
+
 // Backstop for the geometric check above: moons ride a moving parent, and an
 // anchored station must never be swept by a body OTHER than its own.
-// Which orbiting bodies sweep a pad or station they are not carrying. Empty
-// means the level is clear.
+//
+// Everything drawn on the surface is checked against everything else — worlds
+// against worlds, worlds against asteroids, worlds against pads and docking
+// rings. Checking only worlds-against-stations left moons buried in planets
+// and docking rings sitting inside Jupiter. Returns the orbiting bodies
+// implicated; empty means the level is clear.
 function offenders(level, anchors) {
   const bad = new Set();
-  const spots = keepOuts(level, anchors);
-  const riders = [
-    { spot: level.ship, r: 3, own: anchors.ship && anchors.ship.body },
-    { spot: level.goal, r: level.goal.r + 1, own: anchors.goal && anchors.goal.body },
-    ...(level.waypoints || []).map((wp, i) => ({ spot: wp, r: wp.r + 1, own: anchors.waypoints[i] && anchors.waypoints[i].body })),
-  ].filter(x => x.own != null);
-  for (let t = 0; t <= 120; t += 0.5) {
+  const drawR = drawRadius;
+  // Everything the player sees, at time t, with the orbiting bodies each disc
+  // depends on. Blaming those is how a collision becomes actionable: freeze
+  // the world and the disc stops moving into things.
+  const discsAt = t => {
     const ps = bodiesAt(level, t);
-    for (let i = 0; i < ps.length; i++) {
-      const b = level.bodies[i];
-      if (!b.orbit) continue;
-      for (const s of spots) {
-        if (Math.hypot(ps[i].x - s.x, ps[i].z - s.z) < b.radius + s.r) bad.add(i);
-      }
-      for (const rd of riders) {
-        if (rd.own === i) continue;                       // its own host is fine
-        const sx = anchorX(rd.spot, ps), sz = anchorZ(rd.spot, ps);
-        if (Math.hypot(ps[i].x - sx, ps[i].z - sz) < b.radius + rd.r) bad.add(i);
+    const hs = hazardsAt(level, t);
+    const out = [];
+    level.bodies.forEach((b, i) => {
+      out.push({ x: ps[i].x, z: ps[i].z, r: drawR(b), idx: i, dust: false, target: false, blame: b.orbit ? [i] : [] });
+    });
+    (level.hazards || []).forEach((h, k) => {
+      const p = hs[k];
+      if (p) out.push({ x: p.x, z: p.z, r: h.radius, dust: h.kind === 'asteroid', target: false, roving: isRoving(h), blame: [] });
+    });
+    const station = (spot, r, a, key) => {
+      const host = a && level.bodies[a.body].orbit ? a.body : null;
+      out.push({
+        x: anchorX(host != null ? { ...spot, anchor: a } : spot, ps),
+        z: anchorZ(host != null ? { ...spot, anchor: a } : spot, ps),
+        r, dust: false, target: true, host, rider: host != null ? key : null,
+        blame: host != null ? [host] : [],
+      });
+    };
+    station(level.ship, 3, anchors.ship, 'ship');
+    station(level.goal, level.goal.r + 1, anchors.goal, 'goal');
+    (level.waypoints || []).forEach((wp, i) => station(wp, wp.r + 1, anchors.waypoints[i], `wp${i}`));
+    return out;
+  };
+  // Collisions a riding station is involved in are reported separately: a
+  // station that sweeps into things can simply stop riding, which costs one
+  // level a moving pad. Freezing its host world instead stops every planet on
+  // the level, which is how belt levels came out completely static.
+  const riders = new Set();
+  const { T, step } = sweepPlan(level);
+  for (let t = 0; t <= T; t += step) {
+    const d = discsAt(t);
+    for (let i = 0; i < d.length; i++) {
+      for (let j = i + 1; j < d.length; j++) {
+        const gap = requiredGap(level, d[i], d[j]);
+        if (gap === null) continue;
+        if (Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) >= d[i].r + d[j].r + gap) continue;
+        if (d[i].rider || d[j].rider) {
+          if (d[i].rider) riders.add(d[i].rider);
+          if (d[j].rider) riders.add(d[j].rider);
+          continue;
+        }
+        for (const k of d[i].blame) bad.add(k);
+        for (const k of d[j].blame) bad.add(k);
       }
     }
   }
-  return bad;
+  return { bodies: bad, riders };
 }
 
 // Coarse solver sweep, identical in shape to solve.js --fast.
@@ -193,20 +256,33 @@ function solveLevel(index) {
     return { index, scale: null, skipped: 'already moving', bodies: [] };
   }
   const anchors = anchorsFor(level);
-  // Freeze the specific bodies that would sweep a pad or station — slowing
-  // them down never helps, it only delays the collision.
+  // Resolve geometry in the order that costs the least motion. Slowing an
+  // orbit never helps — it only delays the collision — so the choice is which
+  // thing stops moving:
+  //   1. a station that sweeps into something stops riding its world,
+  //   2. only then is a world itself frozen (and its moons with it).
+  // Doing (2) first turned whole belt levels static, because one goal riding
+  // a planet through the rocks condemned every planet on the level.
   const frozen = new Set();
-  for (let pass = 0; pass < 8; pass++) {
-    const bad = offenders(withOrbits(level, 1, anchors, frozen), anchors);
-    if (!bad.size) break;
+  for (let pass = 0; pass < 10; pass++) {
+    const { bodies: bad, riders } = offenders(withOrbits(level, 1, anchors, frozen), anchors);
+    if (!bad.size && !riders.size) break;
+    if (riders.size) {
+      if (riders.has('ship')) anchors.ship = null;
+      if (riders.has('goal')) anchors.goal = null;
+      anchors.waypoints = anchors.waypoints.map((a, i) => (riders.has(`wp${i}`) ? null : a));
+      continue;                       // re-measure before freezing anything
+    }
     bad.forEach(i => frozen.add(i));
+    freezeKin(level, frozen);
   }
   for (const scale of BACKOFF) {
     const cand = withOrbits(level, scale, anchors, frozen);
     if (!cand.bodies.some(b => b.orbit)) {
       return { index, scale: null, skipped: 'no orbitable bodies', bodies: [] };
     }
-    if (offenders(cand, anchors).size) continue;
+    const off = offenders(cand, anchors);
+    if (off.bodies.size || off.riders.size) continue;
     const wins = minWinsOf(cand);
     if (wins >= MIN_WINS) {
       const bodies = cand.bodies.map((b, i) => (b.orbit ? { i, orbit: b.orbit } : null)).filter(Boolean);
