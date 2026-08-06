@@ -112,24 +112,11 @@ function init() {
 
   document.getElementById('btn-home').addEventListener('click', () => { sfx.clickSound(); showMenu(); });
   document.getElementById('btn-retry').addEventListener('click', () => { sfx.clickSound(); if (state !== 'menu') resetLevel(); });
-  document.getElementById('btn-mute').addEventListener('click', toggleMute);
   document.getElementById('btn-install').addEventListener('click', runInstall);
   document.getElementById('btn-install-no').addEventListener('click', () => { sfx.clickSound(); dismissInstall(); });
   document.getElementById('level-label').addEventListener('click', () => {
     sfx.clickSound();
     setLevelPanel(!levelPanelOpen());
-  });
-  const expBtn = document.getElementById('btn-exp');
-  expBtn.classList.toggle('on', !!save.experimental);
-  expBtn.addEventListener('click', () => {
-    sfx.clickSound();
-    save.experimental = !save.experimental;
-    storeSave();
-    expBtn.classList.toggle('on', !!save.experimental);
-    buildLevelBar();
-    toast(save.experimental
-      ? '🧪 Experimental mode ON — every level is open to explore!'
-      : '🧪 Experimental mode off — back to normal progression.');
   });
 
   loadLevel(Math.min(save.unlocked - 1, LEVELS.length - 1));
@@ -1572,7 +1559,9 @@ function updateThrustSound() {
 
 function toggleMute() {
   sfx.setMuted(!sfx.isMuted());
-  document.getElementById('btn-mute').textContent = sfx.isMuted() ? '🔇' : '🔊';
+  // The switch lives on the title screen; if we are looking at it, redraw so
+  // the M key and the toggle never disagree.
+  if (state === 'menu') showMenu();
 }
 
 // ---------------------------------------------------------------------------
@@ -1983,6 +1972,42 @@ function showOverlay(html) {
   overlayEl().classList.add('show');
 }
 
+
+// ---------------------------------------------------------------------- settings
+// The title screen IS the settings screen: every option the game has lives
+// here, so there is one place to look rather than a scatter of HUD icons whose
+// meaning you have to infer from a glyph.
+function settingsRows() {
+  const muted = sfx.isMuted();
+  const row = (id, on, icon, name, hint) => `
+      <button class="setting" id="${id}" role="switch" aria-checked="${on}">
+        <span class="s-icon">${icon}</span>
+        <span class="s-text"><b>${name}</b><span>${hint}</span></span>
+        <span class="s-toggle${on ? ' on' : ''}"></span>
+      </button>`;
+  return `
+    <div class="settings">
+      ${row('set-sound', !muted, muted ? '\u{1F507}' : '\u{1F50A}', 'Sound',
+    'Launch thuds, thruster hiss, docking chime')}
+      ${row('set-exp', !!save.experimental, '\u{1F9EA}', 'Experimental mode',
+    'Open every level, ignoring progression')}
+    </div>`;
+}
+
+function wireSettings(rerender) {
+  const snd = document.getElementById('set-sound');
+  if (snd) snd.addEventListener('click', () => { toggleMute(); rerender(); });
+  const exp = document.getElementById('set-exp');
+  if (exp) exp.addEventListener('click', () => {
+    sfx.clickSound();
+    save.experimental = !save.experimental;
+    storeSave();
+    buildLevelBar();
+    rerender();
+  });
+}
+
+
 function showMenu() {
   state = 'menu';
   showOverlay(`
@@ -2002,6 +2027,7 @@ function showMenu() {
       <button id="btn-play" class="big">▶ Play</button>
       <button id="btn-news" class="linkish">v${VERSION} · What's new${unreadNews() ? ' <span class="news-dot">NEW</span>' : ''}</button>
       <button id="btn-rebuild" class="linkish">Built by AI · rebuild it yourself</button>
+      ${settingsRows()}
       <div class="menu-links">
         <a href="${REPO}" target="_blank" rel="noopener">Project site ↗</a>
         <a href="${REPO}#readme" target="_blank" rel="noopener">How it works ↗</a>
@@ -2022,6 +2048,7 @@ function showMenu() {
     sfx.clickSound();
     showRebuild();
   });
+  wireSettings(showMenu);
   refreshInstallUI();
 }
 
