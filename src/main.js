@@ -231,7 +231,37 @@ function buildTerrain() {
 }
 
 const _c = new THREE.Color();
-function heightColor(y, out, o) {
+// MOCKUP: how the surface shows gravity where the ground looks flat.
+//   'off'   height colour only (today) — far field reads as empty
+//   'field' tint by force strength, so flat ground still glows with its pull
+//   'bands' contour banding by potential: rings keep marching outward
+//   'comp'  compress the deep wells so the gentle far-field slope is visible
+let gravVis = 'off';
+if (typeof window !== 'undefined' && window.GRAV_VIS) gravVis = window.GRAV_VIS;
+// Force at a vertex, normalised the same way the in-flight readout is.
+let fieldAt = null;
+
+function heightColor(y, out, o, idx) {
+  if (gravVis === 'field' && fieldAt) {
+    const f = fieldAt[idx];
+    // cyan where gravity is faint but present, through green to hot red where
+    // it dominates. Nowhere on the map is truly unlit: that is the point.
+    _c.setHSL(0.55 - 0.55 * f, 0.85, 0.18 + 0.42 * f);
+    _c.toArray(out, o);
+    return;
+  }
+  if (gravVis === 'bands' && fieldAt) {
+    const band = ((-y) % 4) / 4;              // one ring every 4 units of depth
+    const edge = band < 0.16 ? 1 : 0.22;
+    const t = Math.min(-y / 26, 1);
+    _c.setRGB((0.16 + 0.5 * t) * edge, (0.55 + 0.2 * t) * edge, (0.85 - 0.1 * t) * edge);
+    _c.toArray(out, o);
+    return;
+  }
+  heightOnlyColor(y, out, o);
+}
+
+function heightOnlyColor(y, out, o) {
   if (y > 0.4) {
     // antimatter hills glow violet
     const t = Math.min(y / 12, 1);
@@ -282,12 +312,19 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
+  if (gravVis === 'field' || gravVis === 'bands') {
+    if (!fieldAt || fieldAt.length !== gridX.length) fieldAt = new Float32Array(gridX.length);
+    for (let idx = 0; idx < gridX.length; idx++) {
+      const a = accelAt(level, gridX[idx], gridZ[idx], positions);
+      fieldAt[idx] = pullFrac(Math.hypot(a.x, a.z));
+    }
+  }
   for (let idx = 0; idx < gridX.length; idx++) {
     const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
     if (snap) {
       pos[idx * 3 + 1] = y;
-      heightColor(y, col, idx * 3);
+      heightColor(y, col, idx * 3, idx);
     }
   }
   if (snap) {
@@ -313,7 +350,7 @@ function easeTerrain(dt) {
       moved = true;
       // depth colour is a slow gradient — only worth redoing on a visible
       // change, which keeps the per-frame ease cheap at full grid density
-      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3, idx); recoloured = true; }
     }
   }
   if (moved) posAttr.needsUpdate = true;
