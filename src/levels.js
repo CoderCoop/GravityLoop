@@ -104,7 +104,7 @@ export const LEVELS = [
           "parent": 3,
           "cx": -26.001,
           "cz": -1.998,
-          "radius": 19.312,
+          "radius": 19.311,
           "phase": -2.7707,
           "omega": 0.01849
         }
@@ -194,7 +194,7 @@ export const LEVELS = [
           "parent": 3,
           "cx": 2.002,
           "cz": 25,
-          "radius": 19.025,
+          "radius": 19.024,
           "phase": 1.6234,
           "omega": 0.01863
         }
@@ -776,14 +776,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 38,
-          "cz": -23,
-          "radius": 54.037,
-          "phase": -3.1046,
-          "omega": 0.00503
-        }
+        "x": -16,
+        "z": -24.999
       },
       {
         "name": "Moon",
@@ -959,14 +953,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 30,
-          "cz": 31,
-          "radius": 58.796,
-          "phase": -2.4164,
-          "omega": 0.01325
-        }
+        "x": -14.001,
+        "z": -7.998
       },
       {
         "name": "Moon",
@@ -1056,14 +1044,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 44,
-          "cz": 10,
-          "radius": 60.017,
-          "phase": -2.9573,
-          "omega": 0.01311
-        }
+        "x": -15.001,
+        "z": -0.998
       },
       {
         "name": "Moon",
@@ -1153,14 +1135,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -16,
-          "cz": 43,
-          "radius": 60.017,
-          "phase": -1.3865,
-          "omega": 0.01311
-        }
+        "x": -5.002,
+        "z": -16.001
       },
       {
         "name": "Moon",
@@ -1246,14 +1222,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 40,
-          "cz": 23,
-          "radius": 62.769,
-          "phase": -2.7493,
-          "omega": 0.01282
-        }
+        "x": -18.001,
+        "z": -0.997
       },
       {
         "name": "Moon",
@@ -1438,14 +1408,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -32,
-          "cz": -31,
-          "radius": 59.405,
-          "phase": 0.63,
-          "omega": 0.01318
-        }
+        "x": 16.001,
+        "z": 3.998
       },
       {
         "name": "Moon",
@@ -1502,12 +1466,7 @@ export const LEVELS = [
     "extent": 90,
     "ship": {
       "x": 37,
-      "z": 43,
-      "anchor": {
-        "body": 3,
-        "dx": 5,
-        "dz": 8
-      }
+      "z": 43
     },
     "goal": {
       "x": -33,
@@ -1559,14 +1518,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 38,
-          "cz": -29,
-          "radius": 64.281,
-          "phase": 1.6643,
-          "omega": 0.01267
-        }
+        "x": 31.998,
+        "z": 35
       },
       {
         "name": "Moon",
@@ -1582,14 +1535,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": 38,
-          "cz": -29,
-          "radius": 73.348,
-          "phase": -2.6901,
-          "omega": 0.01186
-        }
+        "x": -27.998,
+        "z": -61.002
       }
     ],
     "homeIdx": 3,
@@ -2031,14 +1978,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -22,
-          "cz": -25,
-          "radius": 40.05,
-          "phase": -0.05,
-          "omega": 0.02627
-        }
+        "x": 18,
+        "z": -27.002
       },
       {
         "name": "Moon",
@@ -2152,14 +2093,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -25,
-          "cz": 24,
-          "radius": 39.294,
-          "phase": 0.2573,
-          "omega": 0.02652
-        }
+        "x": 13,
+        "z": 33.999
       },
       {
         "name": "Moon",
@@ -2273,14 +2208,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -27,
-          "cz": 10,
-          "radius": 40.224,
-          "phase": 0.6087,
-          "omega": 0.02621
-        }
+        "x": 5.999,
+        "z": 33
       },
       {
         "name": "Moon",
@@ -2624,12 +2553,7 @@ export const LEVELS = [
     "goal": {
       "x": 9,
       "z": -85,
-      "r": 1.01,
-      "anchor": {
-        "body": 9,
-        "dx": 2,
-        "dz": -15
-      }
+      "r": 1.01
     },
     "maxLaunch": 47,
     "fuel": 0.35,
@@ -2721,14 +2645,8 @@ export const LEVELS = [
         "mass": 1250,
         "radius": 5.7,
         "color": 0xe3c896,
-        "orbit": {
-          "parent": 0,
-          "cx": 33,
-          "cz": 13,
-          "radius": 86.977,
-          "phase": -1.8744,
-          "omega": 0.01782
-        }
+        "x": 6.997,
+        "z": -69.999
       },
       {
         "name": "Titan",
@@ -2736,14 +2654,8 @@ export const LEVELS = [
         "radius": 1.1,
         "color": 0xd8d8d8,
         "moonOf": 9,
-        "orbit": {
-          "parent": 9,
-          "cx": 7,
-          "cz": -70,
-          "radius": 9.22,
-          "phase": -0.2187,
-          "omega": 0.12045
-        }
+        "x": 15.998,
+        "z": -72
       },
       {
         "name": "Rhea",
@@ -2910,14 +2822,8 @@ export const LEVELS = [
         "mass": 1250,
         "radius": 5.7,
         "color": 0xe3c896,
-        "orbit": {
-          "parent": 0,
-          "cx": -35,
-          "cz": 13,
-          "radius": 84.959,
-          "phase": 0.7354,
-          "omega": 0.01804
-        }
+        "x": 28.002,
+        "z": 69.998
       },
       {
         "name": "Titan",
@@ -2925,14 +2831,8 @@ export const LEVELS = [
         "radius": 1.2,
         "color": 0xd8d8d8,
         "moonOf": 10,
-        "orbit": {
-          "parent": 10,
-          "cx": 28,
-          "cz": 70,
-          "radius": 9.22,
-          "phase": 0.8622,
-          "omega": 0.12045
-        }
+        "x": 34.002,
+        "z": 76.998
       },
       {
         "name": "Rhea",
@@ -3211,14 +3111,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 8,
-          "cz": -40,
-          "radius": 38.897,
-          "phase": 2.828,
-          "omega": 0.02665
-        }
+        "x": -29,
+        "z": -28.001
       },
       {
         "name": "Moon",
@@ -3251,14 +3145,8 @@ export const LEVELS = [
         "radius": 1.2,
         "color": 0xd8d8d8,
         "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 72,
-          "cz": -30,
-          "radius": 9.849,
-          "phase": 1.989,
-          "omega": 0.11654
-        }
+        "x": 68,
+        "z": -21
       },
       {
         "name": "Europa",
@@ -3266,14 +3154,8 @@ export const LEVELS = [
         "radius": 1.1,
         "color": 0xd8d8d8,
         "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 72,
-          "cz": -30,
-          "radius": 13.038,
-          "phase": -2.1375,
-          "omega": 0.10128
-        }
+        "x": 65,
+        "z": -41
       },
       {
         "name": "Ganymede",
@@ -3281,14 +3163,8 @@ export const LEVELS = [
         "radius": 1,
         "color": 0xd8d8d8,
         "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 72,
-          "cz": -30,
-          "radius": 14.56,
-          "phase": 0.2783,
-          "omega": 0.09584
-        }
+        "x": 86,
+        "z": -26
       },
       {
         "name": "Saturn",
@@ -3471,8 +3347,8 @@ export const LEVELS = [
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 62,
-          "cz": 11,
+          "cx": 62.001,
+          "cz": 10.999,
           "radius": 10.05,
           "phase": -0.0997,
           "omega": 0.11536
@@ -3486,8 +3362,8 @@ export const LEVELS = [
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 62,
-          "cz": 11,
+          "cx": 62.001,
+          "cz": 10.999,
           "radius": 12.649,
           "phase": 1.8925,
           "omega": 0.10283
@@ -3501,8 +3377,8 @@ export const LEVELS = [
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 62,
-          "cz": 11,
+          "cx": 62.001,
+          "cz": 10.999,
           "radius": 15.232,
           "phase": -2.7367,
           "omega": 0.09371
@@ -3635,14 +3511,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 16,
-          "cz": -22,
-          "radius": 38.601,
-          "phase": 1.2818,
-          "omega": 0.03716
-        }
+        "x": 27.001,
+        "z": 15
       },
       {
         "name": "Moon",
@@ -3938,14 +3808,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -25,
-          "cz": 3,
-          "radius": 39.825,
-          "phase": -1.0735,
-          "omega": 0.03659
-        }
+        "x": -6.001,
+        "z": -32.001
       },
       {
         "name": "Moon",
@@ -4216,12 +4080,7 @@ export const LEVELS = [
     "extent": 110,
     "ship": {
       "x": -25,
-      "z": 31,
-      "anchor": {
-        "body": 3,
-        "dx": -8,
-        "dz": 6
-      }
+      "z": 31
     },
     "goal": {
       "x": 65,
@@ -4273,14 +4132,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -23,
-          "cz": -15,
-          "radius": 40.447,
-          "phase": 1.4219,
-          "omega": 0.0363
-        }
+        "x": -17,
+        "z": 24.999
       },
       {
         "name": "Moon",
@@ -4296,14 +4149,8 @@ export const LEVELS = [
         "mass": 220,
         "radius": 1.9,
         "color": 0xd1603d,
-        "orbit": {
-          "parent": 0,
-          "cx": -23,
-          "cz": -15,
-          "radius": 51.4,
-          "phase": 0.9234,
-          "omega": 0.0322
-        }
+        "x": 8,
+        "z": 26
       },
       {
         "name": "Jupiter",
@@ -5340,14 +5187,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": -31,
-          "cz": 0,
-          "radius": 41.049,
-          "phase": -0.976,
-          "omega": 0.03604
-        }
+        "x": -7.999,
+        "z": -33.999
       },
       {
         "name": "Moon",
@@ -5380,14 +5221,8 @@ export const LEVELS = [
         "radius": 1.1,
         "color": 0xd8d8d8,
         "moonOf": 6,
-        "orbit": {
-          "parent": 6,
-          "cx": 14,
-          "cz": 59,
-          "radius": 9.899,
-          "phase": -0.7854,
-          "omega": 0.16144
-        }
+        "x": 21,
+        "z": 52
       },
       {
         "name": "Europa",
@@ -6217,10 +6052,10 @@ export const LEVELS = [
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 2,
-          "cz": -61,
+          "cx": 1.997,
+          "cz": -60.999,
           "radius": 10.05,
-          "phase": -1.6705,
+          "phase": -1.6706,
           "omega": 0.16023
         }
       },
@@ -6232,10 +6067,10 @@ export const LEVELS = [
         "moonOf": 6,
         "orbit": {
           "parent": 6,
-          "cx": 2,
-          "cz": -61,
-          "radius": 12.649,
-          "phase": 0.3218,
+          "cx": 1.997,
+          "cz": -60.999,
+          "radius": 12.648,
+          "phase": 0.3219,
           "omega": 0.14282
         }
       }
@@ -7056,14 +6891,8 @@ export const LEVELS = [
         "mass": 420,
         "radius": 2.6,
         "color": 0x4d9de0,
-        "orbit": {
-          "parent": 0,
-          "cx": 4,
-          "cz": -29,
-          "radius": 39.962,
-          "phase": 2.5883,
-          "omega": 0.03652
-        }
+        "x": -30,
+        "z": -8
       },
       {
         "name": "Moon",
