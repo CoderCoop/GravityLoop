@@ -359,7 +359,14 @@ const arg = k => (process.argv.find(a => a.startsWith(`--${k}=`)) || '').split('
 
 const applyDir = arg('apply');
 if (applyDir) {
-  const levels = LEVELS.map(l => ({ ...l, bodies: l.bodies.map(b => ({ ...b })) }));
+  // Strip a previous run first. Applying on top of one only ever ADDED orbits,
+  // so a body the new run decided should stay put kept the old one — which is
+  // how a re-run that correctly parked Earth alongside its Moon still shipped
+  // an orbiting Earth. Merging must replace the tool's output, not accumulate.
+  const levels = LEVELS.map(l => {
+    const s = stripToolOrbits(l);
+    return { ...s, bodies: s.bodies.map(b => ({ ...b })) };
+  });
   let moved = 0, statics = [];
   for (let i = 0; i < levels.length; i++) {
     const f = path.join(applyDir, `orbit-${i}.json`);
