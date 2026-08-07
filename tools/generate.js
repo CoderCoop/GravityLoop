@@ -693,10 +693,24 @@ function addWaypoints(rng, level, specs) {
     for (let tries = 0; tries < 140 && !placed; tries++) {
       const anchor = near.length ? near[Math.min(near.length - 1, Math.floor(tries / 24))] : null;
       let x, z;
-      if (anchor) {
-        // clear of the drawn disc (and of the ring it sweeps, if it orbits) by
-        // more than the geometry check demands, but still inside its well
-        const d = anchor.b.radius + anchor.a.maxR + rand(rng, 11, 19);
+      if (anchor && anchor.a.maxR > 0) {
+        // An orbiting world is not at a place, it is a ring — and annulus()
+        // reports the ORBIT CENTRE with the ring radius, not the planet. So
+        // "beside it" means beside the band: park just outside or just inside,
+        // at the azimuth where the route crosses. Offsetting from a.x/a.z as
+        // though it were the planet threw the stop a full orbital radius clear
+        // of the system, which is how set 5's tours ended up flying around the
+        // outside in a straight line.
+        const cx = level.ship.x + px * spec.t, cz = level.ship.z + pz * spec.t;
+        const az = Math.atan2(cz - anchor.a.z, cx - anchor.a.x) + rand(rng, -0.35, 0.35);
+        const off = anchor.b.radius + rand(rng, 11, 19);
+        const R = anchor.a.maxR + (tries % 2 === 0 ? off : -off);
+        if (R < 8) continue;
+        x = Math.round(anchor.a.x + Math.cos(az) * R);
+        z = Math.round(anchor.a.z + Math.sin(az) * R);
+      } else if (anchor) {
+        // a static world: clear of the drawn disc, but still inside its well
+        const d = anchor.b.radius + rand(rng, 11, 19);
         // Which flank? With home and target on opposite sides of the star the
         // chord runs past it, so one of the two offsets points straight at the
         // sun — that single choice was 80% of all waypoint rejections. Take
@@ -976,11 +990,19 @@ function sampleEarthrise(rng, slot) {
   // then out to the inner planets.
   const moonSlot = slot < 1;
   const venusSlot = slot >= 1 && slot < 5;
+  // Home on the centre line, destination near-opposite it. The Mars slots used
+  // to put Earth at center + 0.45..0.7 dA instead, leaving the two ends only
+  // 88-150 degrees apart: measured, every one of them came out with the
+  // laziest route passing NO third-party world and no assist available, while
+  // the fully opposed Venus slots delivered one world and a forced assist —
+  // and passed geometry twice as often besides.
+  const sd = Math.sign(dA);
+  const targetAng = center - dA;
   const ang = {
-    mercury: center + rand(rng, -1.4, 1.4),
-    venus: venusSlot ? center - dA : center + rand(rng, -1.1, 1.1),
-    earth: moonSlot ? center + rand(rng, -0.18, 0.18) : center + dA * rand(rng, 0.45, 0.7),
-    mars: center - dA,
+    mercury: center + sd * rand(rng, 1.4, 2.2),
+    venus: venusSlot ? targetAng : center - sd * rand(rng, 0.7, 1.2),
+    earth: center + rand(rng, -0.2, 0.2),
+    mars: venusSlot || moonSlot ? center + sd * rand(rng, 0.7, 1.2) : targetAng,
   };
   const inner = moonSlot || venusSlot;
   const past = inner ? [0.34, 0.46] : [0.30, 0.40];  // rings wide of a centred sun
@@ -1399,21 +1421,40 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 //           could not reach 3 at all.
 //   turn  — radians the straightest winning route must bend.
 //   shape — how far the best-fitting winner may miss the slot's route shape.
+//
+// These are set from the measured distribution, not from ambition. The
+// previous numbers (wells 2-3, turn 1.3-2.6) were never once met: every slot
+// in every set fell through to a relaxed rung, and the last rung asks for
+// nothing at all — so the effective bar was zero and the search kept whatever
+// it happened to find. A bar that is always relaxed does not make hard levels,
+// it makes the difficulty search inoperative.
+//
+// Sampled over 120 layouts per slot with the corrected geometry, what the
+// samplers actually deliver on a single-leg level is one third-party world and
+// a forced assist, bending 1.15-2.35 radians. So `wells` sits at 1 and the
+// turn floor rises across the campaign through the middle of that range. Slots
+// that can do better still do — set 1 slot 5 came out at wells 2 / turn 1.94
+// — because the bar decides what is ACCEPTABLE and the rate band decides what
+// is chosen from among the acceptable.
 const HARD = [
-  { wells: 2, turn: 1.3, shape: 0.8, assist: 4 },
-  { wells: 2, turn: 1.7, shape: 0.7, assist: 6 },
-  { wells: 2, turn: 2.0, shape: 0.7, assist: 8 },
-  { wells: 3, turn: 2.3, shape: 0.6, assist: 10 },
-  { wells: 3, turn: 2.6, shape: 0.6, assist: 12 },
+  { wells: 1, turn: 1.3, shape: 1.4, assist: 3 },
+  { wells: 1, turn: 1.4, shape: 1.4, assist: 4 },
+  { wells: 1, turn: 1.5, shape: 1.4, assist: 5 },
+  { wells: 1, turn: 1.5, shape: 1.4, assist: 6 },
+  { wells: 1, turn: 1.0, shape: 1.4, assist: 6 },
 ]
 // Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
 // tries. Each rung is reported, so an easy level is visible in the log rather
 // than silently shipped as if it had passed.
+// Each rung must be strictly looser than the one above it, or a candidate can
+// be rejected by a rung that is supposed to be a concession: the old rung 2
+// dropped wells to 1 while rung 3 raised it back to max(wells-1, 1), so with a
+// bar of 2 rung 3 was *stricter* than rung 2. Wells now falls once, at rung 3.
 const REQ_RUNGS = [
   r => r,
   r => ({ ...r, turn: r.turn * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
-  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
-  r => ({ ...r, wells: Math.max(r.wells - 1, 1), turn: r.turn * 0.5, shape: 99, assist: r.assist * 0.25 }),
+  r => ({ ...r, turn: r.turn * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
+  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.5, shape: 99, assist: r.assist * 0.25 }),
   () => ({ wells: 0, turn: 0, shape: 99, assist: 0 }),
 ];
 
@@ -1464,8 +1505,15 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   // anything, and slots reported as clearing rung 1 had no assisted route at
   // all. An infinite gap means no direct route exists, which is the strongest
   // form of the requirement, not a failure of it.
+  // minTurn is the straightest single LEG, so a level cut into three stops is
+  // judged on a flight a third as long — and a shorter flight simply has less
+  // room to bend. Measured, 3-leg levels came in at 0.03-0.30 radians against
+  // 1.15-2.35 for single-leg ones. Holding them to the same floor does not
+  // make them harder, it just guarantees they fail it and drop to the rung
+  // that asks for nothing. Scale the floor by how many legs the route has.
   const clears = (r, q) =>
-    r.minTurn >= q.turn && (r.wellsMin == null || r.wellsMin >= q.wells)
+    r.minTurn >= q.turn / (1 + 0.5 * (Math.max(r.legs, 1) - 1))
+    && (r.wellsMin == null || r.wellsMin >= q.wells)
     && (!shape || r.shapeFit <= q.shape)
     && (q.assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= q.assist));
   const byRung = new Array(rungs.length).fill(null);
