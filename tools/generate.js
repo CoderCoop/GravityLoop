@@ -330,6 +330,15 @@ function keyPoints(level) {
 // reached NONE. No acceptance bar can conjure a route through mass that is not
 // in the way; raising the bar there only makes the search reject everything and
 // fall back to the easiest candidate it saw.
+// Worlds required in the corridor, per set. This is what a route can possibly
+// thread; the per-route bar in HARD sits just under it. Set 1 stays an on-ramp:
+// its levels are Earth-to-Moon hops whose ceiling is 2 no matter where the bar
+// is put, so demanding more there would only reject every candidate.
+const CORRIDOR = [2, 4, 4, 5, 5];
+function corridorOk(level, setIdx) {
+  return corridorBodies(level, level.ship, level.goal) >= CORRIDOR[setIdx];
+}
+
 function corridorBodies(level, pad, goal, margin = 10) {
   const vx = goal.x - pad.x, vz = goal.z - pad.z;
   const L2 = vx * vx + vz * vz;
@@ -825,7 +834,8 @@ function sampleEarthrise(rng, slot) {
     goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +(6.2 - slot * 0.12).toFixed(1));
   }
   lv.targetIdx = targetIdx;
-  return levelGeometryOk(lv, 15, 13) ? lv : null;
+  if (!levelGeometryOk(lv, 15, 13) || !corridorOk(lv, 0)) return null;
+  return lv;
 }
 
 // ---------------------------------------------------------------------------
@@ -853,7 +863,7 @@ function sampleInner(rng, slot) {
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +rand(rng, 4.9, 5.5).toFixed(1));
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 15, 13)) return null;
+  if (!levelGeometryOk(lv, 15, 13) || !corridorOk(lv, 1)) return null;
   if (slot >= 2) for (let i = 0; i < 1 + (slot >= 5 ? 1 : 0); i++) addDerelict(rng, lv);
   if (slot >= 4) addComet(rng, lv);
   if (slot >= 7) addPatrol(rng, lv);
@@ -889,7 +899,7 @@ function sampleOuter(rng, slot) {
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 15, 12)) return null;
+  if (!levelGeometryOk(lv, 15, 12) || !corridorOk(lv, 2)) return null;
   if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   if (slot >= 2 && rng() < 0.6) addDerelict(rng, lv);
   if (slot >= 3) addComet(rng, lv);
@@ -923,7 +933,7 @@ function sampleBelt(rng, slot) {
   lv.targetIdx = sol.idx.jupiter;
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[sol.idx.jupiter], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[sol.idx.jupiter], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
-  if (!levelGeometryOk(lv, 15, 12)) return null;
+  if (!levelGeometryOk(lv, 15, 12) || !corridorOk(lv, 3)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
   } else if (slot >= 1 && rng() < 0.5) {
@@ -1052,7 +1062,7 @@ function sampleAlien(rng, slot) {
       x: Math.round(sun.x + Math.cos(ang) * d), z: Math.round(sun.z + Math.sin(ang) * d),
     });
   }
-  if (!levelGeometryOk(lv, 14, 11)) return null;
+  if (!levelGeometryOk(lv, 14, 11) || !corridorOk(lv, 4)) return null;
   // the straight ship->goal line must cross at least one planet's swept ring:
   // direct shots die in a moving well, curves are mandatory
   let blocked = false;
@@ -1155,17 +1165,20 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 // pass/fail: a candidate that misses is discarded, not ranked.
 //   wells — worlds the EASIEST winning route must pass close to. This is the
 //           knob that makes a level a journey through gravity rather than a
-//           lob across it. Measured on the campaign before this change, the
-//           median level's laziest route passed 2 and the worst passed 0.
+//           lob across it. Set one under CORRIDOR: the corridor guarantees the
+//           mass is in the way, this asks that a route actually go through it.
+//           Measured before this change, the median level's laziest route
+//           passed 2 and the worst passed 0, and the best route on 16 levels
+//           could not reach 3 at all.
 //   turn  — radians the straightest winning route must bend.
 //   shape — how far the best-fitting winner may miss the slot's route shape.
 const HARD = [
-  { wells: 3, turn: 1.5, shape: 0.7 },
-  { wells: 3, turn: 1.9, shape: 0.6 },
+  { wells: 2, turn: 1.3, shape: 0.8 },
+  { wells: 3, turn: 1.7, shape: 0.7 },
+  { wells: 3, turn: 2.0, shape: 0.7 },
   { wells: 4, turn: 2.3, shape: 0.6 },
-  { wells: 4, turn: 2.7, shape: 0.5 },
-  { wells: 5, turn: 3.1, shape: 0.5 },
-];
+  { wells: 4, turn: 2.6, shape: 0.6 },
+]
 // Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
 // tries. Each rung is reported, so an easy level is visible in the log rather
 // than silently shipped as if it had passed.
