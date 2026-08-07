@@ -11,6 +11,19 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '3.0.0',
+    date: '2026-08-07',
+    title: 'No more straight shots',
+    notes: [
+      'All 50 levels are rebuilt and much harder. Your routes are gone, and so is the habit behind most of them: on the majority of levels there is now no shot that reaches the goal directly, at any engine power. Reaching it means stealing speed from something on the way.',
+      'Your home world and your destination now sit on opposite sides of the star, so the star and everything orbiting inside your target’s ring are in the way rather than off to one side. Winning routes pass worlds you have no business visiting.',
+      'Fuel decides which route you can afford. Where a direct line does exist, the engine is capped below what it would take, so the gravity-efficient curve is not the clever option — it is the only one you can pay for.',
+      'Stations and cargo drops sit right beside a world now, instead of floating in the gap between two of them. Docking is a detour you fly through that world’s gravity, coming and going.',
+      'In alien systems the stop rides its planet. Where it will be when you arrive is part of the problem — the same question a moving docking target already asked, now asked of the whole route.',
+      'The Earth–Moon hop is one level instead of three. Venus from level 2, Mars from level 6.',
+    ],
+  },
+  {
     v: '2.2.1',
     date: '2026-08-07',
     title: 'Moons stay with their planets',
