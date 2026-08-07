@@ -85,11 +85,11 @@ function pathTurning(pts) {
 // search budget that the other shapes need. SHAPE_RAMP scales these up for
 // the later sets, where the layouts can support it.
 const SHAPES = {
-  arc: { absLo: 1.0, absHi: 2.6, netLo: 0.75, interest: 1.0 },
-  sling: { absLo: 2.2, absHi: 4.2, netLo: 0.7, interest: 1.0 },
-  loop: { absLo: 2.6, absHi: 99, netLo: 0.75, interest: 1.0 },
-  ess: { absLo: 2.6, absHi: 99, netHi: 0.45, interest: 1.0 },
-  cruise: { absLo: 1.6, absHi: 99, netLo: 0.0, interest: 1.6 },
+  arc: { absLo: 1.6, absHi: 3.0, netLo: 0.75, interest: 1.0 },
+  sling: { absLo: 2.6, absHi: 4.6, netLo: 0.7, interest: 1.0 },
+  loop: { absLo: 4.4, absHi: 99, netLo: 0.8, interest: 1.0 },
+  ess: { absLo: 3.0, absHi: 99, netHi: 0.45, interest: 1.0 },
+  cruise: { absLo: 2.2, absHi: 99, netLo: 0.0, interest: 2.4 },
 };
 // Which shape each slot of a set must satisfy. Rotated by set so the same
 // slot number is not the same shape campaign-wide.
@@ -171,7 +171,7 @@ function concentration(byT0) {
 // through empty space score low and are penalized in evaluate().
 function legInterest(level, stage, legWinners) {
   const start = legStart(level, stage);
-  const vals = [];
+  const vals = [], wells = [];
   for (const w of legWinners.slice(0, 10)) {
     const rad = (w.ang * Math.PI) / 180;
     const r = predict(level, start.x, start.z, Math.cos(rad) * w.sp, Math.sin(rad) * w.sp, w.t0, 10, stage);
@@ -189,28 +189,43 @@ function legInterest(level, stage, legWinners) {
       }
     }
     vals.push(near + Math.min(len / straight - 1, 1));
+    wells.push(near);
   }
-  if (!vals.length) return { med: 0, min: 0 };
+  if (!vals.length) return { med: 0, min: 0, wellsMin: 0 };
+  wells.sort((a, b) => a - b);
   vals.sort((a, b) => a - b);
   // The median says what a typical winning route sweeps; the minimum says
   // what the laziest one does. A level where you can simply fly wide around
   // the whole system and skip the terrain has a fine median and a floor of
   // nearly zero — so the floor is what has to be gated on.
-  return { med: vals[Math.floor(vals.length / 2)], min: vals[0] };
+  // wellsMin is the plain count of worlds the LAZIEST winning route passes
+  // close to — the number the hard bar is set on.
+  return { med: vals[Math.floor(vals.length / 2)], min: vals[0], wellsMin: wells[0] };
 }
 
 // Per-leg verdict: every leg in band, legs of comparable difficulty, route
 // interest above the set's floor, and (when required) timing-window
 // sensitivity on the first launch. Aborts early once a candidate cannot beat
 // the best found so far.
-function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null) {
+function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, req = null) {
   const legs = legCount(level);
   const low = set.band[0], high = set.band[1] * (legs > 1 ? 2.2 : 1);
   const rates = [], winners = [];
   let dist2 = 0, minWins = Infinity, conc = 0;
   let evalMinTurn = Infinity, evalMedTurn = Infinity, shapeFit = 0;
+  // `req` is the hard bar this slot must clear. Everything below it also feeds
+  // the soft score, which still ranks the survivors — but a candidate that
+  // misses the bar is rejected outright rather than ranked. Summing everything
+  // into one distance and keeping the best is what made the campaign easy:
+  // when no candidate satisfied the floors, the search shipped the closest
+  // miss and printed "(closest to band)". It did that on 9 slots out of 10.
+  const reject = { minWins: 0, rates: [], dist: Infinity, conc: 0, legs, winners: [], rejected: true };
   for (let s = 0; s < legs; s++) {
     const r = solveLeg(level, s, shape);
+    if (req) {
+      if (r.minTurn < req.turn) return reject;       // a near-straight shot wins
+      if (shape && r.shapeFit > req.shape) return reject;
+    }
     // Weighted above the turn floor below: the shape is the level's identity,
     // the floor only rules out straight shots. Left equal, the search trades
     // the shape away to shave the floor and every level ends up alike again.
@@ -237,20 +252,26 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null) {
     const ratio = Math.max(...rates) / Math.max(Math.min(...rates), 1e-9);
     if (ratio > 2.5) dist2 += ratio - 2.5;           // legs must be comparable
   }
-  let interest = 0, interestMin = Infinity;
+  let interest = 0, interestMin = Infinity, wellsMin = Infinity;
   if (set.interest) {
     for (let s = 0; s < legs; s++) {
       const iv = legInterest(level, s, winners[s]);
       interest += iv.med;
       interestMin = Math.min(interestMin, iv.min);
+      wellsMin = Math.min(wellsMin, iv.wellsMin);
     }
     interest /= legs;
     if (interest < set.interest) dist2 += (set.interest - interest) * 1.2;
     // and no leg may offer a way through that meets nothing
     const floor = set.interestMin != null ? set.interestMin : Math.max(set.interest - 1.4, 1);
     if (interestMin < floor) dist2 += (floor - interestMin) * 2.5;
+    // The hard bar is on WELLS, counted whole: the easiest way through a leg
+    // has to pass close to this many worlds. Route interest blends a body
+    // count with path elongation, so a long lazy arc could score its way past
+    // a floor without going near anything.
+    if (req && wellsMin < req.wells) return reject;
   }
-  return { minWins, rates, dist: dist2, conc, legs, winners, interest, interestMin,
+  return { minWins, rates, dist: dist2, conc, legs, winners, interest, interestMin, wellsMin,
     shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn };
 }
 
@@ -1102,6 +1123,32 @@ SETS.forEach((s, i) => { s.turnMin = TURNS[i]; });
 // blockers + turn gates cut raw win rates: halve the band floors
 SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 
+// The HARD bar a slot must clear, per set. Unlike the soft score these are
+// pass/fail: a candidate that misses is discarded, not ranked.
+//   wells — worlds the EASIEST winning route must pass close to. This is the
+//           knob that makes a level a journey through gravity rather than a
+//           lob across it. Measured on the campaign before this change, the
+//           median level's laziest route passed 2 and the worst passed 0.
+//   turn  — radians the straightest winning route must bend.
+//   shape — how far the best-fitting winner may miss the slot's route shape.
+const HARD = [
+  { wells: 3, turn: 1.5, shape: 0.7 },
+  { wells: 3, turn: 1.9, shape: 0.6 },
+  { wells: 4, turn: 2.3, shape: 0.6 },
+  { wells: 4, turn: 2.7, shape: 0.5 },
+  { wells: 5, turn: 3.1, shape: 0.5 },
+];
+// Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
+// tries. Each rung is reported, so an easy level is visible in the log rather
+// than silently shipped as if it had passed.
+const REQ_RUNGS = [
+  r => r,
+  r => ({ wells: r.wells, turn: r.turn * 0.8, shape: r.shape + 0.4 }),
+  r => ({ wells: r.wells - 1, turn: r.turn * 0.65, shape: r.shape + 0.9 }),
+  r => ({ wells: Math.max(r.wells - 2, 1), turn: r.turn * 0.5, shape: 99 }),
+  () => ({ wells: 0, turn: 0, shape: 99 }),
+];
+
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
 const ATTEMPTS = +(process.env.GEN_ATTEMPTS || 800);   // extreme-turn candidates are rare
 
@@ -1138,7 +1185,13 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   }
   const needsTiming = set.timing != null && slot >= set.timing;
   const shape = shapeFor(s, slot);
-  let best = null;
+  const bar = HARD[Math.min(s, HARD.length - 1)];
+  const rungs = REQ_RUNGS.map(f => f(bar));
+  const loosest = rungs[rungs.length - 1];
+  const clears = (r, q) =>
+    r.minTurn >= q.turn && (r.wellsMin == null || r.wellsMin >= q.wells)
+    && (!shape || r.shapeFit <= q.shape);
+  const byRung = new Array(rungs.length).fill(null);
   let found = null;
   let geoOk = 0, solvable = 0;
   for (let attempt = shardK; attempt < ATTEMPTS; attempt += shardN) {
@@ -1147,12 +1200,21 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     if (!lv) continue;
     scaleGoals(lv);
     geoOk++;
-    const r = evaluate(set, needsTiming, lv, best ? best.res.dist : Infinity, shape);
-    if (r.minWins < MIN_WINS || r.dist === Infinity) continue;
+    // Screen against the loosest rung first so hopeless candidates die cheaply,
+    // then file the survivor under the strictest rung it actually clears.
+    const r = evaluate(set, needsTiming, lv, Infinity, shape, loosest);
+    if (r.rejected || r.minWins < MIN_WINS || r.dist === Infinity) continue;
     solvable++;
-    if (!best || r.dist < best.res.dist) best = { level: lv, res: r, rng, attempt };
-    if (r.dist === 0) { found = { level: lv, res: r, rng, attempt }; break; }
+    const rung = rungs.findIndex(q => clears(r, q));
+    if (rung < 0) continue;
+    const cur = byRung[rung];
+    if (!cur || r.dist < cur.res.dist) byRung[rung] = { level: lv, res: r, rng, attempt };
+    // a candidate that clears the full bar with nothing left to improve is
+    // as good as this slot gets — stop looking
+    if (rung === 0 && r.dist === 0) { found = byRung[0]; break; }
   }
+  const usedRung = byRung.findIndex(Boolean);
+  const best = usedRung >= 0 ? byRung[usedRung] : null;
   const chosen = found || best;
   if (!chosen) {
     if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
@@ -1167,11 +1229,12 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     `[set ${s + 1}] slot ${slot} generated ${set.names[slot].padEnd(18)} rates [${r.rates.map(x => x.toFixed(2)).join(', ')}]%` +
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
+    ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
-    `${found ? '' : '  (closest to band)'}`
+    `${usedRung > 0 ? `  RELAXED x${usedRung}` : ''}`
   );
   return { level: chosen.level, found: !!found, attempt: chosen.attempt, dist: chosen.res.dist };
 }
