@@ -85,11 +85,11 @@ function pathTurning(pts) {
 // search budget that the other shapes need. SHAPE_RAMP scales these up for
 // the later sets, where the layouts can support it.
 const SHAPES = {
-  arc: { absLo: 1.6, absHi: 3.0, netLo: 0.75, interest: 1.0 },
-  sling: { absLo: 2.6, absHi: 4.6, netLo: 0.7, interest: 1.0 },
-  loop: { absLo: 4.4, absHi: 99, netLo: 0.8, interest: 1.0 },
-  ess: { absLo: 3.0, absHi: 99, netHi: 0.45, interest: 1.0 },
-  cruise: { absLo: 2.2, absHi: 99, netLo: 0.0, interest: 2.4 },
+  arc: { absLo: 1.0, absHi: 2.8, netLo: 0.75, interest: 1.0 },
+  sling: { absLo: 2.2, absHi: 4.4, netLo: 0.7, interest: 1.0 },
+  loop: { absLo: 2.8, absHi: 99, netLo: 0.78, interest: 1.0 },
+  ess: { absLo: 2.6, absHi: 99, netHi: 0.45, interest: 1.0 },
+  cruise: { absLo: 1.8, absHi: 99, netLo: 0.0, interest: 2.0 },
 };
 // Which shape each slot of a set must satisfy. Rotated by set so the same
 // slot number is not the same shape campaign-wide.
@@ -140,16 +140,27 @@ function solveLeg(level, stage, shape) {
           const turn = pathTurning(r.points);
           turns.push(turn.abs);
           if (shape) misses.push(shapeMiss(shape, turn));
-          // Did this route steal from a well, or just fly there? The cheapest
-          // UNASSISTED win is the speed the engine has to be capped below.
-          let wells = 0;
+          // Did this route steal from a world ON THE WAY, or just leave home and
+          // arrive? The home world and the target are touched by every route
+          // trivially - the pad sits on one and the goal beside the other - so
+          // counting them made every level look like it already forced an
+          // assist, and the engine cap never fired. Only worlds passed in
+          // between count.
+          let wells = 0, via = 0;
           for (let bi = 0; bi < level.bodies.length; bi++) {
             const an = annulus(level, bi);
             for (let k = 0; k < r.points.length; k += 4) {
-              if (pointToAnnulus(an, r.points[k].x, r.points[k].z) < level.bodies[bi].radius + 8) { wells++; break; }
+              if (pointToAnnulus(an, r.points[k].x, r.points[k].z) < level.bodies[bi].radius + 8) {
+                wells++;
+                const b = level.bodies[bi];
+                const home = bi === level.homeIdx || b.moonOf === level.homeIdx;
+                const tgt = bi === level.targetIdx || b.moonOf === level.targetIdx;
+                if (!home && !tgt) via++;
+                break;
+              }
             }
           }
-          if (wells > 0) cheapAssist = Math.min(cheapAssist, sp);
+          if (via > 0) cheapAssist = Math.min(cheapAssist, sp);
           else cheapDirect = Math.min(cheapDirect, sp);
           if (winners.length < 40) winners.push({ ang, sp, t0, turn: turn.abs, wells });
         }
@@ -248,8 +259,10 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
       // is slower than the cheapest win that touches nothing, the engine can be
       // capped between the two: the direct shot no longer has the speed to
       // arrive, and the only way there is to steal momentum from a world.
-      if (r.cheapAssist === Infinity) return reject;               // no assisted route at all
-      if (r.cheapDirect - r.cheapAssist < req.assist) return reject;
+      if (req.assist > 0) {
+        if (r.cheapAssist === Infinity) return reject;             // no assisted route at all
+        if (r.cheapDirect - r.cheapAssist < req.assist) return reject;
+      }
     }
     // Weighted above the turn floor below: the shape is the level's identity,
     // the floor only rules out straight shots. Left equal, the search trades
@@ -358,11 +371,13 @@ function keyPoints(level) {
 // reached NONE. No acceptance bar can conjure a route through mass that is not
 // in the way; raising the bar there only makes the search reject everything and
 // fall back to the easiest candidate it saw.
-// Worlds required in the corridor, per set. This is what a route can possibly
-// thread; the per-route bar in HARD sits just under it. Set 1 stays an on-ramp:
-// its levels are Earth-to-Moon hops whose ceiling is 2 no matter where the bar
-// is put, so demanding more there would only reject every candidate.
-const CORRIDOR = [2, 4, 4, 5, 5];
+// Worlds required in the corridor, per set. Kept deliberately low: demanding
+// four here rejected 799 layouts out of 800 before any of them were solved, and
+// it did not buy difficulty anyway - routes thread BETWEEN corridor worlds
+// rather than through them, because gravity deflects a trajectory away from
+// mass. This now only rules out layouts with nothing at all in the way; the
+// assist requirement in HARD is what actually makes a level hard.
+const CORRIDOR = [1, 2, 2, 2, 2];
 function corridorOk(level, setIdx) {
   return corridorBodies(level, level.ship, level.goal) >= CORRIDOR[setIdx];
 }
@@ -1274,9 +1289,18 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   const bar = HARD[Math.min(s, HARD.length - 1)];
   const rungs = REQ_RUNGS.map(f => f(bar));
   const loosest = rungs[rungs.length - 1];
+  // Every requirement the rung names has to be checked HERE. evaluate() is
+  // called with the loosest rung so hopeless candidates die cheaply, which
+  // means the strict rungs are enforced only by this function — a requirement
+  // missing from it is a requirement that does not exist, however carefully
+  // it is defined elsewhere. The assist gap was absent and so never gated
+  // anything, and slots reported as clearing rung 1 had no assisted route at
+  // all. An infinite gap means no direct route exists, which is the strongest
+  // form of the requirement, not a failure of it.
   const clears = (r, q) =>
     r.minTurn >= q.turn && (r.wellsMin == null || r.wellsMin >= q.wells)
-    && (!shape || r.shapeFit <= q.shape);
+    && (!shape || r.shapeFit <= q.shape)
+    && (q.assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= q.assist));
   const byRung = new Array(rungs.length).fill(null);
   let found = null;
   let geoOk = 0, solvable = 0;
