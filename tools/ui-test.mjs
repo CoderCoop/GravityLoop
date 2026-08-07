@@ -36,6 +36,9 @@ const FRAME_LEVELS = [0, 1, 2, 6, 12, 25, 33, 40, 49];
 // slingshot is a drag away from the target, which the level-start camera puts
 // up-screen, so a ship parked on the bottom edge cannot be pulled to power.
 const FOOT = 0.26;
+// How many of the sampled levels may fall back to less drag room because the
+// pad and the goal simply cannot both fit on screen with the full amount.
+const MAX_DEGRADED = 1;
 
 function serve() {
   return new Promise(resolve => {
@@ -128,25 +131,36 @@ for (const vp of VIEWPORTS) {
 
   // Launch framing: on every leg start the ship must be on screen, clear of
   // the HUD strip, and with room below it to drag the slingshot into.
-  const frameIssues = await page.evaluate(async ({ levels, foot }) => {
-    const out = [];
+  const frameIssues = await page.evaluate(async ({ levels, foot, MAX_DEGRADED }) => {
+    const out = [], degraded = [];
     const hudBottom = document.getElementById('hud').getBoundingClientRect().bottom;
     for (const i of levels) {
       window.GL.load(i);
       window.GL.settleCamera();
-      const { x, y } = window.GL.debugSpots().shipScreen;
+      const spots = window.GL.debugSpots();
+      const { x, y } = spots.shipScreen;
+      // A handful of levels put the pad and the goal so far apart that the
+      // pair cannot fit on screen with the full drag room reserved. The camera
+      // gives that room back a rung at a time rather than framing the ship off
+      // the edge, and reports the rung it landed on — so hold it to what it
+      // actually promised, and separately cap how often it may settle.
+      const got = spots.fitFoot != null ? spots.fitFoot : foot;
+      if (got < foot) degraded.push(`${i + 1} (foot ${got})`);
       // +1: shipScreen is rounded to whole pixels, and the fit lands exactly
       // on this boundary, so compare with a pixel of slack.
-      const maxY = innerHeight * (1 - foot) + 1;
+      const maxY = innerHeight * (1 - got) + 1;
       if (x < 0 || x > innerWidth || y < 0 || y > innerHeight)
         out.push(`level ${i + 1}: ship off screen at (${x},${y}) in ${innerWidth}x${innerHeight}`);
       else if (y > maxY)
-        out.push(`level ${i + 1}: ship at y=${y} leaves only ${Math.round(innerHeight - y)}px below it (need ${Math.round(innerHeight - maxY)}px to drag into)`);
+        out.push(`level ${i + 1}: ship at y=${y} leaves only ${Math.round(innerHeight - y)}px below it (need ${Math.round(innerHeight - maxY)}px at foot ${got})`);
       else if (y < hudBottom)
         out.push(`level ${i + 1}: ship at y=${y} is behind the HUD strip (bottom ${Math.round(hudBottom)})`);
     }
+    if (degraded.length > MAX_DEGRADED) {
+      out.push(`${degraded.length} levels gave up drag room (max ${MAX_DEGRADED}): ${degraded.join(', ')}`);
+    }
     return out;
-  }, { levels: FRAME_LEVELS, foot: FOOT });
+  }, { levels: FRAME_LEVELS, foot: FOOT, MAX_DEGRADED });
   issues.push(...frameIssues);
 
   if (pageErrors.length) issues.push(...pageErrors.map(m => `page error: ${m}`));

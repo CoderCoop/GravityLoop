@@ -143,11 +143,18 @@ export function accelAt(level, x, z, positions) {
 //          sun's bowl off flat at the bottom, which is what makes it read as a
 //          hole rather than a basin; raising it lets the bowl keep its shape.
 // Shipped shape: centres rounded just enough to stop a body sitting in a
-// needle, depth restored by gain so the well stays plainly visible, and the
-// clamp raised so a sun's bowl is not cut off flat at the bottom. True 1/r
-// falloff is kept deliberately — flattening it spreads mass influence outward
-// but tilts the whole sheet, which washes local wells out entirely.
-export const VIS = { round: true, soft: 1.35, exp: 1, comp: false, gain: 1.35, depth: 40 };
+// needle, and true 1/r falloff kept deliberately — flattening it spreads mass
+// influence outward but tilts the whole sheet, which washes local wells out
+// entirely.
+//
+// Gain and compression work as a pair. A hard clamp spends the whole height
+// range on the deep wells and leaves the far field within a couple of units of
+// level, so ground that is still pulling hard draws as flat. Raising gain
+// amplifies that gentle far-field slope into something you can see, and tanh
+// saturation then rounds the deep wells off instead of letting them run away
+// or cut flat at the bottom. The surface is no longer level anywhere there is
+// mass, which is the point.
+export const VIS = { round: true, soft: 1.35, exp: 1, comp: true, gain: 3, depth: 26 };
 const REF = 20;
 export function heightAt(level, x, z, positions) {
   let h = 0;
