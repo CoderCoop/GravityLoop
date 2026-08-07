@@ -484,7 +484,13 @@ function levelGeometryOk(level, padClear, goalClear) {
       // a stop that RIDES this world is meant to be beside it — it keeps a
       // fixed offset, so it can never drift into the planet it is bolted to
       if (wp.anchor && wp.anchor.body === i) continue;
-      if (pointToAnnulus(a, wp.x, wp.z) < bi.radius + (moving ? 6 : 10)) return no(`waypoint near ${bi.name}`);
+      // A stop must be allowed INSIDE the radius a route is credited for
+      // passing (bodies.radius + 8), or the two rules contradict each other:
+      // stops were being parked at radius + 11..19 to satisfy a clearance of
+      // radius + 10, which is just outside the radius that counts them — so a
+      // level whose station sat beside Mars still scored as passing no world
+      // at all. Clearance is now only what keeps the two discs visibly apart.
+      if (pointToAnnulus(a, wp.x, wp.z) < bi.radius + (moving ? 3 : 3.5)) return no(`waypoint near ${bi.name}`);
     }
     for (let j = i + 1; j < level.bodies.length; j++) {
       const bj = level.bodies[j];
@@ -715,6 +721,10 @@ function addWaypoints(rng, level, specs) {
       && !isEnd(level, 'homeIdx', i, b) && !isEnd(level, 'targetIdx', i, b))
     .map(o => ({ ...o, t: ((o.a.x - level.ship.x) * px + (o.a.z - level.ship.z) * pz) / (L * L) }))
     .filter(o => o.t > 0.1 && o.t < 0.95);
+  // A stop with nothing to anchor to falls back to scattering along the chord,
+  // which is the placement this function exists to replace — so say so rather
+  // than silently reverting.
+  if (WHY && !anchors.length) whyTally.set('stop had no anchor world', (whyTally.get('stop had no anchor world') || 0) + 1);
   for (const spec of specs) {
     // work outward from the world nearest this stop's share of the route
     const near = anchors.slice().sort((A, B) => Math.abs(A.t - spec.t) - Math.abs(B.t - spec.t));
@@ -732,14 +742,14 @@ function addWaypoints(rng, level, specs) {
         // outside in a straight line.
         const cx = level.ship.x + px * spec.t, cz = level.ship.z + pz * spec.t;
         const az = Math.atan2(cz - anchor.a.z, cx - anchor.a.x) + rand(rng, -0.35, 0.35);
-        const off = anchor.b.radius + rand(rng, 11, 19);
+        const off = anchor.b.radius + rand(rng, 4, 7);
         const R = anchor.a.maxR + (tries % 2 === 0 ? off : -off);
         if (R < 8) continue;
         x = Math.round(anchor.a.x + Math.cos(az) * R);
         z = Math.round(anchor.a.z + Math.sin(az) * R);
       } else if (anchor) {
         // a static world: clear of the drawn disc, but still inside its well
-        const d = anchor.b.radius + rand(rng, 11, 19);
+        const d = anchor.b.radius + rand(rng, 4, 7);
         // Which flank? With home and target on opposite sides of the star the
         // chord runs past it, so one of the two offsets points straight at the
         // sun — that single choice was 80% of all waypoint rejections. Take
@@ -1261,7 +1271,7 @@ function addTourWaypoints(rng, lv, outerR, specs) {
       if (tries < 90 && hosts.length) {
         const h = hosts[(k + Math.floor(tries / 12)) % hosts.length];
         const dir = rand(rng, 0, 6.28);
-        const off = h.b.radius + rand(rng, 9, 15);
+        const off = h.b.radius + rand(rng, 4, 7);
         const dx = +(Math.cos(dir) * off).toFixed(1), dz = +(Math.sin(dir) * off).toFixed(1);
         const p = at0[h.i];
         cand = { x: Math.round(p.x + dx), z: Math.round(p.z + dz), r: spec.r, type: spec.type,
