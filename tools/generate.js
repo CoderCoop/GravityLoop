@@ -868,11 +868,18 @@ function addComet(rng, lv) {
 // orbits inside the target's ring, squarely in the way. A route has to go
 // around or steal from them.
 const SEPARATION = [2.3, 3.0];
+// How far off-centre the sun sits, as a fraction of the map extent. It used to
+// be pushed to 0.48-0.62 so the flying happened across open space away from it
+// — which is precisely the empty space that makes routes touch nothing. With
+// the two ends of a level near-opposite about the sun, the far one lands off
+// the map entirely at those offsets: 0 of 800 layouts passed. Centred, the
+// sun's well sits between the ends and both fit.
+const SUN_OFF = [0.06, 0.20];
 
 function sampleEarthrise(rng, slot) {
   const E = 80;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 6 }, maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2000, 2600, 11, 13, [0.52, 0.62]);
+  const sun = mkSun(rng, lv, 'Sol', 2000, 2600, 11, 13, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const off = Math.hypot(sun.x, sun.z);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
@@ -883,9 +890,9 @@ function sampleEarthrise(rng, slot) {
     earth: moonSlot ? center + rand(rng, -0.18, 0.18) : center + dA * rand(rng, 0.45, 0.7),
     mars: center - dA,
   };
-  const past = slot < 6 ? [0.22, 0.36] : [0.12, 0.22];  // keep Mars in bounds
+  const past = slot < 6 ? [0.34, 0.46] : [0.30, 0.40];  // rings wide of a centred sun
   const sol = buildSol(rng, lv, slot < 6 ? 'earth' : 'mars', {
-    ang, earthRing: off + rand(rng, past[0], past[1]) * E,
+    ang, earthRing: rand(rng, past[0], past[1]) * E,
     moonGap: moonSlot ? [14, 18] : [6, 9],
     moonAng: moonSlot ? ang.earth + rand(rng, -0.35, 0.35) : null,
   });
@@ -917,7 +924,7 @@ function sampleEarthrise(rng, slot) {
 function sampleInner(rng, slot) {
   const E = 90;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 5.2 }, maxLaunch: Math.round(rand(rng, 46, 50)), fuel: 3, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 11, 13, [0.48, 0.58]);
+  const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 11, 13, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const off = Math.hypot(sun.x, sun.z);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
@@ -929,14 +936,14 @@ function sampleInner(rng, slot) {
     mars: center - dA,
   };
   const sol = buildSol(rng, lv, 'mars', {
-    ang, earthRing: off + rand(rng, 0.10, 0.20) * E, moonGap: [6, 9],
+    ang, earthRing: rand(rng, 0.34, 0.44) * E, moonGap: [6, 9],
   });
   lv.homeIdx = sol.idx.earth;
   const targetIdx = sol.idx[targetKey];
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +rand(rng, 4.9, 5.5).toFixed(1));
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 15, 13) || !corridorOk(lv, 1)) return null;
+  if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 1)) return null;
   if (slot >= 2) for (let i = 0; i < 1 + (slot >= 5 ? 1 : 0); i++) addDerelict(rng, lv);
   if (slot >= 4) addComet(rng, lv);
   if (slot >= 7) addPatrol(rng, lv);
@@ -950,7 +957,7 @@ function sampleOuter(rng, slot) {
   const through = slot < 5 ? 'jupiter' : 'saturn';
   const E = through === 'jupiter' ? 96 : 106;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2600, 3200, 10, 11.5, [0.30, 0.40]);
+  const sun = mkSun(rng, lv, 'Sol', 2600, 3200, 10, 11.5, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   // angle ladder: radially-adjacent planets alternate sides of the center
@@ -987,7 +994,7 @@ function sampleOuter(rng, slot) {
 function sampleBelt(rng, slot) {
   const E = 110;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.8, 5.2).toFixed(1) }, maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
-  const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 10, 11.5, [0.22, 0.28]);
+  const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 10, 11.5, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   // same angle ladder as sampleOuter: adjacent rings alternate sides
