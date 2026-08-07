@@ -11,6 +11,14 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '2.2.1',
+    date: '2026-08-07',
+    title: 'Moons stay with their planets',
+    notes: [
+      'On 20 levels a moon sat parked in empty space while its planet orbited off without it \u2014 level 13\u2019s Moon was 60 units from an Earth circling the Sun alone. Every moon now travels with its world, or they both stay put.',
+    ],
+  },
+  {
     v: '2.2.0',
     date: '2026-08-06',
     title: 'Gravity is visible everywhere, not just in the wells',
