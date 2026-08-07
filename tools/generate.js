@@ -13,7 +13,7 @@
 //   set 3 Outer Planets    gas giants + moons, station routes (static)
 //   set 4 Asteroid Belt    rock fields, cargo hauls, patrol lanes
 //   set 5 New Star Systems alien suns, antimatter stars, black holes (moving)
-import { predict, legStart, legCount, launchFuelCost } from '../src/physics.js';
+import { predict, legStart, legCount, launchFuelCost, bodiesAt } from '../src/physics.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -462,6 +462,9 @@ function levelGeometryOk(level, padClear, goalClear) {
     if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return no(`pad near ${bi.name}`);
     if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return no(`goal near ${bi.name}`);
     for (const wp of level.waypoints || []) {
+      // a stop that RIDES this world is meant to be beside it — it keeps a
+      // fixed offset, so it can never drift into the planet it is bolted to
+      if (wp.anchor && wp.anchor.body === i) continue;
       if (pointToAnnulus(a, wp.x, wp.z) < bi.radius + (moving ? 6 : 10)) return no(`waypoint near ${bi.name}`);
     }
     for (let j = i + 1; j < level.bodies.length; j++) {
@@ -683,7 +686,14 @@ function addWaypoints(rng, level, specs) {
   const star = level.bodies.find(b => b.type === 'sun') || { x: 0, z: 0 };
   const anchors = level.bodies
     .map((b, i) => ({ b, i, a: annulus(level, i) }))
-    .filter(({ b }) => b.type !== 'sun' && b.type !== 'blackhole' && b.mass > 0)
+    // Never the two ends. A stop parked beside the TARGET turns the last leg
+    // into a few units of straight coasting, and every metric a level is judged
+    // on takes its worst leg: set 3's two-leg slots measured turn 0.16 with the
+    // laziest route passing no third-party world, because the station was
+    // sitting next to Jupiter and leg two was a hop. Anchoring to a world that
+    // is neither end is what makes the stop a place you have to go via.
+    .filter(({ b, i }) => b.type !== 'sun' && b.type !== 'blackhole' && b.mass > 0
+      && !isEnd(level, 'homeIdx', i, b) && !isEnd(level, 'targetIdx', i, b))
     .map(o => ({ ...o, t: ((o.a.x - level.ship.x) * px + (o.a.z - level.ship.z) * pz) / (L * L) }))
     .filter(o => o.t > 0.1 && o.t < 0.95);
   for (const spec of specs) {
@@ -1189,10 +1199,17 @@ function sampleBelt(rng, slot) {
 }
 
 
-// Cargo tours in moving systems: stops sit on a service ring just outside the
-// outermost orbit, spread around the sun (the LONG way from pad to goal), so
-// every leg arcs across the system instead of hopping along the map edge —
-// edge hops were tanking route interest on 3-leg alien levels.
+// Cargo tours in moving systems: stops are spread around the sun the LONG way
+// from pad to goal, so every leg arcs across the system instead of hopping
+// along the map edge, and each one is parked ALONGSIDE a planet's orbital ring
+// — close enough to be inside that world's pull when it comes round.
+//
+// Two earlier placements both produced the same dead level. A service ring
+// outside every orbit made the tour a lap of the map edge through empty space;
+// the midpoint of the gap between two rings is, by construction, the one place
+// in the system with no mass near it. Both measured at 0.03-0.07 radians of
+// bend per leg with route interest of 1.0 — a straight line touching nothing.
+// Beside a ring is where the gravity is.
 function addTourWaypoints(rng, lv, outerR, specs) {
   const sun = lv.bodies[0];
   const azS = Math.atan2(lv.ship.z - sun.z, lv.ship.x - sun.x);
@@ -1201,32 +1218,43 @@ function addTourWaypoints(rng, lv, outerR, specs) {
   while (sweep > Math.PI) sweep -= 2 * Math.PI;
   while (sweep < -Math.PI) sweep += 2 * Math.PI;
   if (Math.abs(sweep) < Math.PI * 0.9) sweep -= Math.sign(sweep || 1) * 2 * Math.PI;
-  // Park each stop in a GAP between two planetary rings, not on a service ring
-  // outside the outermost orbit. Outside, a tour is a lap of the map edge
-  // through empty space — the measured 3-leg levels bent 0.03-0.07 radians in
-  // total and passed no world at all, which is the same "fly wide around the
-  // system" route that levels are supposed to rule out. In a gap the stop sits
-  // inside the system, so every leg has to cross a ring to reach it.
-  const rings = lv.bodies.filter(b => b.orbit && b.orbit.parent == null)
-    .map(b => b.orbit.radius).sort((a, b) => a - b);
-  // Only the gaps BETWEEN rings. Inside the innermost orbit is not a gap, it
-  // is the sun: that radius landed the stop within the star's clearance on
-  // every attempt. Where no gap has room for a station either — a pair of
-  // moon-bearing giants sweeps most of the space between them — fall back to
-  // the outer service ring rather than failing the layout outright.
-  const gaps = [];
-  for (let i = 1; i < rings.length; i++) gaps.push((rings[i - 1] + rings[i]) / 2);
+  // In a system where everything moves, a FIXED point is never reliably near
+  // anything. Parked beside a ring it is beside a planet only on the fraction
+  // of the orbit when that planet happens to be at that azimuth; the rest of
+  // the time it is void, which is why ring-adjacent stops measured the same
+  // dead 0.04-0.07 radians as the service ring did.
+  //
+  // So bolt the stop to a world and let it ride: physics.js already resolves
+  // `anchor` against live positions, which is how launch pads follow their
+  // planet. Now the stop is beside that world by construction, and both the
+  // leg in and the leg out are flown against its gravity — and where the world
+  // will BE when you arrive becomes the question the level asks.
+  const hosts = lv.bodies
+    .map((b, i) => ({ b, i }))
+    .filter(({ b }) => b.orbit && b.orbit.parent == null);
+  const at0 = bodiesAt(lv, 0);
   const wps = [];
   for (let k = 0; k < specs.length; k++) {
     const spec = specs[k];
     let placed = false;
-    for (let tries = 0; tries < 90 && !placed; tries++) {
-      const az = azS + sweep * ((k + 1) / (specs.length + 1)) + rand(rng, -0.25, 0.25);
-      const R = (tries < 60 && gaps.length) ? pick(rng, gaps) : outerR + rand(rng, 9, 14);
-      const x = Math.round(sun.x + Math.cos(az) * R);
-      const z = Math.round(sun.z + Math.sin(az) * R);
-      if (Math.hypot(x, z) > lv.extent * 0.85) continue;
-      const cand = { x, z, r: spec.r, type: spec.type };
+    for (let tries = 0; tries < 120 && !placed; tries++) {
+      let cand;
+      if (tries < 90 && hosts.length) {
+        const h = hosts[(k + Math.floor(tries / 12)) % hosts.length];
+        const dir = rand(rng, 0, 6.28);
+        const off = h.b.radius + rand(rng, 9, 15);
+        const dx = +(Math.cos(dir) * off).toFixed(1), dz = +(Math.sin(dir) * off).toFixed(1);
+        const p = at0[h.i];
+        cand = { x: Math.round(p.x + dx), z: Math.round(p.z + dz), r: spec.r, type: spec.type,
+          anchor: { body: h.i, dx, dz } };
+      } else {
+        // last resort: the old fixed service ring, spread the long way round
+        const az = azS + sweep * ((k + 1) / (specs.length + 1)) + rand(rng, -0.25, 0.25);
+        const R = outerR + rand(rng, 9, 14);
+        cand = { x: Math.round(sun.x + Math.cos(az) * R), z: Math.round(sun.z + Math.sin(az) * R),
+          r: spec.r, type: spec.type };
+      }
+      if (Math.hypot(cand.x, cand.z) > lv.extent * 0.85) continue;
       const test = { ...lv, waypoints: [...wps, cand] };
       if (levelGeometryOk(test, 9, 7)) { wps.push(cand); placed = true; }
     }
