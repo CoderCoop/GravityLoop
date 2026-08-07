@@ -125,6 +125,7 @@ function solveLeg(level, stage, shape) {
   const winners = [];
   const turns = [];
   const misses = [];
+  let cheapAssist = Infinity, cheapDirect = Infinity;
   for (let ti = 0; ti < times.length; ti++) {
     const t0 = times[ti];
     for (let ang = 0; ang < 360; ang += 3) {
@@ -139,7 +140,18 @@ function solveLeg(level, stage, shape) {
           const turn = pathTurning(r.points);
           turns.push(turn.abs);
           if (shape) misses.push(shapeMiss(shape, turn));
-          if (winners.length < 40) winners.push({ ang, sp, t0, turn: turn.abs });
+          // Did this route steal from a well, or just fly there? The cheapest
+          // UNASSISTED win is the speed the engine has to be capped below.
+          let wells = 0;
+          for (let bi = 0; bi < level.bodies.length; bi++) {
+            const an = annulus(level, bi);
+            for (let k = 0; k < r.points.length; k += 4) {
+              if (pointToAnnulus(an, r.points[k].x, r.points[k].z) < level.bodies[bi].radius + 8) { wells++; break; }
+            }
+          }
+          if (wells > 0) cheapAssist = Math.min(cheapAssist, sp);
+          else cheapDirect = Math.min(cheapDirect, sp);
+          if (winners.length < 40) winners.push({ ang, sp, t0, turn: turn.abs, wells });
         }
       }
     }
@@ -153,7 +165,8 @@ function solveLeg(level, stage, shape) {
   // sneaks past.
   misses.sort((a, b) => a - b);
   const shapeFit = misses.length ? misses[0] : Infinity;
-  return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn, shapeFit };
+  return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn, shapeFit,
+    cheapAssist, cheapDirect };
 }
 
 // Gravity-assist timing sensitivity: how much of the leg's wins concentrate
@@ -213,6 +226,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
   const rates = [], winners = [];
   let dist2 = 0, minWins = Infinity, conc = 0;
   let evalMinTurn = Infinity, evalMedTurn = Infinity, shapeFit = 0;
+  let evalAssist = 0, evalDirect = Infinity;
   // `req` is the hard bar this slot must clear. Everything below it also feeds
   // the soft score, which still ranks the survivors — but a candidate that
   // misses the bar is rejected outright rather than ranked. Summing everything
@@ -225,6 +239,17 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     if (req) {
       if (r.minTurn < req.turn) return reject;       // a near-straight shot wins
       if (shape && r.shapeFit > req.shape) return reject;
+      // The level must REQUIRE a gravity assist. Putting mass near the straight
+      // line does not achieve that - gravity deflects a trajectory away from
+      // mass, so routes thread between the wells instead of through them, and a
+      // corridor of four worlds still produced two-well routes.
+      //
+      // What does achieve it is energy. If the cheapest win that touches a well
+      // is slower than the cheapest win that touches nothing, the engine can be
+      // capped between the two: the direct shot no longer has the speed to
+      // arrive, and the only way there is to steal momentum from a world.
+      if (r.cheapAssist === Infinity) return reject;               // no assisted route at all
+      if (r.cheapDirect - r.cheapAssist < req.assist) return reject;
     }
     // Weighted above the turn floor below: the shape is the level's identity,
     // the floor only rules out straight shots. Left equal, the search trades
@@ -235,6 +260,8 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     rates.push(r.rate);
     winners.push(r.winners);
     evalMinTurn = Math.min(evalMinTurn, r.minTurn);
+    evalAssist = Math.max(evalAssist, r.cheapAssist);   // slowest leg sets the cap floor
+    evalDirect = Math.min(evalDirect, r.cheapDirect);   // fastest direct win sets the ceiling
     evalMedTurn = Math.min(evalMedTurn, r.medTurn);
     if (r.rate < low) dist2 += low - r.rate;
     else if (r.rate > high) dist2 += r.rate - high;
@@ -272,7 +299,8 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     if (req && wellsMin < req.wells) return reject;
   }
   return { minWins, rates, dist: dist2, conc, legs, winners, interest, interestMin, wellsMin,
-    shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn };
+    shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn,
+    cheapAssist: evalAssist, cheapDirect: evalDirect };
 }
 
 // ---------------------------------------------------------------------------
@@ -605,6 +633,23 @@ function addWaypoints(rng, level, specs) {
 // thrust reserve) but sits below the sum of the cheapest per-leg launches —
 // so skipping the cell means running dry before the goal.
 // ---------------------------------------------------------------------------
+// Put the engine cap between the cheapest assisted win and the cheapest direct
+// one, so the direct shot simply does not have the speed to arrive. This is
+// what makes the gravity route the only route rather than merely the tidy one,
+// and it is why fuel bites: the launch you can afford is the one that uses a
+// world, not the one that ignores them.
+function capEngineBelowDirect(level, res) {
+  const a = res.cheapAssist, d = res.cheapDirect;
+  if (!(a < d) || !isFinite(a)) return;
+  // sit just under the direct requirement, but never below the assisted route
+  // plus a little headroom for aiming slop
+  const cap = Math.max(Math.min(d - 2, level.maxLaunch), a + 3);
+  if (cap < level.maxLaunch) {
+    level.maxLaunch = Math.round(cap);
+    level.assistOnly = true;
+  }
+}
+
 function tuneFuelEconomy(rng, level, res) {
   if (res.legs <= 1) {
     // single leg: the tank sits between the efficient slingshot cost and the
@@ -1173,21 +1218,21 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 //   turn  — radians the straightest winning route must bend.
 //   shape — how far the best-fitting winner may miss the slot's route shape.
 const HARD = [
-  { wells: 2, turn: 1.3, shape: 0.8 },
-  { wells: 3, turn: 1.7, shape: 0.7 },
-  { wells: 3, turn: 2.0, shape: 0.7 },
-  { wells: 4, turn: 2.3, shape: 0.6 },
-  { wells: 4, turn: 2.6, shape: 0.6 },
+  { wells: 2, turn: 1.3, shape: 0.8, assist: 4 },
+  { wells: 2, turn: 1.7, shape: 0.7, assist: 6 },
+  { wells: 2, turn: 2.0, shape: 0.7, assist: 8 },
+  { wells: 3, turn: 2.3, shape: 0.6, assist: 10 },
+  { wells: 3, turn: 2.6, shape: 0.6, assist: 12 },
 ]
 // Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
 // tries. Each rung is reported, so an easy level is visible in the log rather
 // than silently shipped as if it had passed.
 const REQ_RUNGS = [
   r => r,
-  r => ({ wells: r.wells, turn: r.turn * 0.8, shape: r.shape + 0.4 }),
-  r => ({ wells: r.wells - 1, turn: r.turn * 0.65, shape: r.shape + 0.9 }),
-  r => ({ wells: Math.max(r.wells - 2, 1), turn: r.turn * 0.5, shape: 99 }),
-  () => ({ wells: 0, turn: 0, shape: 99 }),
+  r => ({ ...r, turn: r.turn * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
+  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
+  r => ({ ...r, wells: Math.max(r.wells - 1, 1), turn: r.turn * 0.5, shape: 99, assist: r.assist * 0.25 }),
+  () => ({ wells: 1, turn: 0, shape: 99, assist: 0 }),
 ];
 
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
@@ -1261,6 +1306,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
     throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
   }
+  capEngineBelowDirect(chosen.level, chosen.res);
   tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
   chosen.level.name = set.names[slot];
   chosen.level.hint = set.slotHints[slot] || set.hint;
@@ -1271,6 +1317,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
     ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
+    ` assist ${isFinite(r.cheapDirect) ? (r.cheapDirect - r.cheapAssist).toFixed(0) : 'forced'}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
