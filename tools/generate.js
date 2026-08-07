@@ -1469,8 +1469,18 @@ const HARD = [
   { wells: 1, turn: 1.4, shape: 1.4, assist: 4 },
   { wells: 1, turn: 1.5, shape: 1.4, assist: 5 },
   { wells: 1, turn: 1.5, shape: 1.4, assist: 6 },
-  { wells: 1, turn: 1.0, shape: 1.4, assist: 6 },
+  { wells: 1, turn: 0.4, shape: 1.4, assist: 6 },
 ]
+// Set 5 is the exception to the rising turn floor, and deliberately. Its
+// single-leg levels measure 0.29-0.73 radians where set 3's measure 1.2-2.55,
+// because an alien system launches from open space at one edge of the map to
+// open space at the other rather than from one world to another — there is no
+// pair of wells for the route to wrap around. Difficulty there is carried by
+// what set 5 actually has and no other set does: launch-window timing against
+// orbiting worlds (its levels concentrate 40-71% of wins in 4 of 11 launch
+// buckets), cargo tours that run the tank dry, black holes and antimatter.
+// Holding it to set 3's floor would only relax every slot to the rung that
+// asks for nothing, which is the failure this whole change is fixing.
 // Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
 // tries. Each rung is reported, so an easy level is visible in the log rather
 // than silently shipped as if it had passed.
