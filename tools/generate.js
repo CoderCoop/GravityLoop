@@ -94,11 +94,17 @@ const SHAPES = {
 // Which shape each slot of a set must satisfy. Rotated by set so the same
 // slot number is not the same shape campaign-wide.
 const SHAPE_ORDER = ['arc', 'sling', 'ess', 'loop', 'cruise', 'sling', 'arc', 'loop', 'ess', 'cruise'];
-// Later sets demand more of whatever shape they are asking for. This is the
-// difficulty ramp that used to live in a single per-set turning floor — which
-// pushed every level in a set toward "bend as hard as possible" and so made
-// them all play alike.
-const SHAPE_RAMP = [1, 1.15, 1.3, 1.45, 1.6];
+// How much of whatever shape it asks for each set demands. Scaled to the
+// turning its geometry can actually produce, measured: sets 1-4 come in at
+// 1.2-2.6 radians on a single-leg level, set 5 at 0.29-0.73 because it flies
+// from open space to open space with no pair of wells to wrap around.
+//
+// This used to ramp monotonically to 1.6 at set 5, which asked the set with the
+// LEAST curvature for the most: its slots were told to fly an S-curve of 4.2
+// radians and missed by 8.35. A shape target the geometry cannot reach is not a
+// difficulty setting, it is a guaranteed relaxation — and a relaxed rung asks
+// for nothing at all.
+const SHAPE_RAMP = [1, 1.1, 1.25, 1.1, 0.35];
 function shapeFor(setIdx, slot) {
   const base = SHAPES[SHAPE_ORDER[(slot + setIdx) % SHAPE_ORDER.length]];
   const k = SHAPE_RAMP[Math.min(setIdx, SHAPE_RAMP.length - 1)];
@@ -327,7 +333,15 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
       const iv = legInterest(level, s, winners[s]);
       interest += iv.med;
       interestMin = Math.min(interestMin, iv.min);
-      wellsMin = Math.min(wellsMin, iv.wellsMin);
+      // Summed over legs, not minimised across them. The bar asks that the
+      // winning PATH navigate wells; a journey with a stop is one path, and
+      // taking the worst leg judged it on whichever hop happened to be short.
+      // Every two- and three-leg level in the campaign scored 0 that way — the
+      // approach to the goal is a few units of coasting on almost any of them,
+      // so the whole route was written off however much work the other legs
+      // did. Turn is still taken per leg (a trivially straight leg is a real
+      // weakness), just scaled by how many legs there are.
+      wellsMin = wellsMin === Infinity ? iv.wellsMin : wellsMin + iv.wellsMin;
     }
     interest /= legs;
     if (interest < set.interest) dist2 += (set.interest - interest) * 1.2;
