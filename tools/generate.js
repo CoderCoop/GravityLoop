@@ -116,6 +116,20 @@ function shapeMiss(shape, t) {
   return miss;
 }
 
+// Is body `bi` one of the level's two ends — the world the pad sits on, or the
+// one the goal orbits — or a moon of it?
+//
+// The `!= null` guard is the whole point. Alien levels put the pad and goal at
+// free points in space and never set homeIdx/targetIdx, so the obvious
+// `b.moonOf === level.homeIdx` compared undefined to undefined and came out
+// TRUE for every planet that is not a moon. On set 5 that made every world
+// count as home: pad and goal clearance collapsed from 14/11 units to 3, and
+// no route could ever be credited with passing a third-party world.
+function isEnd(level, key, bi, b) {
+  const end = level[key];
+  return end != null && (bi === end || b.moonOf === end);
+}
+
 function solveLeg(level, stage, shape) {
   const dynamic = isDynamic(level);
   const times = dynamic ? Array.from({ length: 11 }, (_, i) => i * 0.9) : [0];
@@ -153,8 +167,8 @@ function solveLeg(level, stage, shape) {
               if (pointToAnnulus(an, r.points[k].x, r.points[k].z) < level.bodies[bi].radius + 8) {
                 wells++;
                 const b = level.bodies[bi];
-                const home = bi === level.homeIdx || b.moonOf === level.homeIdx;
-                const tgt = bi === level.targetIdx || b.moonOf === level.targetIdx;
+                const home = isEnd(level, 'homeIdx', bi, b);
+                const tgt = isEnd(level, 'targetIdx', bi, b);
                 if (!home && !tgt) via++;
                 break;
               }
@@ -205,15 +219,30 @@ function legInterest(level, stage, legWinners) {
     for (let i = 1; i < pts.length; i++) len += dist(pts[i].x, pts[i].z, pts[i - 1].x, pts[i - 1].z);
     const end = pts[pts.length - 1];
     const straight = Math.max(dist(start.x, start.z, end.x, end.z), 1e-6);
-    let near = 0;
+    // `near` is everything the route sweeps, home and target included — that
+    // is what makes a flight interesting to look at. `via` is the honest
+    // difficulty number: worlds passed that are NEITHER end. Gating on `near`
+    // measured almost nothing, because the pad sits on the home world and the
+    // goal beside the target, so every winner passes both — and their moons
+    // too. Set 3 reported the laziest route passing five worlds while having
+    // no assisted route at all: all five were Earth, the Moon, Jupiter and two
+    // Jovian moons.
+    let near = 0, via = 0;
     for (let i = 0; i < level.bodies.length; i++) {
       const a = annulus(level, i);
       for (let k = 0; k < pts.length; k += 4) {
-        if (pointToAnnulus(a, pts[k].x, pts[k].z) < level.bodies[i].radius + 8) { near++; break; }
+        if (pointToAnnulus(a, pts[k].x, pts[k].z) < level.bodies[i].radius + 8) {
+          near++;
+          const b = level.bodies[i];
+          const home = isEnd(level, 'homeIdx', i, b);
+          const tgt = isEnd(level, 'targetIdx', i, b);
+          if (!home && !tgt) via++;
+          break;
+        }
       }
     }
     vals.push(near + Math.min(len / straight - 1, 1));
-    wells.push(near);
+    wells.push(via);
   }
   if (!vals.length) return { med: 0, min: 0, wellsMin: 0 };
   wells.sort((a, b) => a - b);
@@ -379,7 +408,8 @@ function keyPoints(level) {
 // assist requirement in HARD is what actually makes a level hard.
 const CORRIDOR = [1, 2, 2, 2, 2];
 function corridorOk(level, setIdx) {
-  return corridorBodies(level, level.ship, level.goal) >= CORRIDOR[setIdx];
+  return corridorBodies(level, level.ship, level.goal) >= CORRIDOR[setIdx]
+    || no('nothing in the corridor');
 }
 
 function corridorBodies(level, pad, goal, margin = 10) {
@@ -399,21 +429,40 @@ function corridorBodies(level, pad, goal, margin = 10) {
   return n;
 }
 
+// Why layouts are being thrown away. A sampler that rejects everything looks
+// identical to a sampler that is merely unlucky, and guessing at the cause
+// cost three blind iterations (separation, sun offset, ring radii — 0/800
+// each) before a two-minute tally gave the real answer in one run. Set
+// GEN_WHY=1 and every rejection is counted by reason and by the body that
+// caused it, printed per slot.
+const WHY = !!process.env.GEN_WHY;
+const whyTally = new Map();
+function no(reason) {
+  if (WHY) whyTally.set(reason, (whyTally.get(reason) || 0) + 1);
+  return false;
+}
+function whyReport() {
+  if (!WHY || !whyTally.size) return '';
+  const rows = [...whyTally].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  whyTally.clear();
+  return '\n    rejected: ' + rows.map(([r, n]) => `${r} x${n}`).join(', ');
+}
+
 function levelGeometryOk(level, padClear, goalClear) {
   const E = level.extent;
   for (let i = 0; i < level.bodies.length; i++) {
     const bi = level.bodies[i];
     const a = annulus(level, i);
     const moving = !!bi.orbit;
-    if (Math.hypot(a.x, a.z) + a.maxR + bi.radius > E * 0.95) return false;
-    const isHome = level.homeIdx === i || bi.moonOf === level.homeIdx;
-    const isTarget = level.targetIdx === i || bi.moonOf === level.targetIdx;
+    if (Math.hypot(a.x, a.z) + a.maxR + bi.radius > E * 0.95) return no(`${bi.name} off map`);
+    const isHome = isEnd(level, 'homeIdx', i, bi);
+    const isTarget = isEnd(level, 'targetIdx', i, bi);
     const padM = isHome ? 3 : moving ? Math.min(padClear, 10) : padClear;
     const goalM = isTarget ? 3 : moving ? Math.min(goalClear, 8) : goalClear;
-    if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return false;
-    if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return false;
+    if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return no(`pad near ${bi.name}`);
+    if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return no(`goal near ${bi.name}`);
     for (const wp of level.waypoints || []) {
-      if (pointToAnnulus(a, wp.x, wp.z) < bi.radius + (moving ? 6 : 10)) return false;
+      if (pointToAnnulus(a, wp.x, wp.z) < bi.radius + (moving ? 6 : 10)) return no(`waypoint near ${bi.name}`);
     }
     for (let j = i + 1; j < level.bodies.length; j++) {
       const bj = level.bodies[j];
@@ -421,21 +470,21 @@ function levelGeometryOk(level, padClear, goalClear) {
       if ((oj && oj.parent === i) || (oi && oi.parent === j)) continue;
       if (bi.moonOf === j || bj.moonOf === i ||
           (bi.moonOf != null && bi.moonOf === bj.moonOf)) {
-        if (dist(a.x, a.z, annulus(level, j).x, annulus(level, j).z) < bi.radius + bj.radius + 2) return false;
+        if (dist(a.x, a.z, annulus(level, j).x, annulus(level, j).z) < bi.radius + bj.radius + 2) return no(`${bi.name}/${bj.name} touch`);
         continue;
       }
       if (oi && oj && oi.parent == null && oj.parent == null &&
           (oi.cx || 0) === (oj.cx || 0) && (oi.cz || 0) === (oj.cz || 0) && oi.omega === oj.omega) {
         continue;
       }
-      if (annulusGap(a, annulus(level, j)) < bi.radius + bj.radius + 6) return false;
+      if (annulusGap(a, annulus(level, j)) < bi.radius + bj.radius + 6) return no(`${bi.name}/${bj.name} rings close`);
     }
   }
   const sep = level.extent >= 66 ? 20 : 24;
   const kps = keyPoints(level);
   for (let i = 0; i < kps.length; i++) {
     for (let j = i + 1; j < kps.length; j++) {
-      if (dist(kps[i].x, kps[i].z, kps[j].x, kps[j].z) < sep) return false;
+      if (dist(kps[i].x, kps[i].z, kps[j].x, kps[j].z) < sep) return no('key points crowded');
     }
   }
   return true;
@@ -616,22 +665,57 @@ function addPatrol(rng, level) {
   }
 }
 
+// A stop is a detour or it is nothing. Scattering it near the pad->goal line
+// and hoping it landed by a world produced the easiest levels in the game:
+// measured, the multi-leg slots came out at turn 0.03-0.21 with the laziest
+// route passing zero third-party worlds, because each stop sat on the way and
+// simply chopped one flight into two shorter, straighter ones.
+//
+// So anchor every stop to a world and hang it off the FLANK of the direct
+// line — the side, at a distance that keeps it in that world's well. Docking
+// then costs a real deviation, and both the leg in and the leg out have to be
+// flown through the world's gravity.
 function addWaypoints(rng, level, specs) {
   const wps = [];
+  const px = level.goal.x - level.ship.x, pz = level.goal.z - level.ship.z;
+  const L = Math.max(Math.hypot(px, pz), 1);
+  const ux = -pz / L, uz = px / L;            // unit perpendicular to the chord
+  const star = level.bodies.find(b => b.type === 'sun') || { x: 0, z: 0 };
+  const anchors = level.bodies
+    .map((b, i) => ({ b, i, a: annulus(level, i) }))
+    .filter(({ b }) => b.type !== 'sun' && b.type !== 'blackhole' && b.mass > 0)
+    .map(o => ({ ...o, t: ((o.a.x - level.ship.x) * px + (o.a.z - level.ship.z) * pz) / (L * L) }))
+    .filter(o => o.t > 0.1 && o.t < 0.95);
   for (const spec of specs) {
+    // work outward from the world nearest this stop's share of the route
+    const near = anchors.slice().sort((A, B) => Math.abs(A.t - spec.t) - Math.abs(B.t - spec.t));
     let placed = false;
-    for (let tries = 0; tries < 80 && !placed; tries++) {
-      const t = spec.t + rand(rng, -0.08, 0.08);
-      const x = Math.round(level.ship.x + (level.goal.x - level.ship.x) * t + rand(rng, -0.42, 0.42) * level.extent);
-      const z = Math.round(level.ship.z + (level.goal.z - level.ship.z) * t + rand(rng, -0.16, 0.16) * level.extent);
+    for (let tries = 0; tries < 140 && !placed; tries++) {
+      const anchor = near.length ? near[Math.min(near.length - 1, Math.floor(tries / 24))] : null;
+      let x, z;
+      if (anchor) {
+        // clear of the drawn disc (and of the ring it sweeps, if it orbits) by
+        // more than the geometry check demands, but still inside its well
+        const d = anchor.b.radius + anchor.a.maxR + rand(rng, 11, 19);
+        // Which flank? With home and target on opposite sides of the star the
+        // chord runs past it, so one of the two offsets points straight at the
+        // sun — that single choice was 80% of all waypoint rejections. Take
+        // the outward one by default, and try the inward one occasionally in
+        // case that is where the room is.
+        const away = (anchor.a.x + ux * d - star.x) ** 2 + (anchor.a.z + uz * d - star.z) ** 2
+          >= (anchor.a.x - ux * d - star.x) ** 2 + (anchor.a.z - uz * d - star.z) ** 2 ? 1 : -1;
+        const s = tries % 3 === 2 ? -away : away;
+        x = Math.round(anchor.a.x + ux * s * d);
+        z = Math.round(anchor.a.z + uz * s * d);
+      } else {
+        const t = spec.t + rand(rng, -0.08, 0.08);
+        x = Math.round(level.ship.x + px * t + rand(rng, -0.42, 0.42) * level.extent);
+        z = Math.round(level.ship.z + pz * t + rand(rng, -0.16, 0.16) * level.extent);
+      }
       if (Math.hypot(x, z) > level.extent * 0.85) continue;
-      // prefer stations parked close to a body (first 50 tries): legs in and
-      // out of the dock then have to cross its well — empty-space hops are
-      // what tank a multi-leg level's route interest
-      if (tries < 50 && bodyClearance(level, x, z) > 14) continue;
       const cand = { x, z, r: spec.r, type: spec.type };
       const test = { ...level, waypoints: [...wps, cand] };
-      if (levelGeometryOk(test, 14, 11)) {
+      if (levelGeometryOk(test, 9, 7)) {
         wps.push(cand);
         placed = true;
       }
@@ -883,18 +967,34 @@ function sampleEarthrise(rng, slot) {
   const center = Math.atan2(-sun.z, -sun.x);
   const off = Math.hypot(sun.x, sun.z);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
-  const moonSlot = slot < 3;
+  // The Earth-Moon hop is the tutorial and nothing more. Measured over 800
+  // layouts each, the three Moon slots were the only weak levels in the set:
+  // the straightest winning route bent 0.41-0.48 radians and no assisted route
+  // existed at all, against 0.93-2.05 and a real assist on every Venus/Mars
+  // slot. Home and target sit a few tens of units apart with the rest of the
+  // system elsewhere, so there is nothing for a route to work. One slot of it,
+  // then out to the inner planets.
+  const moonSlot = slot < 1;
+  const venusSlot = slot >= 1 && slot < 5;
   const ang = {
     mercury: center + rand(rng, -1.4, 1.4),
-    venus: slot >= 3 && slot < 6 ? center - dA : center + rand(rng, -1.1, 1.1),
+    venus: venusSlot ? center - dA : center + rand(rng, -1.1, 1.1),
     earth: moonSlot ? center + rand(rng, -0.18, 0.18) : center + dA * rand(rng, 0.45, 0.7),
     mars: center - dA,
   };
-  const past = slot < 6 ? [0.34, 0.46] : [0.30, 0.40];  // rings wide of a centred sun
-  const sol = buildSol(rng, lv, slot < 6 ? 'earth' : 'mars', {
+  const inner = moonSlot || venusSlot;
+  const past = inner ? [0.34, 0.46] : [0.30, 0.40];  // rings wide of a centred sun
+  const sol = buildSol(rng, lv, inner ? 'earth' : 'mars', {
     ang, earthRing: rand(rng, past[0], past[1]) * E,
     moonGap: moonSlot ? [14, 18] : [6, 9],
-    moonAng: moonSlot ? ang.earth + rand(rng, -0.35, 0.35) : null,
+    // Hang the Moon off Earth's flank rather than straight out from the sun.
+    // The pad goes on the far side of Earth from the Moon, so a radial Moon
+    // put the pad on Earth's sunward side — around 20 units from a sun that
+    // now sits near the middle of the map, inside its clearance on 787 of
+    // every 800 layouts. Tangentially, pad and Moon both stay out at roughly
+    // Earth's own orbital radius, and the hop crosses the sun's field
+    // sideways instead of diving at it.
+    moonAng: moonSlot ? ang.earth + sign(rng) * (Math.PI / 2 + rand(rng, -0.3, 0.3)) : null,
   });
   const earth = lv.bodies[sol.idx.earth];
   lv.homeIdx = sol.idx.earth;
@@ -907,14 +1007,14 @@ function sampleEarthrise(rng, slot) {
     targetIdx = sol.idx.moon;
     lv.goal = { x: Math.round(moon.x + mu.x * (moon.radius + rand(rng, 8, 10))), z: Math.round(moon.z + mu.z * (moon.radius + rand(rng, 8, 10))), r: +(6.4 - slot * 0.15).toFixed(1) };
   } else {
-    targetIdx = slot < 6 ? sol.idx.venus : sol.idx.mars;
+    targetIdx = venusSlot ? sol.idx.venus : sol.idx.mars;
     // pad tucked behind Earth (away from the target), goal tucked behind the
     // target (away from Earth): every route must curve around both wells
     padByBody(lv, earth, lv.bodies[targetIdx], rand(rng, 7, 9));
     goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +(6.2 - slot * 0.12).toFixed(1));
   }
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 15, 13) || !corridorOk(lv, 0)) return null;
+  if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 0)) return null;
   return lv;
 }
 
@@ -955,31 +1055,42 @@ function sampleInner(rng, slot) {
 // ---------------------------------------------------------------------------
 function sampleOuter(rng, slot) {
   const through = slot < 5 ? 'jupiter' : 'saturn';
-  const E = through === 'jupiter' ? 96 : 106;
+  // Saturn's ring lands near 84 units out and the sun sits up to a fifth of
+  // the map off-centre, so a 106-unit map put Saturn past the edge on most
+  // layouts — 18 of every ~36 rejections on the Saturn slots were exactly
+  // that. The map has to be wide enough for the ring the level is named after.
+  const E = through === 'jupiter' ? 100 : 126;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2600, 3200, 10, 11.5, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
-  // angle ladder: radially-adjacent planets alternate sides of the center
-  // line so cumulative ring gaps never have to survive an angular alignment
+  const sd = Math.sign(dA);
+  // Home near the centre line, target near-opposite it, everything else
+  // filling the space between. The old ladder placed Earth at center + dA and
+  // the giant at center - 0.85..1.1 dA, which with the current separation
+  // wraps most of the way round: Earth and Jupiter came out as little as a few
+  // degrees apart, on the SAME side of the sun. Routes then flew the gap
+  // directly and the laziest winner passed zero worlds other than the two ends
+  // — the level looked busy (five bodies swept) only because Jupiter's own
+  // moons were being counted.
   const sol = buildSol(rng, lv, through, {
     ang: {
-      mercury: center - dA * rand(rng, 1.3, 1.8),
-      venus: center - dA * rand(rng, 0.45, 0.75),
-      earth: center + dA,
-      mars: center + dA * rand(rng, 0.35, 0.55),
-      jupiter: through === 'jupiter' ? center - dA * rand(rng, 0.85, 1.1) : center - dA * rand(rng, 1.4, 1.7),
-      saturn: center - dA * rand(rng, 0.85, 1.1),
+      mercury: center + sd * rand(rng, 1.4, 2.2),
+      venus: center - sd * rand(rng, 0.7, 1.2),
+      earth: center + rand(rng, -0.2, 0.2),
+      mars: center + sd * rand(rng, 0.7, 1.2),
+      jupiter: through === 'jupiter' ? center - dA : center + sd * rand(rng, 1.9, 2.4),
+      saturn: center - dA,
     },
     moonGap: [6, 9],
-    moonAng: center + dA + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
+    moonAng: center + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
   });
   lv.homeIdx = sol.idx.earth;
   const targetIdx = through === 'jupiter' ? sol.idx.jupiter : sol.idx.saturn;
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[targetIdx], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
   lv.targetIdx = targetIdx;
-  if (!levelGeometryOk(lv, 15, 12) || !corridorOk(lv, 2)) return null;
+  if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 2)) return null;
   if (slot >= 4 && !addWaypoints(rng, lv, [{ t: 0.5, r: 4.5, type: 'station' }])) return null;
   if (slot >= 2 && rng() < 0.6) addDerelict(rng, lv);
   if (slot >= 3) addComet(rng, lv);
@@ -997,23 +1108,25 @@ function sampleBelt(rng, slot) {
   const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 10, 11.5, SUN_OFF);
   const center = Math.atan2(-sun.z, -sun.x);
   const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
-  // same angle ladder as sampleOuter: adjacent rings alternate sides
+  // same opposed layout as sampleOuter: home on the centre line, target
+  // near-opposite it, the rest of the inventory filling the space between
+  const sd = Math.sign(dA);
   const sol = buildSol(rng, lv, 'beltjupiter', {
     ang: {
-      mercury: center - dA * rand(rng, 1.3, 1.8),
-      venus: center - dA * rand(rng, 0.45, 0.75),
-      earth: center + dA,
-      mars: center + dA * rand(rng, 0.35, 0.55),
-      jupiter: center - dA * rand(rng, 0.85, 1.1),
+      mercury: center + sd * rand(rng, 1.4, 2.2),
+      venus: center - sd * rand(rng, 0.7, 1.2),
+      earth: center + rand(rng, -0.2, 0.2),
+      mars: center + sd * rand(rng, 0.7, 1.2),
+      jupiter: center - dA,
     },
     moonGap: [6, 9],
-    moonAng: center + dA + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
+    moonAng: center + Math.PI + rand(rng, -1.0, 1.0),   // sunward: clear of the pad
   });
   lv.homeIdx = sol.idx.earth;
   lv.targetIdx = sol.idx.jupiter;
   padByBody(lv, lv.bodies[sol.idx.earth], lv.bodies[sol.idx.jupiter], rand(rng, 7, 9));
   goalByBody(lv, lv.bodies[sol.idx.jupiter], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 8, 11), lv.goal.r);
-  if (!levelGeometryOk(lv, 15, 12) || !corridorOk(lv, 3)) return null;
+  if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 3)) return null;
   if (slot >= 3) {
     if (!addWaypoints(rng, lv, [{ t: 0.35, r: 4.5, type: 'cargo' }, { t: 0.7, r: 4.5, type: 'dropoff' }])) return null;
   } else if (slot >= 1 && rng() < 0.5) {
@@ -1066,19 +1179,34 @@ function addTourWaypoints(rng, lv, outerR, specs) {
   while (sweep > Math.PI) sweep -= 2 * Math.PI;
   while (sweep < -Math.PI) sweep += 2 * Math.PI;
   if (Math.abs(sweep) < Math.PI * 0.9) sweep -= Math.sign(sweep || 1) * 2 * Math.PI;
+  // Park each stop in a GAP between two planetary rings, not on a service ring
+  // outside the outermost orbit. Outside, a tour is a lap of the map edge
+  // through empty space — the measured 3-leg levels bent 0.03-0.07 radians in
+  // total and passed no world at all, which is the same "fly wide around the
+  // system" route that levels are supposed to rule out. In a gap the stop sits
+  // inside the system, so every leg has to cross a ring to reach it.
+  const rings = lv.bodies.filter(b => b.orbit && b.orbit.parent == null)
+    .map(b => b.orbit.radius).sort((a, b) => a - b);
+  // Only the gaps BETWEEN rings. Inside the innermost orbit is not a gap, it
+  // is the sun: that radius landed the stop within the star's clearance on
+  // every attempt. Where no gap has room for a station either — a pair of
+  // moon-bearing giants sweeps most of the space between them — fall back to
+  // the outer service ring rather than failing the layout outright.
+  const gaps = [];
+  for (let i = 1; i < rings.length; i++) gaps.push((rings[i - 1] + rings[i]) / 2);
   const wps = [];
   for (let k = 0; k < specs.length; k++) {
     const spec = specs[k];
     let placed = false;
-    for (let tries = 0; tries < 60 && !placed; tries++) {
+    for (let tries = 0; tries < 90 && !placed; tries++) {
       const az = azS + sweep * ((k + 1) / (specs.length + 1)) + rand(rng, -0.25, 0.25);
-      const R = outerR + rand(rng, 9, 14);
+      const R = (tries < 60 && gaps.length) ? pick(rng, gaps) : outerR + rand(rng, 9, 14);
       const x = Math.round(sun.x + Math.cos(az) * R);
       const z = Math.round(sun.z + Math.sin(az) * R);
       if (Math.hypot(x, z) > lv.extent * 0.85) continue;
       const cand = { x, z, r: spec.r, type: spec.type };
       const test = { ...lv, waypoints: [...wps, cand] };
-      if (levelGeometryOk(test, 14, 11)) { wps.push(cand); placed = true; }
+      if (levelGeometryOk(test, 9, 7)) { wps.push(cand); placed = true; }
     }
     if (!placed) return false;
   }
@@ -1095,33 +1223,52 @@ function sampleAlien(rng, slot) {
   const sun = mkSun(rng, lv, pick(rng, ['Helios', 'Aurum', 'Tsuki', 'Vera', 'Kestrel', 'Rana']), 2600, 3800, 10, 12, [0.16, 0.28]);
   const sunOff = Math.hypot(sun.x, sun.z);
   const planetIdxs = [];
-  let orbR = sun.radius + rand(rng, 8, 11);
   const nPl = 3 + (rng() < 0.4 ? 1 : 0);
+  // Decide the whole inventory before spacing the rings. The ring step used to
+  // be a flat max(14, 0.15-0.19 E), which on a 72-80 unit map is at most 15.2
+  // — while two neighbouring gas giants need their swept discs 6 units apart,
+  // so 5 + 6 + 6 = 17. Adjacent giants were therefore ALWAYS rejected, and a
+  // moon (whose swept ring is its planet's ring widened by its own orbit) made
+  // it worse. Only about one layout in fifty survived, which left the search
+  // nothing to choose between: set 5 shipped whatever geometry it could get
+  // rather than the hardest it could find.
+  const plan = [];
+  let moonBudget = 2;
   for (let i = 0; i < nPl; i++) {
-    if (orbR > E * 0.93 - sunOff - 7) break;
     const isGas = rng() < 0.4;
-    planetIdxs.push(lv.bodies.length);
-    lv.bodies.push({
-      name: name(ALIEN_NAMES),
+    const radius = isGas ? +rand(rng, 5, 6).toFixed(1) : +rand(rng, 2, 3.2).toFixed(1);
+    const wantsMoon = moonBudget > 0 && rng() < 0.45;
+    if (wantsMoon) moonBudget--;
+    const moonOrb = wantsMoon ? +(radius + rand(rng, 3.5, 5.5)).toFixed(1) : 0;
+    const moonRad = wantsMoon ? +rand(rng, 1, 1.5).toFixed(1) : 0;
+    plan.push({
+      isGas, radius, wantsMoon, moonOrb, moonRad,
       mass: isGas ? Math.round(rand(rng, 1000, 1500)) : Math.round(rand(rng, 250, 550)),
-      radius: isGas ? +rand(rng, 5, 6).toFixed(1) : +rand(rng, 2, 3.2).toFixed(1),
       color: pick(rng, PLANET_COLORS),
+      // how far this planet's family reaches either side of its own ring
+      reach: Math.max(radius, moonOrb + moonRad),
+    });
+  }
+  let orbR = sun.radius + rand(rng, 8, 11) + plan[0].reach;
+  for (let i = 0; i < plan.length; i++) {
+    const p = plan[i];
+    if (i > 0) orbR += Math.max(rand(rng, 0.15, 0.19) * E, plan[i - 1].reach + p.reach + 7);
+    if (orbR + p.reach > E * 0.93 - sunOff) break;
+    const pIdx = lv.bodies.length;
+    planetIdxs.push(pIdx);
+    lv.bodies.push({
+      name: name(ALIEN_NAMES), mass: p.mass, radius: p.radius, color: p.color,
       orbit: { cx: sun.x, cz: sun.z, radius: +orbR.toFixed(1), omega: +(sign(rng) * rand(rng, 0.22, 0.55)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
     });
-    orbR += Math.max(14, rand(rng, 0.15, 0.19) * E);
+    if (p.wantsMoon) {
+      lv.bodies.push({
+        name: name(ALIEN_NAMES), mass: Math.round(rand(rng, 50, 130)),
+        radius: p.moonRad, color: 0xe2e2e2,
+        orbit: { parent: pIdx, radius: p.moonOrb, omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
+      });
+    }
   }
   if (!planetIdxs.length) return null;
-  let moons = 0;
-  for (const pIdx of planetIdxs) {
-    if (moons >= 2 || rng() >= 0.45) continue;
-    const parent = lv.bodies[pIdx];
-    lv.bodies.push({
-      name: name(ALIEN_NAMES), mass: Math.round(rand(rng, 50, 130)),
-      radius: +rand(rng, 1, 1.5).toFixed(1), color: 0xe2e2e2,
-      orbit: { parent: pIdx, radius: +(parent.radius + rand(rng, 3.5, 5.5)).toFixed(1), omega: +(sign(rng) * rand(rng, 0.8, 1.2)).toFixed(2), phase: +rand(rng, 0, 6.28).toFixed(2) },
-    });
-    moons++;
-  }
   const outer = lv.bodies[planetIdxs[planetIdxs.length - 1]].orbit.radius;
   const centerA = Math.atan2(-sun.z, -sun.x);   // keep exotics inside bounds
   if (rng() < 0.45) {
@@ -1180,10 +1327,10 @@ const SETS = [
     hint: 'You launch from Earth — the whole inner system is out there bending your shot.',
     slotHints: {
       0: 'Welcome aboard! Drag back from your ship to launch from Earth to the lunar station.',
-      3: 'Venus this time — swing past Sol\'s huge well without falling in.',
-      6: 'All the way to Mars station. Plot carefully.',
+      1: 'Venus already — swing past Sol\'s huge well without falling in.',
+      5: 'All the way to Mars station. Plot carefully.',
     },
-    names: ['Earthrise', 'To the Moon', 'Lunar Loop', 'Venus Bound', 'Morning Star', 'Transit of Venus', 'Halfway to Mars', 'Red Planet', 'Dusty Landing', 'Escape Velocity'],
+    names: ['Earthrise', 'Venus Bound', 'Morning Star', 'Transit of Venus', 'Evening Star', 'Halfway to Mars', 'Red Planet', 'Dusty Landing', 'Phobos Pass', 'Escape Velocity'],
   },
   {
     name: 'Inner System', difficulty: 2, sample: sampleInner, band: [0.3, 0.9], interest: 3,
@@ -1267,7 +1414,7 @@ const REQ_RUNGS = [
   r => ({ ...r, turn: r.turn * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
   r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
   r => ({ ...r, wells: Math.max(r.wells - 1, 1), turn: r.turn * 0.5, shape: 99, assist: r.assist * 0.25 }),
-  () => ({ wells: 1, turn: 0, shape: 99, assist: 0 }),
+  () => ({ wells: 0, turn: 0, shape: 99, assist: 0 }),
 ];
 
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
@@ -1348,7 +1495,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   const chosen = found || best;
   if (!chosen) {
     if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
-    throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})`);
+    throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})${whyReport()}`);
   }
   capEngineBelowDirect(chosen.level, chosen.res);
   tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
@@ -1361,12 +1508,13 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
     ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
-    ` assist ${isFinite(r.cheapDirect) ? (r.cheapDirect - r.cheapAssist).toFixed(0) : 'forced'}` +
+    ` assist ${!isFinite(r.cheapDirect) ? 'forced' : !isFinite(r.cheapAssist) ? 'none' : (r.cheapDirect - r.cheapAssist).toFixed(0)}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
-    `${usedRung > 0 ? `  RELAXED x${usedRung}` : ''}`
+    `${usedRung > 0 ? `  RELAXED x${usedRung}` : ''}` +
+    `${WHY ? ` geoOk ${geoOk}/${ATTEMPTS} solvable ${solvable}${whyReport()}` : ''}`
   );
   return { level: chosen.level, found: !!found, attempt: chosen.attempt, dist: chosen.res.dist };
 }
