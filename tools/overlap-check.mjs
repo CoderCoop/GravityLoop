@@ -49,39 +49,45 @@ function discsAt(level, t) {
   return out;
 }
 
-let worst = [];
-for (const [li, level] of LEVELS.entries()) {
-  const seen = new Map();      // pair key -> deepest overlap seen
-  const { T, step } = sweepPlan(level);
-  for (let t = 0; t <= T; t += step) {
-    const d = discsAt(level, t);
-    for (let i = 0; i < d.length; i++) {
-      for (let j = i + 1; j < d.length; j++) {
-        const req = requiredGap(level, d[i], d[j]);
-        if (req === null) continue;
-        const gap = Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) - (d[i].r + d[j].r + req);
-        if (gap >= 0) continue;
-        const key = `${d[i].what} | ${d[j].what}`;
-        const prev = seen.get(key);
-        if (!prev || gap < prev.gap) seen.set(key, { gap, t, pair: key });
+// Every overlapping pair across every level, worst first. Empty means clean.
+export function findOverlaps(levels = LEVELS) {
+  const worst = [];
+  for (const [li, level] of levels.entries()) {
+    const seen = new Map();      // pair key -> deepest overlap seen
+    const { T, step } = sweepPlan(level);
+    for (let t = 0; t <= T; t += step) {
+      const d = discsAt(level, t);
+      for (let i = 0; i < d.length; i++) {
+        for (let j = i + 1; j < d.length; j++) {
+          const req = requiredGap(level, d[i], d[j]);
+          if (req === null) continue;
+          const gap = Math.hypot(d[i].x - d[j].x, d[i].z - d[j].z) - (d[i].r + d[j].r + req);
+          if (gap >= 0) continue;
+          const key = `${d[i].what} | ${d[j].what}`;
+          const prev = seen.get(key);
+          if (!prev || gap < prev.gap) seen.set(key, { gap, t, pair: key });
+        }
       }
     }
+    for (const v of seen.values()) worst.push({ level: li + 1, name: level.name, ...v });
   }
-  for (const v of seen.values()) worst.push({ level: li + 1, name: level.name, ...v });
+  return worst.sort((a, b) => a.gap - b.gap);
 }
 
-worst.sort((a, b) => a.gap - b.gap);
-if (!worst.length) {
-  console.log(`No overlaps across ${LEVELS.length} levels, each swept over its slowest full orbital period.`);
-  process.exit(0);
+export function describe(w) {
+  return `L${w.level} ${w.name}: ${w.pair} overlaps by ${(-w.gap).toFixed(2)}u at t=${w.t.toFixed(1)}s`;
 }
 
-const byLevel = new Map();
-for (const w of worst) byLevel.set(w.level, (byLevel.get(w.level) || 0) + 1);
-console.error(`${worst.length} overlapping pair(s) across ${byLevel.size} level(s):\n`);
-for (const w of (VERBOSE ? worst : worst.slice(0, 40))) {
-  console.error(`  L${String(w.level).padStart(2)} ${w.name.padEnd(18)} ${w.pair}`);
-  console.error(`      overlaps by ${(-w.gap).toFixed(2)}u at t=${w.t.toFixed(1)}s`);
+// CLI: node tools/overlap-check.mjs [--verbose]
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const worst = findOverlaps();
+  if (!worst.length) {
+    console.log(`No overlaps across ${LEVELS.length} levels, each swept over its slowest full orbital period.`);
+    process.exit(0);
+  }
+  const byLevel = new Set(worst.map(w => w.level));
+  console.error(`${worst.length} overlapping pair(s) across ${byLevel.size} level(s):\n`);
+  for (const w of (VERBOSE ? worst : worst.slice(0, 40))) console.error('  ' + describe(w));
+  if (!VERBOSE && worst.length > 40) console.error(`  ... and ${worst.length - 40} more (--verbose)`);
+  process.exit(1);
 }
-if (!VERBOSE && worst.length > 40) console.error(`  ... and ${worst.length - 40} more (--verbose)`);
-process.exit(1);

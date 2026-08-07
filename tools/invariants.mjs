@@ -9,6 +9,7 @@
 //
 //   node tools/invariants.mjs
 import { predict, legStart, legCount, bodiesAt, hazardsAt, activeTarget, SHIP_R } from '../src/physics.js';
+import { findOverlaps, describe } from './overlap-check.mjs';
 import { LEVELS } from '../src/levels.js';
 
 let failures = 0;
@@ -175,10 +176,27 @@ function checkLevelData() {
   });
 }
 
+// Nothing the player sees may sit inside anything else the player sees. This
+// lives here rather than in its own CI job because a workflow file cannot be
+// added with the credentials this repo's agent sessions carry — and an
+// unenforced check is worth very little. Overlap is a geometric invariant of
+// the level data, so it belongs among the others regardless.
+function checkNoOverlaps() {
+  const worst = findOverlaps();
+  if (!worst.length) {
+    console.log('nothing drawn sits inside anything else');
+    console.log(`  ${LEVELS.length} levels, each swept over its slowest full orbital period`);
+    return;
+  }
+  for (const w of worst.slice(0, 12)) fail(describe(w));
+  if (worst.length > 12) fail(`... and ${worst.length - 12} more overlapping pairs (node tools/overlap-check.mjs --verbose)`);
+}
+
 console.log('physics invariants\n');
 checkLevelData();
 checkOutcomesAgree();
 checkDeterminism();
 checkMetamorphic();
+checkNoOverlaps();
 console.log(failures ? `\n${failures} invariant failure(s)` : '\nAll invariants hold.');
 process.exit(failures ? 1 : 0);
