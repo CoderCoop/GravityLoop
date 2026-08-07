@@ -140,8 +140,34 @@ function freezeKin(level, frozen) {
 
 function withOrbits(level, scale, anchors, frozen) {
   const out = { ...level, bodies: level.bodies.map(b => ({ ...b })) };
+  // Decide every orbit first, then close the decision under the moon/parent
+  // relation before applying any of it.
+  //
+  // freezeKin propagates through the `frozen` set, but that is only one of the
+  // six ways orbitFor can refuse an orbit — a moon rejected for crossing a pad,
+  // for sitting too close to its planet, or for cutting through a derelict
+  // never enters `frozen` at all. Its planet then kept orbiting and sailed off
+  // without it, leaving the moon parked in empty space. That is legal geometry,
+  // so the overlap gate had nothing to say about it, and it shipped on 20
+  // levels.
+  const orbits = level.bodies.map((_, i) => orbitFor(level, i, scale, anchors, frozen));
+  for (let pass = 0; pass < level.bodies.length; pass++) {
+    let changed = false;
+    level.bodies.forEach((b, i) => {
+      if (b.moonOf == null) return;
+      // only along real moon links: every planet nominally orbits body 0, and
+      // a parked sun must not ground the whole system
+      const hasMoon = !!orbits[i], hasParent = !!orbits[b.moonOf];
+      if (hasMoon !== hasParent) {
+        orbits[i] = null;
+        orbits[b.moonOf] = null;
+        changed = true;
+      }
+    });
+    if (!changed) break;
+  }
   for (let i = 0; i < out.bodies.length; i++) {
-    const o = orbitFor(level, i, scale, anchors, frozen);
+    const o = orbits[i];
     if (!o) continue;
     delete out.bodies[i].x;
     delete out.bodies[i].z;
@@ -249,11 +275,40 @@ function minWinsOf(level) {
   return worst;
 }
 
+// An orbit this tool wrote, as opposed to one the generator designed: it always
+// records both a parent and the parent's centre. Set 5 ships with generated
+// orbits that have one or the other, never both.
+function isToolOrbit(o) {
+  return !!o && o.parent != null && o.cx !== undefined;
+}
+
+// Undo a previous run, exactly. Phases were chosen so t = 0 reproduces the
+// static layout the generator produced, so evaluating at t = 0 recovers it.
+// Without this the tool could only ever be run once: a second run saw orbits
+// already present and skipped every level, which is why a bad orbit decision
+// could not simply be fixed and re-applied.
+function stripToolOrbits(level) {
+  if (!level.bodies.some(b => isToolOrbit(b.orbit))) return level;
+  const at0 = bodiesAt(level, 0);
+  const out = {
+    ...level,
+    bodies: level.bodies.map((b, i) => {
+      if (!isToolOrbit(b.orbit)) return { ...b };
+      const { orbit, ...rest } = b;
+      return { ...rest, x: +at0[i].x.toFixed(3), z: +at0[i].z.toFixed(3) };
+    }),
+  };
+  const unanchor = s => { const { anchor, ...rest } = s; return rest; };
+  out.ship = unanchor(level.ship);
+  out.goal = unanchor(level.goal);
+  if (level.waypoints) out.waypoints = level.waypoints.map(unanchor);
+  return out;
+}
+
 function solveLevel(index) {
-  const level = LEVELS[index];
-  const already = level.bodies.some(b => b.orbit);
-  if (already) {
-    return { index, scale: null, skipped: 'already moving', bodies: [] };
+  const level = stripToolOrbits(LEVELS[index]);
+  if (level.bodies.some(b => b.orbit)) {
+    return { index, scale: null, skipped: 'generator orbits, left alone', bodies: [] };
   }
   const anchors = anchorsFor(level);
   // Resolve geometry in the order that costs the least motion. Slowing an

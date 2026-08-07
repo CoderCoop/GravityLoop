@@ -173,6 +173,17 @@ function checkLevelData() {
     }
     // a target you cannot fit through is not a target
     if (lv.goal.r < SHIP_R) fail(`${tag}: goal radius ${lv.goal.r} is smaller than the ship (${SHIP_R})`);
+    // A moon rides its planet or they both stay put. Half a system in motion
+    // leaves the moon parked in empty space as its planet sails off, which is
+    // legal geometry — no overlap — so nothing else here would catch it.
+    lv.bodies.forEach((b, bi) => {
+      if (b.moonOf == null) return;
+      const p = lv.bodies[b.moonOf];
+      if (!p) return;
+      if (!!b.orbit !== !!p.orbit) {
+        fail(`${tag}: ${b.name} ${b.orbit ? 'orbits' : 'stays put'} but its planet ${p.name} ${p.orbit ? 'orbits' : 'stays put'} — a moon must move with its planet`);
+      }
+    });
   });
 }
 
