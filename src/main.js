@@ -1,7 +1,7 @@
 // GravityLoop — spaceship golf across gravity-well terrain.
 import * as THREE from '../vendor/three.module.js';
 import {
-  STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, checkState, stepShip, predict,
+  STEP, PREDICT_T, bodiesAt, hazardsAt, heightAt, accelAt, checkState, stepShip, predict,
   activeTarget, legStart, legCount, launchFuelCost, maxAffordableLaunch,
   anchorX, anchorZ, SHIP_R,
 } from './physics.js';
@@ -230,25 +230,39 @@ function buildTerrain() {
   updateTerrain(bodiesAt(level, simTime), true);
 }
 
+// Gravity strength at each grid vertex, normalised. Only the wells used to be
+// legible: away from them the surface is nearly level, so the far field drew
+// as flat empty ground even though it is bending every route through it.
+// Measured on level 7, half the map sits at acceleration >= 0.87 and a quarter
+// at >= 1.67, against a median of 1.31 along an actual flight — the "empty"
+// ground pulls about as hard as the visible wells do.
+let fieldAt = null;
+// Force spans ~0.6 to 15 along a flight and up to ~55 against a sun, so a
+// linear scale wastes nearly all its range. A soft knee spreads the useful
+// band and never quite saturates:  g 0.6→0.17  1.3→0.30  4→0.57  15→0.83
+const PULL_HALF = 3;
+const pullFrac = g => g / (g + PULL_HALF);
+// World units of potential between contour rings.
+const BAND = 3.2;
+
 const _c = new THREE.Color();
-function heightColor(y, out, o) {
+function heightColor(y, out, o, idx) {
   if (y > 0.4) {
     // antimatter hills glow violet
     const t = Math.min(y / 12, 1);
     _c.setRGB(0.2 + 0.58 * t, 0.2 + 0.28 * t, 0.42 + 0.56 * t);
-  } else {
-    const d = -y;
-    if (d < 7) {
-      const t = d / 7;
-      _c.setRGB(0.14 + 0.02 * t, 0.19 + 0.55 * t, 0.42 + 0.5 * t);
-    } else if (d < 16) {
-      const t = (d - 7) / 9;
-      _c.setRGB(0.16 + 0.4 * t, 0.74 - 0.5 * t, 0.92 + 0.03 * t);
-    } else {
-      const t = Math.min((d - 16) / 10, 1);
-      _c.setRGB(0.56 + 0.44 * t, 0.24 - 0.06 * t, 0.95 - 0.37 * t);
-    }
+    out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
+    return;
   }
+  // Hue and brightness carry the force, so nowhere on the map is unlit: faint
+  // teal where gravity barely reaches, through green, to hot yellow-white in a
+  // well. Contour rings ride on top, spaced by potential — tight where the
+  // ground falls away fast, wide but still marching across the flat.
+  const f = fieldAt ? fieldAt[idx] : 0;
+  const phase = (((-y) % BAND) + BAND) % BAND / BAND;
+  const onRing = phase < 0.13;
+  const l = Math.min((0.15 + 0.36 * f) * (onRing ? 1.9 : 1), 0.95);
+  _c.setHSL(0.55 - 0.55 * f, 0.85 - 0.25 * f, l);
   out[o] = _c.r; out[o + 1] = _c.g; out[o + 2] = _c.b;
 }
 
@@ -282,12 +296,15 @@ function updateTerrain(positions, snap) {
     terrain.targetY = new Float32Array(gridX.length);
     snap = true;
   }
+  if (!fieldAt || fieldAt.length !== gridX.length) fieldAt = new Float32Array(gridX.length);
   for (let idx = 0; idx < gridX.length; idx++) {
+    const a = accelAt(level, gridX[idx], gridZ[idx], positions);
+    fieldAt[idx] = pullFrac(Math.hypot(a.x, a.z));
     const y = surfaceY(gridX[idx], gridZ[idx], positions);
     terrain.targetY[idx] = y;
     if (snap) {
       pos[idx * 3 + 1] = y;
-      heightColor(y, col, idx * 3);
+      heightColor(y, col, idx * 3, idx);
     }
   }
   if (snap) {
@@ -313,7 +330,7 @@ function easeTerrain(dt) {
       moved = true;
       // depth colour is a slow gradient — only worth redoing on a visible
       // change, which keeps the per-frame ease cheap at full grid density
-      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3); recoloured = true; }
+      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3, idx); recoloured = true; }
     }
   }
   if (moved) posAttr.needsUpdate = true;
@@ -1061,12 +1078,28 @@ function fitZoom(tgt, marginTgt, marginShip, flying, zoomOut = 1, shipFoot = 0) 
   };
   let lo = 0.05, hi = zoomOut;
   if (test(lo)) return lo;
-  if (!test(hi)) return hi;
+  if (!test(hi)) return -1;        // does not fit even pulled all the way back
   for (let i = 0; i < 18; i++) {
     const mid = (lo + hi) / 2;
     if (test(mid)) hi = mid; else lo = mid;
   }
   return hi;
+}
+
+// The launch framing, degrading in the order that costs the player least.
+// A few levels put the pad and the goal so far apart that the pair cannot fit
+// on screen at all with a full SHIP_FOOT of drag room reserved; there, giving
+// back some of that room beats framing the ship off the bottom edge. The last
+// rung asks only that the ship be on screen.
+const FOOT_LADDER = [SHIP_FOOT, 0.2, 0.14, 0.08, 0];
+let fitFoot = SHIP_FOOT;        // rung actually used, reported to the UI test
+function fitLaunchZoom(tgt) {
+  for (const foot of FOOT_LADDER) {
+    const z = fitZoom(tgt, 0.04, 0.08, false, CAM_ZOOM_MAX, foot);
+    if (z >= 0) { fitFoot = foot; return z; }
+  }
+  fitFoot = 0;
+  return CAM_ZOOM_MAX;
 }
 function resetCamera() {
   camZoom = 1;
@@ -1089,10 +1122,7 @@ function resetCamera() {
   // must be on screen at all, and it must have room below it to drag into.
   // Zooming out past 1 is allowed here — on wide levels the pair does not fit
   // otherwise and the ship used to be framed clean off the bottom of the view.
-  camZoom = Math.min(
-    Math.max(fitZoom(tgt, 0.04, 0.08, false, CAM_ZOOM_MAX, SHIP_FOOT), 9 / level.extent),
-    CAM_ZOOM_MAX,
-  );
+  camZoom = Math.min(Math.max(fitLaunchZoom(tgt), 9 / level.extent), CAM_ZOOM_MAX);
 }
 function onWheel(e) {
   e.preventDefault();
@@ -1844,7 +1874,8 @@ function updateCamera(dt) {
     // and breathe the zoom so the ship and what it is heading for both stay
     // in frame as the gap between them opens and closes
     const tgt = activeTarget(level, stage, bodiesAt(level, simTime));
-    const want = Math.min(Math.max(fitZoom(tgt, 0.07, 0.12, true, CAM_ZOOM_MAX), 9 / E), CAM_ZOOM_MAX);
+    const fit = fitZoom(tgt, 0.07, 0.12, true, CAM_ZOOM_MAX);
+    const want = fit < 0 ? CAM_ZOOM_MAX : Math.min(Math.max(fit, 9 / E), CAM_ZOOM_MAX);
     camZoom += (want - camZoom) * Math.min(dt * 1.6, 1);
   }
   const inFlight = state === 'flying' || state === 'crashed' || state === 'won';
@@ -2357,6 +2388,7 @@ window.GL = {
       t: simTime,
       goal: { x: anchorX(level.goal, p), z: anchorZ(level.goal, p) },
       pad: { x: anchorX(level.ship, p), z: anchorZ(level.ship, p) },
+      fitFoot,
       shipScreen: (() => {
         const v = new THREE.Vector3(ship.x, shipY(p), ship.z).project(camera);
         const r = renderer.domElement.getBoundingClientRect();

@@ -11,6 +11,18 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '2.2.0',
+    date: '2026-08-06',
+    title: 'Gravity is visible everywhere, not just in the wells',
+    notes: [
+      'Open space is not empty. Half of a typical map pulls about as hard as the middle of a real flight does, but it used to be drawn as flat dark ground with nothing to say so \u2014 you only saw gravity where it had already dug a well.',
+      'The surface now carries the field itself: it glows faint teal where the pull is slight, warming through green to hot yellow inside a well, so no part of the map reads as dead space.',
+      'Contour rings ride on top, spaced by how fast the ground is falling away \u2014 tight around a world, wide but still marching outward across ground that looks level.',
+      'Deep wells round off instead of spiking, which frees up the range to show the gentle far-field slope. The ground is no longer flat anywhere there is mass.',
+      'Nothing about flight changed: the surface is a picture of gravity, not the source of it.',
+    ],
+  },
+  {
     v: '2.1.0',
     date: '2026-08-05',
     title: 'One place for every setting',
