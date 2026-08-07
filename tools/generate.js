@@ -319,6 +319,34 @@ function keyPoints(level) {
   ];
 }
 
+// Worlds sitting in the corridor between the pad and the goal, counted at
+// sample time — before any solving, so a layout that cannot support a
+// multi-well route is thrown away cheaply.
+//
+// This is the ceiling on difficulty, and it is set by the layout, not by how
+// strictly routes are judged afterwards. Measured on the campaign: the most
+// wells ANY winning route could reach was a median of 3, and on 16 levels the
+// best possible route reached under 3 — on four of them (32, 46, 47, 50) it
+// reached NONE. No acceptance bar can conjure a route through mass that is not
+// in the way; raising the bar there only makes the search reject everything and
+// fall back to the easiest candidate it saw.
+function corridorBodies(level, pad, goal, margin = 10) {
+  const vx = goal.x - pad.x, vz = goal.z - pad.z;
+  const L2 = vx * vx + vz * vz;
+  if (L2 < 1) return 0;
+  let n = 0;
+  for (let i = 0; i < level.bodies.length; i++) {
+    const b = level.bodies[i];
+    const a = annulus(level, i);
+    const px = a.x, pz = a.z;
+    let t = ((px - pad.x) * vx + (pz - pad.z) * vz) / L2;
+    t = Math.max(0, Math.min(1, t));
+    const cx = pad.x + vx * t, cz = pad.z + vz * t;
+    if (Math.hypot(px - cx, pz - cz) < b.radius + a.maxR + margin) n++;
+  }
+  return n;
+}
+
 function levelGeometryOk(level, padClear, goalClear) {
   const E = level.extent;
   for (let i = 0; i < level.bodies.length; i++) {
