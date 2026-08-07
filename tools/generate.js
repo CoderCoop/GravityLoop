@@ -856,13 +856,26 @@ function addComet(rng, lv) {
 // center so the Earth-Moon neighborhood owns the open half; Venus/Mars
 // targets swing to the opposite side of Sol from Earth.
 // ---------------------------------------------------------------------------
+// Angular separation between the home world and the target, about the sun.
+// This is what decides whether anything sits between the two ends of a level.
+// It used to be ~1.0-1.35 radians (60-77 degrees), which puts home and target
+// on the SAME side of the system with clear space between them - so a route
+// flew straight across and touched nothing on the way. Measured on set 2:
+// zero of 696 valid layouts had a winning route passing any world other than
+// home and target.
+//
+// Near-opposite instead (roughly 130-175 degrees) puts the sun, and whatever
+// orbits inside the target's ring, squarely in the way. A route has to go
+// around or steal from them.
+const SEPARATION = [2.3, 3.0];
+
 function sampleEarthrise(rng, slot) {
   const E = 80;
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: 6 }, maxLaunch: Math.round(rand(rng, 48, 52)), fuel: 3, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2000, 2600, 11, 13, [0.52, 0.62]);
   const center = Math.atan2(-sun.z, -sun.x);
   const off = Math.hypot(sun.x, sun.z);
-  const dA = sign(rng) * rand(rng, 1.05, 1.35);
+  const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   const moonSlot = slot < 3;
   const ang = {
     mercury: center + rand(rng, -1.4, 1.4),
@@ -907,7 +920,7 @@ function sampleInner(rng, slot) {
   const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 11, 13, [0.48, 0.58]);
   const center = Math.atan2(-sun.z, -sun.x);
   const off = Math.hypot(sun.x, sun.z);
-  const dA = sign(rng) * rand(rng, 1.0, 1.3);
+  const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   const targetKey = slot < 3 ? 'venus' : slot < 6 ? 'mercury' : 'mars';
   const ang = {
     mercury: targetKey === 'mercury' ? center - dA : center + rand(rng, -1.4, 1.4),
@@ -939,7 +952,7 @@ function sampleOuter(rng, slot) {
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.6, 5.4).toFixed(1) }, maxLaunch: Math.round(rand(rng, 44, 49)), fuel: 3.5, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2600, 3200, 10, 11.5, [0.30, 0.40]);
   const center = Math.atan2(-sun.z, -sun.x);
-  const dA = sign(rng) * rand(rng, 0.8, 1.05);
+  const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   // angle ladder: radially-adjacent planets alternate sides of the center
   // line so cumulative ring gaps never have to survive an angular alignment
   const sol = buildSol(rng, lv, through, {
@@ -976,7 +989,7 @@ function sampleBelt(rng, slot) {
   const lv = { extent: E, ship: { x: 0, z: 0 }, goal: { x: 0, z: 0, r: +rand(rng, 4.8, 5.2).toFixed(1) }, maxLaunch: Math.round(rand(rng, 42, 48)), fuel: 4, bodies: [] };
   const sun = mkSun(rng, lv, 'Sol', 2400, 3000, 10, 11.5, [0.22, 0.28]);
   const center = Math.atan2(-sun.z, -sun.x);
-  const dA = sign(rng) * rand(rng, 0.8, 1.0);
+  const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
   // same angle ladder as sampleOuter: adjacent rings alternate sides
   const sol = buildSol(rng, lv, 'beltjupiter', {
     ang: {
