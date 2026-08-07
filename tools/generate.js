@@ -307,7 +307,12 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     if (r.wins < MIN_WINS) return { minWins, rates, dist: Infinity, conc, legs, winners };
     rates.push(r.rate);
     winners.push(r.winners);
-    evalMinTurn = Math.min(evalMinTurn, r.minTurn);
+    // Summed over legs for the same reason wells is: the bar is on the route a
+    // player flies, and a route with stops is still one route. Minimised, the
+    // final approach vetoed everything — it is a few units of coasting on
+    // almost every level, so a three-leg tour reported 0.01 radians while its
+    // other two legs were bending properly.
+    evalMinTurn = evalMinTurn === Infinity ? r.minTurn : evalMinTurn + r.minTurn;
     evalAssist = Math.max(evalAssist, r.cheapAssist);   // slowest leg sets the cap floor
     evalDirect = Math.min(evalDirect, r.cheapDirect);   // fastest direct win sets the ceiling
     evalMedTurn = Math.min(evalMedTurn, r.medTurn);
@@ -1479,11 +1484,11 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 // — because the bar decides what is ACCEPTABLE and the rate band decides what
 // is chosen from among the acceptable.
 const HARD = [
-  { wells: 1, turn: 1.3, shape: 1.4, assist: 3 },
-  { wells: 1, turn: 1.4, shape: 1.4, assist: 4 },
-  { wells: 1, turn: 1.5, shape: 1.4, assist: 5 },
-  { wells: 1, turn: 1.5, shape: 1.4, assist: 6 },
-  { wells: 1, turn: 0.4, shape: 1.4, assist: 6 },
+  { wells: 1, turn: 1.3, shape: 1.6, assist: 3 },
+  { wells: 1, turn: 1.4, shape: 1.6, assist: 4 },
+  { wells: 1, turn: 1.5, shape: 1.6, assist: 5 },
+  { wells: 1, turn: 1.5, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 0.4, shape: 1.6, assist: 6 },
 ]
 // Set 5 is the exception to the rising turn floor, and deliberately. Its
 // single-leg levels measure 0.29-0.73 radians where set 3's measure 1.2-2.55,
@@ -1557,14 +1562,11 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   // anything, and slots reported as clearing rung 1 had no assisted route at
   // all. An infinite gap means no direct route exists, which is the strongest
   // form of the requirement, not a failure of it.
-  // minTurn is the straightest single LEG, so a level cut into three stops is
-  // judged on a flight a third as long — and a shorter flight simply has less
-  // room to bend. Measured, 3-leg levels came in at 0.03-0.30 radians against
-  // 1.15-2.35 for single-leg ones. Holding them to the same floor does not
-  // make them harder, it just guarantees they fail it and drop to the rung
-  // that asks for nothing. Scale the floor by how many legs the route has.
+  // minTurn is now summed over the route's legs rather than minimised across
+  // them, so no per-leg scaling is needed here — a journey is judged on the
+  // whole journey, the same way its wells are.
   const clears = (r, q) =>
-    r.minTurn >= q.turn / (1 + 0.5 * (Math.max(r.legs, 1) - 1))
+    r.minTurn >= q.turn
     && (r.wellsMin == null || r.wellsMin >= q.wells)
     && (!shape || r.shapeFit <= q.shape)
     && (q.assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= q.assist));
