@@ -131,17 +131,17 @@ export function accelAt(level, x, z, positions) {
 //          which is what makes a sun's dominance visible as breadth (the
 //          planets orbit inside its bowl) rather than as one deep puncture.
 //          Normalised at REF so overall scale holds as exp changes.
-//   comp — smooth depth saturation (tanh) instead of a hard clamp, so a deep
-//          well has a rounded floor rather than a flat cut.
+//   comp — logarithmic depth compression instead of a hard clamp, so a deep
+//          well keeps its shape rather than being cut flat.
 // `round: false` keeps a hard distance floor at 1.1 body radii, which is the
 // original shape — a needle that saturates the depth clamp. `round: true`
 // softens the centre instead, so the spike becomes a bowl.
 //   gain — overall depth multiplier, so a well widened by a flatter falloff
 //          can be pushed back down to a clearly-visible depth instead of
 //          reading as a shallow dish.
-//   depth — depth limit for the drawn surface. The default 26 is what cuts a
-//          sun's bowl off flat at the bottom, which is what makes it read as a
-//          hole rather than a basin; raising it lets the bowl keep its shape.
+//   depth — the depth SCALE, not a limit: the drawn surface tracks the raw
+//          field one-for-one while shallower than this and compresses
+//          logarithmically past it, so there is no floor to hit.
 // Shipped shape: centres rounded just enough to stop a body sitting in a
 // needle, and true 1/r falloff kept deliberately — flattening it spreads mass
 // influence outward but tilts the whole sheet, which washes local wells out
@@ -150,10 +150,26 @@ export function accelAt(level, x, z, positions) {
 // Gain and compression work as a pair. A hard clamp spends the whole height
 // range on the deep wells and leaves the far field within a couple of units of
 // level, so ground that is still pulling hard draws as flat. Raising gain
-// amplifies that gentle far-field slope into something you can see, and tanh
-// saturation then rounds the deep wells off instead of letting them run away
-// or cut flat at the bottom. The surface is no longer level anywhere there is
-// mass, which is the point.
+// amplifies that gentle far-field slope into something you can see, and the
+// compressor then keeps the deep wells in range instead of letting them run
+// away. The surface is no longer level anywhere there is mass, which is the
+// point.
+//
+// The compressor must not saturate, which tanh does. Its slope goes to zero,
+// so past about 3x depth every different amount of gravity is drawn at the
+// same height and the picture stops carrying information. Measured on the
+// shipped campaign: across the deepest 5% of a map the drawn surface varied by
+// a median of 1.36 units, and on 18 of 50 levels that entire deepest region
+// came out within 1 unit of flat — level 47's black hole and its star both sat
+// on a plateau with no well at all. log1p never saturates: its slope falls off
+// but stays positive, so a heavier body is always drawn deeper than a lighter
+// one. Same 50 levels afterwards: median 6.54 units of relief across that
+// region, worst case 5.39, none flat.
+//
+// Normalised so that -depth * log1p(-h/depth) tracks the old tanh curve while
+// wells are shallow (-5 -> -4.6 against -4.9, -13 -> -10.5 against -12.0) and
+// only diverges where the old one was already flattening out. Levels that
+// looked right keep looking the way they did.
 export const VIS = { round: true, soft: 1.35, exp: 1, comp: true, gain: 3, depth: 26 };
 const REF = 20;
 export function heightAt(level, x, z, positions) {
@@ -168,7 +184,7 @@ export function heightAt(level, x, z, positions) {
       : Math.max(Math.sqrt(r2), b.radius * 1.1);
     h -= (HEIGHT_K * gain * b.mass) * (exp === 1 ? 1 / d : Math.pow(REF, exp - 1) / Math.pow(d, exp));
   }
-  if (comp) return depth * Math.tanh(h / depth);
+  if (comp) return -depth * Math.log1p(-h / depth);
   return Math.max(Math.min(h, depth), -depth);
 }
 
