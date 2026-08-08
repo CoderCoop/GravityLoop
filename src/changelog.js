@@ -11,6 +11,16 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '3.0.1',
+    date: '2026-08-08',
+    title: 'The heaviest wells have a bottom again',
+    notes: [
+      'Black holes and alien suns were drawn sitting on a flat plateau. Past a certain weight the surface stopped going down at all, so the very places where gravity is strongest were the places the ground told you least — on 18 levels the whole deepest region was drawn within a hair of level.',
+      'Deep wells now keep their shape all the way down: a black hole is a narrow throat you can see into, and a heavy star is a broad bowl with a floor rather than a mesa.',
+      'Levels that already looked right are unchanged — only the ground that had flattened out has moved.',
+    ],
+  },
+  {
     v: '3.0.0',
     date: '2026-08-07',
     title: 'No more straight shots',
