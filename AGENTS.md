@@ -84,6 +84,19 @@ solver check always passes.
 from `main` automatically (the live game is
 https://codercoop.github.io/GravityLoop/).
 
+**Merge it yourself once every check is green — do not wait to be asked.**
+Squash merge, and delete the branch. The CI gates are the review: if the
+solver, the invariants, the contract test, the viewport check and the
+changelog check all pass, the change ships. Report the merge; do not ask
+permission for it.
+
+This is not a licence to skip the gates. Green means *every* check on the PR,
+not the ones that finished first, and a check that is still running is not a
+pass. If a check fails, fix it and push — a red PR is never merged, and
+`--force` merging past a failing gate is not a thing this project does. What
+this rule removes is the wait for a human to say yes to a result the CI has
+already confirmed, not the confirmation itself.
+
 Do **not** reuse one long-lived branch for successive PRs. Tooling that links
 a conversation to a pull request keys off the branch name, so a reused branch
 keeps pointing at the first PR ever opened from it — every later PR then shows
