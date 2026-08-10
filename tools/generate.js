@@ -104,7 +104,7 @@ const SHAPE_ORDER = ['arc', 'sling', 'ess', 'loop', 'cruise', 'sling', 'arc', 'l
 // radians and missed by 8.35. A shape target the geometry cannot reach is not a
 // difficulty setting, it is a guaranteed relaxation — and a relaxed rung asks
 // for nothing at all.
-const SHAPE_RAMP = [1, 1.1, 1.25, 1.1, 0.85];
+const SHAPE_RAMP = [1, 1.1, 1.25, 1.1, 0.35];
 function shapeFor(setIdx, slot) {
   const base = SHAPES[SHAPE_ORDER[(slot + setIdx) % SHAPE_ORDER.length]];
   const k = SHAPE_RAMP[Math.min(setIdx, SHAPE_RAMP.length - 1)];
@@ -133,13 +133,7 @@ function shapeMiss(shape, t) {
 // no route could ever be credited with passing a third-party world.
 function isEnd(level, key, bi, b) {
   const end = level[key];
-  if (end == null) return false;
-  // Kinship is recorded two ways: the Sol sets park a static moon beside its
-  // planet with `moonOf`, while alien moons genuinely orbit theirs and say so
-  // with `orbit.parent`. Checking only the first made a home world's own moon
-  // count as a stranger, so a pad tucked beside its planet was rejected for
-  // being too close to the moon going round it.
-  return bi === end || b.moonOf === end || (b.orbit && b.orbit.parent === end);
+  return end != null && (bi === end || b.moonOf === end);
 }
 
 function solveLeg(level, stage, shape) {
@@ -497,13 +491,8 @@ function levelGeometryOk(level, padClear, goalClear) {
     const isTarget = isEnd(level, 'targetIdx', i, bi);
     const padM = isHome ? 3 : moving ? Math.min(padClear, 10) : padClear;
     const goalM = isTarget ? 3 : moving ? Math.min(goalClear, 8) : goalClear;
-    // A pad or goal bolted to this world is meant to be beside it, and keeps a
-    // fixed offset so it can never drift into it. It also sits ON that world's
-    // ring, which for an orbiting body is what annulus() measures against — so
-    // without this it is rejected for being exactly where it belongs.
-    const rides = k => k && k.anchor && k.anchor.body === i;
-    if (!rides(level.ship) && pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return no(`pad near ${bi.name}`);
-    if (!rides(level.goal) && pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return no(`goal near ${bi.name}`);
+    if (pointToAnnulus(a, level.ship.x, level.ship.z) < bi.radius + padM) return no(`pad near ${bi.name}`);
+    if (pointToAnnulus(a, level.goal.x, level.goal.z) < bi.radius + goalM) return no(`goal near ${bi.name}`);
     for (const wp of level.waypoints || []) {
       // a stop that RIDES this world is meant to be beside it — it keeps a
       // fixed offset, so it can never drift into the planet it is bolted to
@@ -1374,58 +1363,6 @@ function sampleAlien(rng, slot) {
   if (!planetIdxs.length) return null;
   const outer = lv.bodies[planetIdxs[planetIdxs.length - 1]].orbit.radius;
   const centerA = Math.atan2(-sun.z, -sun.x);   // keep exotics inside bounds
-
-  // Launch from a world and arrive at a world, on opposite sides of the star —
-  // the arrangement every other set uses, and the one set 5 was missing.
-  //
-  // Its ends used to be fixed points at the map edges (z = +/-0.72 E), OUTSIDE
-  // the planetary system, with open space all around it. A wide lob around the
-  // outside therefore always existed, touching nothing, and no engine cap could
-  // remove it because there was no cheaper assisted route to cap below. All ten
-  // alien levels came out with a direct shot available.
-  //
-  // The reason it was built that way is real: set 5's planets already orbit
-  // when the level is generated, so a pad placed beside one would be left
-  // behind by it. `anchor` is the answer — physics.js resolves an anchored spot
-  // against live positions, so the pad rides its world exactly as the tour
-  // stops do, and where the target world will BE becomes part of the problem.
-  if (planetIdxs.length < 2) return null;
-  const homeIdx = planetIdxs[0];
-  const targetIdx = planetIdxs[planetIdxs.length - 1];
-  const dA = sign(rng) * rand(rng, SEPARATION[0], SEPARATION[1]);
-  lv.bodies[homeIdx].orbit.phase = +(centerA + rand(rng, -0.25, 0.25)).toFixed(2);
-  lv.bodies[targetIdx].orbit.phase = +(centerA - dA).toFixed(2);
-  lv.homeIdx = homeIdx;
-  lv.targetIdx = targetIdx;
-  {
-    const at0 = bodiesAt(lv, 0);
-    const h = lv.bodies[homeIdx], t = lv.bodies[targetIdx];
-    // pad on the far side of home from the target, goal on the far side of the
-    // target from home: both ends tucked behind their own world, so the route
-    // has to come round each of them as well as cross what lies between
-    // Offset ALONG each world's ring, not across it. Pushing the pad straight
-    // away from the target moves it radially, which walks it into the next
-    // planet's swept band — every layout was rejected for "pad near" some
-    // unrelated world. Sliding it round its own orbit instead keeps it at its
-    // host's radius, where by construction there is room. Of the two ways
-    // round, take the one that puts it further from the target, so the route
-    // still has to come round the home world to leave.
-    const far = (cx, cz, ax, az) => {
-      const r = unit(cx - sun.x, cz - sun.z);
-      const tx = -r.z, tz = r.x;                 // unit tangent to the ring
-      const d = (tx * (ax - cx) + tz * (az - cz)) >= 0 ? -1 : 1;
-      return { x: tx * d, z: tz * d };
-    };
-    const pu = far(at0[homeIdx].x, at0[homeIdx].z, at0[targetIdx].x, at0[targetIdx].z);
-    const gu = far(at0[targetIdx].x, at0[targetIdx].z, at0[homeIdx].x, at0[homeIdx].z);
-    const hd = h.radius + rand(rng, 5, 8), td = t.radius + rand(rng, 5, 8);
-    const pdx = +(pu.x * hd).toFixed(1), pdz = +(pu.z * hd).toFixed(1);
-    const gdx = +(gu.x * td).toFixed(1), gdz = +(gu.z * td).toFixed(1);
-    lv.ship = { x: Math.round(at0[homeIdx].x + pdx), z: Math.round(at0[homeIdx].z + pdz),
-      anchor: { body: homeIdx, dx: pdx, dz: pdz } };
-    lv.goal = { x: Math.round(at0[targetIdx].x + gdx), z: Math.round(at0[targetIdx].z + gdz),
-      r: lv.goal.r, anchor: { body: targetIdx, dx: gdx, dz: gdz } };
-  }
   if (rng() < 0.45) {
     const ang = centerA + rand(rng, -1.7, 1.7);
     const d = outer + rand(rng, 12, 20);
@@ -1444,13 +1381,19 @@ function sampleAlien(rng, slot) {
       x: Math.round(sun.x + Math.cos(ang) * d), z: Math.round(sun.z + Math.sin(ang) * d),
     });
   }
-  if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 4)) return null;
-  // The old "straight line must cross a planet's swept ring" test is gone with
-  // the fixed edge-to-edge ends that needed it. It was weak anyway: crossing a
-  // RING says a planet passes through there sometime, not that anything is in
-  // the way when you fly. With the two ends now on opposite sides of the star,
-  // the star itself is between them at every instant, and corridorOk already
-  // asks that something more than the star be in the way.
+  if (!levelGeometryOk(lv, 14, 11) || !corridorOk(lv, 4)) return null;
+  // the straight ship->goal line must cross at least one planet's swept ring:
+  // direct shots die in a moving well, curves are mandatory
+  let blocked = false;
+  for (let k = 1; k <= 19 && !blocked; k++) {
+    const t = k / 20;
+    const x = lv.ship.x + (lv.goal.x - lv.ship.x) * t;
+    const z = lv.ship.z + (lv.goal.z - lv.ship.z) * t;
+    for (const pIdx of planetIdxs) {
+      if (pointToAnnulus(annulus(lv, pIdx), x, z) < lv.bodies[pIdx].radius + 1.5) { blocked = true; break; }
+    }
+  }
+  if (!blocked) return null;
   if (slot >= 5) {
     if (!addTourWaypoints(rng, lv, outer, [{ r: 3.6, type: 'cargo' }, { r: 3.6, type: 'dropoff' }])) return null;
   } else if (slot >= 2 && rng() < 0.7) {
@@ -1568,16 +1511,18 @@ const HARD = [
   { wells: 1, turn: 1.4, shape: 1.6, assist: 4 },
   { wells: 1, turn: 1.5, shape: 1.6, assist: 5 },
   { wells: 1, turn: 1.5, shape: 1.6, assist: 6 },
-  { wells: 1, turn: 1.0, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 0.4, shape: 1.6, assist: 6 },
 ]
-// Set 5's floor used to sit at 0.4 because its levels measured 0.29-0.73
-// radians, and that was read as a property of the set — open space to open
-// space, no pair of wells to wrap around, difficulty carried by launch-window
-// timing instead. That reading was wrong: it was a property of where the ends
-// were PUT. Anchoring them to worlds on opposite sides of the star took the
-// same slots to 1.26-1.43 with two third-party worlds passed and no direct
-// route at all. The floor follows the geometry, so it rises with it — and the
-// timing character is untouched, since the worlds still move under you.
+// Set 5 is the exception to the rising turn floor, and deliberately. Its
+// single-leg levels measure 0.29-0.73 radians where set 3's measure 1.2-2.55,
+// because an alien system launches from open space at one edge of the map to
+// open space at the other rather than from one world to another — there is no
+// pair of wells for the route to wrap around. Difficulty there is carried by
+// what set 5 actually has and no other set does: launch-window timing against
+// orbiting worlds (its levels concentrate 40-71% of wins in 4 of 11 launch
+// buckets), cargo tours that run the tank dry, black holes and antimatter.
+// Holding it to set 3's floor would only relax every slot to the rung that
+// asks for nothing, which is the failure this whole change is fixing.
 // Relaxations tried in order when a slot cannot meet its bar in ATTEMPTS
 // tries. Each rung is reported, so an easy level is visible in the log rather
 // than silently shipped as if it had passed.
