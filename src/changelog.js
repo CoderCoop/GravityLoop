@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '3.0.3',
+    date: '2026-08-08',
+    title: 'A closer look at the launch',
+    notes: [
+      'Every leg opens zoomed in tighter. Your ship and whatever you have to reach next were using well under half the screen between them, with the rest wasted above the target — the view now works out where to sit so both ends push out to the edges.',
+      'The clear space below your ship for pulling the slingshot into is unchanged.',
+    ],
+  },
+  {
     v: '3.0.2',
     date: '2026-08-08',
     title: 'Contour rings keep up with the planets',

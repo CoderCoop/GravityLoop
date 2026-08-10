@@ -1131,15 +1131,35 @@ function resetCamera() {
   const dx = tgt.x - ship.x, dz = tgt.z - ship.z;
   const D = Math.hypot(dx, dz);
   if (D > 1) camYaw = Math.atan2(-dx, -dz);
-  const midX = ship.x * 0.55 + tgt.x * 0.45, midZ = ship.z * 0.55 + tgt.z * 0.45;
-  camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
-  clampPan();
-  // Zoom in on the ship as far as possible with the target still on screen
-  // (user-picked "maximum zoom"), subject to two hard requirements: the ship
-  // must be on screen at all, and it must have room below it to drag into.
-  // Zooming out past 1 is allowed here — on wide levels the pair does not fit
-  // otherwise and the ship used to be framed clean off the bottom of the view.
-  camZoom = Math.min(Math.max(fitLaunchZoom(tgt), 9 / level.extent), CAM_ZOOM_MAX);
+  // Where to centre the view between the ship and its target. This used to be
+  // a fixed 0.55/0.45 and it left a lot of screen unused: the ship stops
+  // descending at the drag-room foot, so tightening the zoom stalls there while
+  // the target is still well short of the top edge — all the waste ends up
+  // above the target. Measured across the campaign, the pair spanned a median
+  // of 41% of the usable viewport and as little as 23%.
+  //
+  // The right weighting depends on the foot and the edge margins, and the
+  // projection is perspective and tilted, so there is no clean closed form.
+  // Search it instead: the zoom fit is already a function of the centre, so
+  // try a spread of weightings and keep whichever admits the tightest zoom.
+  // 0.55 is in the set, so this can only match or beat the old framing.
+  let best = null;
+  for (const w of [0.72, 0.66, 0.60, 0.55, 0.50, 0.45, 0.40]) {
+    const midX = ship.x * w + tgt.x * (1 - w), midZ = ship.z * w + tgt.z * (1 - w);
+    camPan = { x: midX - ship.x * 0.12, z: midZ - ship.z * 0.072 };
+    clampPan();
+    // Zoom in on the ship as far as possible with the target still on screen
+    // (user-picked "maximum zoom"), subject to two hard requirements: the ship
+    // must be on screen at all, and it must have room below it to drag into.
+    // Zooming out past 1 is allowed — on wide levels the pair does not fit
+    // otherwise and the ship used to be framed clean off the bottom.
+    const z = fitLaunchZoom(tgt);
+    if (z >= 0 && (!best || z < best.z || (z === best.z && best.foot < fitFoot))) {
+      best = { z, pan: { ...camPan }, foot: fitFoot };
+    }
+  }
+  if (best) { camPan = best.pan; fitFoot = best.foot; } else { clampPan(); }
+  camZoom = Math.min(Math.max(best ? best.z : CAM_ZOOM_MAX, 9 / level.extent), CAM_ZOOM_MAX);
 }
 function onWheel(e) {
   e.preventDefault();
@@ -2429,6 +2449,14 @@ window.GL = {
       fitFoot,
       shipScreen: (() => {
         const v = new THREE.Vector3(ship.x, shipY(p), ship.z).project(camera);
+        const r = renderer.domElement.getBoundingClientRect();
+        return { x: Math.round((v.x + 1) / 2 * r.width), y: Math.round((1 - v.y) / 2 * r.height) };
+      })(),
+      // where the thing you must reach next lands on screen, so a test can ask
+      // how much of the viewport the pair actually uses
+      targetScreen: (() => {
+        const t = activeTarget(level, stage, p);
+        const v = new THREE.Vector3(t.x, surfaceY(t.x, t.z, p), t.z).project(camera);
         const r = renderer.domElement.getBoundingClientRect();
         return { x: Math.round((v.x + 1) / 2 * r.width), y: Math.round((1 - v.y) / 2 * r.height) };
       })(),
