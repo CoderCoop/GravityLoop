@@ -814,17 +814,39 @@ function addWaypoints(rng, level, specs) {
 // what makes the gravity route the only route rather than merely the tidy one,
 // and it is why fuel bites: the launch you can afford is the one that uses a
 // world, not the one that ignores them.
-function capEngineBelowDirect(level, res) {
-  const a = res.cheapAssist, d = res.cheapDirect;
-  if (!(a < d) || !isFinite(a)) return;
-  // sit just under the direct requirement, but never below the assisted route
-  // plus a little headroom for aiming slop
-  const cap = Math.max(Math.min(d - 2, level.maxLaunch), a + 3);
-  if (cap < level.maxLaunch) {
-    level.maxLaunch = Math.round(cap);
-    level.assistOnly = true;
+function capEngineBelowDirect(level, res, set, needsTiming) {
+  // Bind the engine to the route, on EVERY level.
+  //
+  // This used to fire only where a direct shot existed, so it could sit just
+  // under what that shot cost. But `cap = max(min(d - 2, maxLaunch), a + 3)`
+  // collapses to maxLaunch when d is Infinity — and d is Infinity precisely on
+  // the levels where no direct route exists, which is most of them. Measured on
+  // the shipped campaign: 1 level of 50 had its engine capped. On the other 49
+  // the ship could simply power across at full throttle, and a high-energy
+  // trajectory is a straight one, which is why the laziest winning route bent a
+  // median of 1.75 radians on a campaign built to demand gravity assists.
+  //
+  // The cheapest winning launch is the efficient route by definition: it is the
+  // one that lets gravity do the work. Cap just above it and that route is the
+  // only one affordable, so the curve stops being optional.
+  const cheapest = Math.min(res.cheapAssist, res.cheapDirect);
+  if (!isFinite(cheapest)) return;
+  const full = level.maxLaunch;
+  // Back off if the cap costs the level its winnability, the way targets.js
+  // grows a ring back rather than shipping something nobody can finish.
+  for (const head of [3, 5, 8, 12, 18]) {
+    const cap = Math.round(Math.min(cheapest + head, full));
+    if (cap >= full) return;
+    level.maxLaunch = cap;
+    const r = evaluate(set, needsTiming, level);
+    if (!r.rejected && r.minWins >= MIN_WINS && r.dist !== Infinity) {
+      level.assistOnly = cap < full;
+      return;
+    }
   }
+  level.maxLaunch = full;
 }
+
 
 function tuneFuelEconomy(rng, level, res) {
   if (res.legs <= 1) {
@@ -846,18 +868,30 @@ function tuneFuelEconomy(rng, level, res) {
   const med = costs.map(c => (c.length ? median(c) : 0.8));
   const medTotal = med.reduce((a, b) => a + b, 0);
   if ((level.pickups || []).length) {
-    // gate against TYPICAL play (median winner costs), not the absolute
-    // cheapest grid solution — near-free slow-lob routes exist on almost
-    // every level, so hard-minimum gating is unattainable. The tank covers
-    // the detour launch that flies over the cell (plus a thrust reserve)
-    // but sits below the median route total: ordinary launches run dry
-    // without the cell.
+    // Gate against the CHEAPEST way through, not the typical one. This used to
+    // use median winner costs, on the reasoning that near-free slow-lob routes
+    // exist on almost every level so a hard minimum is unattainable — true
+    // while the engine ran at full throttle, because then the cheap slow route
+    // was one option among many. With the engine bound to the efficient route
+    // the cheapest way through IS the way through, so the minimum is the number
+    // that decides whether the cell is optional.
+    //
+    // Measured before this change: of 18 levels carrying a fuel cell, 7 did not
+    // need it, and the tank was routinely several times the whole route's cost
+    // — level 25 gave 1.89 for a route costing 0.44.
+    const minTotal = (level.legMinCosts || []).reduce((a, b) => a + b, 0);
     const base = detourCost0 != null ? detourCost0 : med[0];
-    level.fuel = +Math.max(base + 0.25, Math.min(medTotal - 0.2, base + 0.6)).toFixed(2);
+    // enough to reach the cell, never enough to finish without it
+    const want = Math.min(base + 0.6, minTotal - 0.05);
+    level.fuel = +Math.max(base + 0.25, want).toFixed(2);
   } else {
     level.fuel = +Math.min(5, medTotal + 1.2).toFixed(1);
   }
-  level.fuelRequired = level.fuel < medTotal - 1e-9;
+  // honest about which it is: the cell is required only if the tank cannot
+  // cover the cheapest complete route without it
+  const minTotal2 = (level.legMinCosts || []).reduce((a, b) => a + b, 0);
+  level.fuelRequired = (level.pickups || []).length ? level.fuel < minTotal2 - 1e-9
+    : level.fuel < medTotal - 1e-9;
 }
 
 // ---------------------------------------------------------------------------
@@ -1696,7 +1730,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
     throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})${whyReport()}`);
   }
-  capEngineBelowDirect(chosen.level, chosen.res);
+  capEngineBelowDirect(chosen.level, chosen.res, set, needsTiming);
   tuneFuelEconomy(chosen.rng, chosen.level, chosen.res);
   chosen.level.name = set.names[slot];
   chosen.level.hint = set.slotHints[slot] || set.hint;
