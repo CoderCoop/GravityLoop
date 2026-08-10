@@ -87,7 +87,7 @@ function pathTurning(pts) {
 const SHAPES = {
   arc: { absLo: 1.0, absHi: 2.8, netLo: 0.75, interest: 1.0 },
   sling: { absLo: 2.2, absHi: 4.4, netLo: 0.7, interest: 1.0 },
-  loop: { absLo: 2.8, absHi: 99, netLo: 0.78, interest: 1.0 },
+  loop: { absLo: 4.6, absHi: 99, netLo: 0.78, interest: 1.0 },
   ess: { absLo: 2.6, absHi: 99, netHi: 0.45, interest: 1.0 },
   cruise: { absLo: 1.8, absHi: 99, netLo: 0.0, interest: 2.0 },
 };
@@ -372,7 +372,13 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
   // identically to one bending 1.3 through one, and the search took whichever
   // it happened to reach first. This is the number that separates them.
   const hard =
-    (evalMinTurn === Infinity ? 0 : evalMinTurn)
+    // Turning is weighted heavily because a loop IS turning: a full wrap of a
+    // world is 2*pi radians, and it is the trajectory this campaign is built to
+    // ask for. At weight 1 it was one term among four and a wrapping candidate
+    // scored barely above a lazy arc, so the search had no reason to hunt for
+    // one. Cubed-ish weighting makes a 4-radian route worth more than any
+    // amount of the other terms combined.
+    (evalMinTurn === Infinity ? 0 : evalMinTurn) * 3
     + (wellsMin === Infinity ? 0 : wellsMin) * 1.2
     // no direct route at all is the strongest form, worth the full bonus
     + (!isFinite(evalDirect) ? 1.5
@@ -1020,9 +1026,23 @@ function padByBody(lv, body, from, gap) {
   const u = unit(body.x - from.x, body.z - from.z);
   lv.ship = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)) };
 }
-function goalByBody(lv, body, from, gap, r) {
+// Put the goal in its world's SHADOW, and put it close.
+//
+// Hiding the goal directly behind the target relative to the pad is what makes
+// a route come round rather than straight in — but the depth of that shadow
+// decides whether it has to wrap or can simply arc past at a distance. At a
+// 6-10 unit standoff the shadow is shallow and a wide bend clears it, which is
+// why the campaign's laziest routes bent about 1.8 radians. Tucked in close,
+// the approach has to arrive nearly tangential to the surface, and the only way
+// to do that from the far side is to come round the body — which is the loop.
+//
+// `tight` pulls the goal in to a couple of ship-widths off the surface. It is
+// applied where the caller asks for it, so levels that want an open approach
+// can still have one.
+function goalByBody(lv, body, from, gap, r, tight = false) {
   const u = unit(body.x - from.x, body.z - from.z);
-  lv.goal = { x: Math.round(body.x + u.x * (body.radius + gap)), z: Math.round(body.z + u.z * (body.radius + gap)), r };
+  const off = tight ? body.radius + Math.max(r + 2.2, 3.2) : body.radius + gap;
+  lv.goal = { x: Math.round(body.x + u.x * off), z: Math.round(body.z + u.z * off), r };
 }
 
 // Comet: lethal, massless, slow LARGE elliptical orbit around the sun.
@@ -1132,7 +1152,7 @@ function sampleEarthrise(rng, slot) {
     // pad tucked behind Earth (away from the target), goal tucked behind the
     // target (away from Earth): every route must curve around both wells
     padByBody(lv, earth, lv.bodies[targetIdx], rand(rng, 7, 9));
-    goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +(6.2 - slot * 0.12).toFixed(1));
+    goalByBody(lv, lv.bodies[targetIdx], { x: lv.ship.x, z: lv.ship.z }, rand(rng, 6, 8), +(6.2 - slot * 0.12).toFixed(1), true);
   }
   lv.targetIdx = targetIdx;
   if (!levelGeometryOk(lv, 9, 7) || !corridorOk(lv, 0)) return null;
