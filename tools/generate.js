@@ -17,6 +17,7 @@ import { predict, legStart, legCount, launchFuelCost, bodiesAt } from '../src/ph
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { findOverlaps } from './overlap-check.mjs';
 
 // ---------------------------------------------------------------------------
 // Seeded RNG
@@ -1458,6 +1459,13 @@ function sampleAlien(rng, slot) {
   }
   if (slot >= 1 && rng() < 0.5) addComet(rng, lv);
   if (slot >= 3) addPatrol(rng, lv);
+  // Anchored spots RIDE their world, so they sweep a ring as it orbits and can
+  // run into things a snapshot never sees. levelGeometryOk checks positions at
+  // t=0 only, which was fine while every pad was a fixed point; now the pad,
+  // the goal and the stops all move. Run the shipping overlap gate's own sweep
+  // over the candidate rather than approximating it here — the two disagreeing
+  // about when to sample is a bug this project has already paid for once.
+  if (findOverlaps([lv]).length) return no('overlaps over its orbit');
   return lv;
 }
 
