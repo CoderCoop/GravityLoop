@@ -841,6 +841,8 @@ function capEngineBelowDirect(level, res, set, needsTiming) {
     const r = evaluate(set, needsTiming, level);
     if (!r.rejected && r.minWins >= MIN_WINS && r.dist !== Infinity) {
       level.assistOnly = cap < full;
+      level.cappedFrom = full;
+      level.postCapTurn = r.minTurn;
       return;
     }
   }
@@ -1747,6 +1749,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
     `${chosen.level.fuelRequired ? ' fuel-gated' : ''}` +
+    `${chosen.level.cappedFrom ? ` engine ${chosen.level.cappedFrom}->${chosen.level.maxLaunch} turn->${(chosen.level.postCapTurn || 0).toFixed(2)}` : ' engine uncapped'}` +
     `${usedRung > 0 ? `  RELAXED x${usedRung}` : ''}` +
     `${WHY ? ` geoOk ${geoOk}/${ATTEMPTS} solvable ${solvable}${whyReport()}` : ''}`
   );
