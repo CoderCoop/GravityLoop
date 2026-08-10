@@ -359,7 +359,20 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     // a floor without going near anything.
     if (req && wellsMin < req.wells) return reject;
   }
-  return { minWins, rates, dist: dist2, conc, legs, winners, interest, interestMin, wellsMin,
+  // How hard this candidate is BEYOND the floors it had to clear. `dist` only
+  // measures conformance — whether the win rate sits in band and the soft
+  // floors are met — and it stops improving the moment a candidate is merely
+  // acceptable. So a route bending 3 radians through four worlds scored
+  // identically to one bending 1.3 through one, and the search took whichever
+  // it happened to reach first. This is the number that separates them.
+  const hard =
+    (evalMinTurn === Infinity ? 0 : evalMinTurn)
+    + (wellsMin === Infinity ? 0 : wellsMin) * 1.2
+    // no direct route at all is the strongest form, worth the full bonus
+    + (!isFinite(evalDirect) ? 1.5
+      : isFinite(evalAssist) ? Math.min(Math.max(evalDirect - evalAssist, 0) / 8, 1.5) : 0)
+    + Math.min(interestMin === Infinity ? 0 : interestMin, 6) * 0.25;
+  return { minWins, rates, dist: dist2, hard, conc, legs, winners, interest, interestMin, wellsMin,
     shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn,
     cheapAssist: evalAssist, cheapDirect: evalDirect };
 }
@@ -1525,6 +1538,9 @@ const REQ_RUNGS = [
   () => ({ wells: 0, turn: 0, shape: 99, assist: 0 }),
 ];
 
+// How many acceptable candidates to weigh before settling on the hardest.
+const IN_BAND_CAP = +(process.env.GEN_INBAND_CAP || 40);
+
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
 const ATTEMPTS = +(process.env.GEN_ATTEMPTS || 800);   // extreme-turn candidates are rare
 
@@ -1581,8 +1597,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     && (!shape || r.shapeFit <= q.shape)
     && (q.assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= q.assist));
   const byRung = new Array(rungs.length).fill(null);
-  let found = null;
-  let geoOk = 0, solvable = 0;
+  let geoOk = 0, solvable = 0, inBandSeen = 0;
   for (let attempt = shardK; attempt < ATTEMPTS; attempt += shardN) {
     const rng = mulberry32(5e6 + s * 100003 + slot * 1009 + attempt);
     const lv = set.sample(rng, slot);
@@ -1596,15 +1611,32 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     solvable++;
     const rung = rungs.findIndex(q => clears(r, q));
     if (rung < 0) continue;
+    // Among candidates that are in band and clear every soft floor, take the
+    // HARDEST rather than the first one found. `dist === 0` says a level is
+    // acceptable, not that it is as hard as this slot can get — and the search
+    // used to stop dead on the first one, often within a handful of the 800
+    // attempts, so every bar set here behaved as a target rather than a floor.
+    // Out-of-band candidates still rank by how close to the band they are.
     const cur = byRung[rung];
-    if (!cur || r.dist < cur.res.dist) byRung[rung] = { level: lv, res: r, rng, attempt };
-    // a candidate that clears the full bar with nothing left to improve is
-    // as good as this slot gets — stop looking
-    if (rung === 0 && r.dist === 0) { found = byRung[0]; break; }
+    const cand = { level: lv, res: r, rng, attempt };
+    const inBand = r.dist === 0, curIn = cur && cur.res.dist === 0;
+    const wins = !cur ? true
+      : inBand !== !!curIn ? inBand
+      : inBand ? r.hard > cur.res.hard
+      : r.dist < cur.res.dist;
+    if (wins) byRung[rung] = cand;
+    // Bounded, not unbounded. Searching every attempt is what makes the pick
+    // the hardest rather than the first, but it also removes the early exit
+    // that kept generation tractable: set 2 slot 5 went from seconds to over
+    // nine minutes, and the CI matrix does not shard that set. Stopping once
+    // enough acceptable candidates have been WEIGHED keeps almost all of the
+    // selectivity — the hardest of forty beats the first of forty by a wide
+    // margin, while the hardest of eight hundred is barely better than that.
+    if (inBand && rung === 0 && ++inBandSeen >= IN_BAND_CAP) break;
   }
   const usedRung = byRung.findIndex(Boolean);
   const best = usedRung >= 0 ? byRung[usedRung] : null;
-  const chosen = found || best;
+  const chosen = best;
   if (!chosen) {
     if (shardN > 1) return { level: null, found: false, attempt: -1, dist: Infinity };
     throw new Error(`set ${s + 1} slot ${slot}: no solvable candidate (geoOk ${geoOk}/${ATTEMPTS}, solvable ${solvable})${whyReport()}`);
@@ -1621,6 +1653,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
     ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
     ` assist ${!isFinite(r.cheapDirect) ? 'forced' : !isFinite(r.cheapAssist) ? 'none' : (r.cheapDirect - r.cheapAssist).toFixed(0)}` +
+    ` hard ${r.hard != null ? r.hard.toFixed(2) : '-'}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
     `${r.minTurn != null && r.minTurn !== Infinity ? ` turn ${r.minTurn.toFixed(2)}/${r.medTurn.toFixed(2)}` : ''}` +
     `${(chosen.level.pickups || []).length ? ` pickups ${chosen.level.pickups.length}` : ''}` +
@@ -1628,7 +1661,11 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     `${usedRung > 0 ? `  RELAXED x${usedRung}` : ''}` +
     `${WHY ? ` geoOk ${geoOk}/${ATTEMPTS} solvable ${solvable}${whyReport()}` : ''}`
   );
-  return { level: chosen.level, found: !!found, attempt: chosen.attempt, dist: chosen.res.dist };
+  // `found` used to mean "stopped early on a full-bar candidate". There is no
+  // early stop any more, so it means what --merge-slot actually needs to know:
+  // this shard's pick cleared the unrelaxed bar.
+  return { level: chosen.level, found: usedRung === 0, attempt: chosen.attempt,
+    dist: chosen.res.dist, hard: chosen.res.hard };
 }
 
 // --emit-slot=S:SLOT --out=FILE   worker mode: search one slot, write JSON
@@ -1669,8 +1706,13 @@ if (EMIT) {
   const founds = cands.filter(x => x.found);
   const pickBy = arr => arr.reduce((a, b) =>
     (b.dist < a.dist || (b.dist === a.dist && b.attempt < a.attempt)) ? b : a);
+  // Mirror the serial rule: among shards whose pick cleared the unrelaxed bar,
+  // take the HARDEST. Taking the earliest attempt instead — which is what this
+  // did while genSlot stopped early — would throw away the whole point of
+  // searching every attempt, since the shards would race to be first again.
   const winner = founds.length
-    ? founds.reduce((a, b) => (b.attempt < a.attempt ? b : a))
+    ? founds.reduce((a, b) =>
+      ((b.hard || 0) > (a.hard || 0) || ((b.hard || 0) === (a.hard || 0) && b.attempt < a.attempt)) ? b : a)
     : pickBy(cands);
   fs.writeFileSync(path.join(dir, `s${s}-${slot}.json`), JSON.stringify(winner.level));
   console.log(`[set ${s + 1}] slot ${slot} merged ${winner.level.name.padEnd(18)} attempt ${winner.attempt} dist ${winner.dist.toFixed(3)}${winner.found ? '' : '  (closest to band)'}`);
