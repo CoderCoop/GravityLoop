@@ -13,7 +13,7 @@
 //   set 3 Outer Planets    gas giants + moons, station routes (static)
 //   set 4 Asteroid Belt    rock fields, cargo hauls, patrol lanes
 //   set 5 New Star Systems alien suns, antimatter stars, black holes (moving)
-import { predict, legStart, legCount, launchFuelCost, bodiesAt } from '../src/physics.js';
+import { predict, legStart, legCount, launchFuelCost, bodiesAt, G } from '../src/physics.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -209,13 +209,61 @@ function concentration(byT0) {
   return (sorted[0] + sorted[1] + sorted[2] + sorted[3]) / total;
 }
 
+// Does the route come RIGHT ROUND a world, or merely bend past it? Only the
+// first is a loop, and the difference is not how heavy the world is. A flyby
+// on an open arc deflects by
+//
+//     sin(deflection / 2) = 1 / (1 + B),   B = r_p v_inf^2 / (G m)
+//
+// which reaches half a turn only as v_inf goes to zero: no mass wraps a fast
+// ship. What wraps a ship is arriving SLOWLY relative to the world — below
+// escape speed at closest approach, so the ship is on a closed arc around it
+// and comes round. That is the test here.
+//
+// Note the speed is taken relative to the body, not to the level. A moon that
+// is running the same way as the ship subtracts its own orbital speed from the
+// pass, which is the cheapest wrap the geometry can offer and is invisible if
+// you measure ground speed. Note also that this must use the APPROACH speed:
+// the speed at closest approach carries the well the ship just fell down
+// (v_p^2 = v_inf^2 + 2 G m / r_p), so testing v_p against escape speed asks
+// whether v_inf^2 < 0, which is never true. Testing whether the ship is bound
+// is exactly testing v_inf^2 < 0 -- the same comparison, honestly stated.
+// `track` is the whole system sampled along the route — bodiesAt once per
+// point, shared by every body tested. Called per body it was three sweeps of
+// bodiesAt each, inside the loop the generator spends most of its time in;
+// this runs in the innermost search of a pipeline that already takes hours.
+function trackAlong(level, pts, t0) {
+  return pts.map(p => bodiesAt(level, t0 + (p.t != null ? p.t : 0)));
+}
+
+function boundTo(level, bi, pts, track) {
+  const b = level.bodies[bi];
+  if (!(b.mass > 0)) return false;
+  let rp = Infinity, at = -1;
+  for (let k = 1; k < pts.length; k++) {
+    const d = dist(pts[k].x, pts[k].z, track[k][bi].x, track[k][bi].z);
+    if (d < rp) { rp = d; at = k; }
+  }
+  if (at < 1 || !isFinite(rp) || rp <= 0) return false;
+  // Both velocities from the same pair of samples, so the subtraction is
+  // between like and like — the body's own motion is what makes a prograde
+  // moon cheap to wrap, and differencing it against a differently-spaced
+  // estimate would put that difference in the noise.
+  const p = pts[at], q = pts[at - 1];
+  const dt = Math.max((p.t != null && q.t != null) ? p.t - q.t : 1 / 40, 1e-6);
+  const bp = track[at][bi], bq = track[at - 1][bi];
+  const vRel = Math.hypot((p.x - q.x) / dt - (bp.x - bq.x) / dt,
+                          (p.z - q.z) / dt - (bp.z - bq.z) / dt);
+  return vRel * vRel < (2 * G * b.mass) / rp;   // below escape speed => closed arc
+}
+
 // Route interest: how much terrain a leg's typical winning routes sweep —
 // bodies passed close by plus a curvature bonus. Successful routes crossing
 // varied terrain are what make levels distinct; candidates whose winners fly
 // through empty space score low and are penalized in evaluate().
 function legInterest(level, stage, legWinners) {
   const start = legStart(level, stage);
-  const vals = [], wells = [];
+  const vals = [], wells = [], wraps = [];
   for (const w of legWinners.slice(0, 10)) {
     const rad = (w.ang * Math.PI) / 180;
     const r = predict(level, start.x, start.z, Math.cos(rad) * w.sp, Math.sin(rad) * w.sp, w.t0, 10, stage);
@@ -233,7 +281,7 @@ function legInterest(level, stage, legWinners) {
     // too. Set 3 reported the laziest route passing five worlds while having
     // no assisted route at all: all five were Earth, the Moon, Jupiter and two
     // Jovian moons.
-    let near = 0, via = 0;
+    let near = 0, via = 0, wrap = 0, track = null;
     for (let i = 0; i < level.bodies.length; i++) {
       const a = annulus(level, i);
       for (let k = 0; k < pts.length; k += 4) {
@@ -242,24 +290,37 @@ function legInterest(level, stage, legWinners) {
           const b = level.bodies[i];
           const home = isEnd(level, 'homeIdx', i, b);
           const tgt = isEnd(level, 'targetIdx', i, b);
-          if (!home && !tgt) via++;
+          // Wrapping is only tested on worlds the route already passes close
+          // to, and only on third parties: the ship launches from beside home
+          // and docks beside the target, so it is all but bound to the target
+          // on arrival and counting that would make every docking a loop.
+          if (!home && !tgt) {
+            via++;
+            if (!track) track = trackAlong(level, pts, w.t0);
+            if (boundTo(level, i, pts, track)) wrap++;
+          }
           break;
         }
       }
     }
     vals.push(near + Math.min(len / straight - 1, 1));
     wells.push(via);
+    wraps.push(wrap);
   }
-  if (!vals.length) return { med: 0, min: 0, wellsMin: 0 };
+  if (!vals.length) return { med: 0, min: 0, wellsMin: 0, wrapMin: 0, wrapAny: 0 };
   wells.sort((a, b) => a - b);
   vals.sort((a, b) => a - b);
+  const wrapAny = Math.max(...wraps), wrapMin = Math.min(...wraps);
   // The median says what a typical winning route sweeps; the minimum says
   // what the laziest one does. A level where you can simply fly wide around
   // the whole system and skip the terrain has a fine median and a floor of
   // nearly zero — so the floor is what has to be gated on.
   // wellsMin is the plain count of worlds the LAZIEST winning route passes
   // close to — the number the hard bar is set on.
-  return { med: vals[Math.floor(vals.length / 2)], min: vals[0], wellsMin: wells[0] };
+  // wrapMin is the strong form — even the laziest way through comes round a
+  // world, so the loop is forced. wrapAny only says one exists to be found.
+  return { med: vals[Math.floor(vals.length / 2)], min: vals[0], wellsMin: wells[0],
+    wrapMin, wrapAny };
 }
 
 // Per-leg verdict: every leg in band, legs of comparable difficulty, route
@@ -333,6 +394,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     if (ratio > 2.5) dist2 += ratio - 2.5;           // legs must be comparable
   }
   let interest = 0, interestMin = Infinity, wellsMin = Infinity;
+  let wrapMin = 0, wrapAny = 0;
   if (set.interest) {
     for (let s = 0; s < legs; s++) {
       const iv = legInterest(level, s, winners[s]);
@@ -347,6 +409,10 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
       // did. Turn is still taken per leg (a trivially straight leg is a real
       // weakness), just scaled by how many legs there are.
       wellsMin = wellsMin === Infinity ? iv.wellsMin : wellsMin + iv.wellsMin;
+      // Summed over legs like wells, and for the same reason: one wrap
+      // anywhere on the journey is a wrap on the journey.
+      wrapMin += iv.wrapMin;
+      wrapAny += iv.wrapAny;
     }
     interest /= legs;
     if (interest < set.interest) dist2 += (set.interest - interest) * 1.2;
@@ -371,8 +437,15 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     // no direct route at all is the strongest form, worth the full bonus
     + (!isFinite(evalDirect) ? 1.5
       : isFinite(evalAssist) ? Math.min(Math.max(evalDirect - evalAssist, 0) / 8, 1.5) : 0)
-    + Math.min(interestMin === Infinity ? 0 : interestMin, 6) * 0.25;
+    + Math.min(interestMin === Infinity ? 0 : interestMin, 6) * 0.25
+    // A route that comes right round a world is the shape the campaign is
+    // after, and it is rare enough that it has to outrank a merely bendy one
+    // decisively or the search will never trade anything for it. Forced wraps
+    // are worth far more than available ones: a loop you can skip is not a
+    // loop the level asks for.
+    + Math.min(wrapMin, 2) * 2.5 + Math.min(wrapAny, 2) * 0.6;
   return { minWins, rates, dist: dist2, hard, conc, legs, winners, interest, interestMin, wellsMin,
+    wrapMin, wrapAny,
     shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn,
     cheapAssist: evalAssist, cheapDirect: evalDirect };
 }
@@ -1611,6 +1684,11 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     solvable++;
     const rung = rungs.findIndex(q => clears(r, q));
     if (rung < 0) continue;
+    if (WHY) {
+      no('acceptable candidate');
+      if (r.wrapAny > 0) no('  ...with a wrap available');
+      if (r.wrapMin > 0) no('  ...with a wrap FORCED');
+    }
     // Among candidates that are in band and clear every soft floor, take the
     // HARDEST rather than the first one found. `dist === 0` says a level is
     // acceptable, not that it is as hard as this slot can get — and the search
@@ -1652,6 +1730,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     ` legs ${r.legs}${needsTiming ? ` timing ${r.conc.toFixed(2)}` : ''}` +
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
     ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
+    ` wrap ${r.wrapMin || 0}/${r.wrapAny || 0}` +
     ` assist ${!isFinite(r.cheapDirect) ? 'forced' : !isFinite(r.cheapAssist) ? 'none' : (r.cheapDirect - r.cheapAssist).toFixed(0)}` +
     ` hard ${r.hard != null ? r.hard.toFixed(2) : '-'}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
