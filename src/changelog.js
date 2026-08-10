@@ -11,6 +11,15 @@
 // tools/changelog-check.mjs enforces the bump and the format in CI.
 export const CHANGELOG = [
   {
+    v: '3.0.2',
+    date: '2026-08-08',
+    title: 'Contour rings keep up with the planets',
+    notes: [
+      'On levels where the worlds orbit, the rings and the field colouring were being left behind. After six seconds of a fast system, up to a third of the ground was still painted for where the planets used to be — so the ground was telling you about a gravity field that had moved on.',
+      'Every part of the surface now repaints as the field changes, and the rings travel with the world that makes them.',
+    ],
+  },
+  {
     v: '3.0.1',
     date: '2026-08-08',
     title: 'The heaviest wells have a bottom again',

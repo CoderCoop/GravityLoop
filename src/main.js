@@ -310,6 +310,12 @@ function updateTerrain(positions, snap) {
   if (snap) {
     posAttr.needsUpdate = true;
     colAttr.needsUpdate = true;
+  } else {
+    // The field just changed, so every vertex's colour is now potentially
+    // wrong — the tint reads fieldAt, which was rewritten above, and that has
+    // nothing to do with whether this particular vertex's HEIGHT moved. Let
+    // the ease repaint the lot rather than only the ones it happens to move.
+    terrain.fieldDirty = true;
   }
 }
 
@@ -320,7 +326,9 @@ function easeTerrain(dt) {
   const { targetY, posAttr, colAttr } = terrain;
   const pos = posAttr.array, col = colAttr.array;
   const k = Math.min(dt * 9, 1);
-  let moved = false, recoloured = false;
+  const fieldDirty = terrain.fieldDirty;
+  terrain.fieldDirty = false;
+  let moved = false, recoloured = fieldDirty;
   for (let idx = 0; idx < targetY.length; idx++) {
     const cur = pos[idx * 3 + 1], want = targetY[idx];
     const d = want - cur;
@@ -328,9 +336,18 @@ function easeTerrain(dt) {
       const y = cur + d * k;
       pos[idx * 3 + 1] = y;
       moved = true;
-      // depth colour is a slow gradient — only worth redoing on a visible
-      // change, which keeps the per-frame ease cheap at full grid density
-      if (d > 0.05 || d < -0.05) { heightColor(y, col, idx * 3, idx); recoloured = true; }
+      // Recolour whatever we moved. This used to skip anything shifting by
+      // less than 0.05 a frame, on the theory that the colour is a slow
+      // gradient — but the colour also carries the contour rings, which are
+      // bands in height, so a vertex creeping across a band boundary changed
+      // colour completely while the ease declined to repaint it. Measured on
+      // the fastest-moving levels, six seconds of orbiting left a third of the
+      // grid painted from an earlier frame, off by up to 0.72 of full scale.
+      heightColor(y, col, idx * 3, idx);
+      recoloured = true;
+    } else if (fieldDirty) {
+      // still, but the field around it moved
+      heightColor(cur, col, idx * 3, idx);
     }
   }
   if (moved) posAttr.needsUpdate = true;
@@ -2381,6 +2398,27 @@ window.GL = {
     updateCamera(1);
     camera.updateMatrixWorld(true);
     camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+  },
+  // How far the drawn terrain colours have drifted from the colours the
+  // current field would produce. Zero means every vertex is showing the field
+  // as it is now; a large max means somewhere on the map is still painted with
+  // a value from an earlier frame.
+  debugColourDrift: () => {
+    const { gridX, gridZ, colAttr, targetY } = terrain;
+    const col = colAttr.array, want = new Float32Array(3);
+    let max = 0, sum = 0, stale = 0;
+    for (let idx = 0; idx < gridX.length; idx++) {
+      heightColor(targetY[idx], want, 0, idx);
+      const e = Math.max(
+        Math.abs(col[idx * 3] - want[0]),
+        Math.abs(col[idx * 3 + 1] - want[1]),
+        Math.abs(col[idx * 3 + 2] - want[2]));
+      if (e > max) max = e;
+      sum += e;
+      if (e > 0.02) stale++;
+    }
+    return { max: +max.toFixed(4), mean: +(sum / gridX.length).toFixed(4),
+      stalePct: +(100 * stale / gridX.length).toFixed(2), vertices: gridX.length };
   },
   debugSpots: () => {
     const p = bodiesAt(level, simTime);
