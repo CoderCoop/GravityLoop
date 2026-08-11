@@ -146,6 +146,22 @@ function solveLeg(level, stage, shape) {
   const turns = [];
   const misses = [];
   let cheapAssist = Infinity, cheapDirect = Infinity;
+  // How many ways through really come round something (four radians is 230
+  // degrees — past a bend, into giving up a heading and taking a new one on
+  // the far side of a world), and what the cheapest such way costs against the
+  // cheapest that does not.
+  //
+  // The plan these were added for was to cap the engine between the two, the
+  // way capEngineBelowDirect kills the direct shot: below the straight
+  // requirement, only the looping launches still arrive. It does not work, and
+  // loopWins is why. Across a slot's whole search, seventeen candidates in
+  // three hundred and fifty-six had ANY looping win and not one had three, so
+  // every cap leaves a level under the win floor — a single launch in thirteen
+  // thousand is a lottery ticket, not a route. A second set had no looping win
+  // at all. Keep the numbers: they say a loop has to be built into the
+  // geometry, as a family of launches that all come round, rather than
+  // selected for after the fact.
+  let cheapLoop = Infinity, cheapStraight = Infinity, loopWins = 0;
   for (let ti = 0; ti < times.length; ti++) {
     const t0 = times[ti];
     for (let ang = 0; ang < 360; ang += 3) {
@@ -182,6 +198,8 @@ function solveLeg(level, stage, shape) {
           }
           if (via > 0) cheapAssist = Math.min(cheapAssist, sp);
           else cheapDirect = Math.min(cheapDirect, sp);
+          if (turn.abs >= LOOP_TURN) { cheapLoop = Math.min(cheapLoop, sp); loopWins++; }
+          else cheapStraight = Math.min(cheapStraight, sp);
           if (winners.length < 40) winners.push({ ang, sp, t0, turn: turn.abs, wells });
         }
       }
@@ -197,7 +215,7 @@ function solveLeg(level, stage, shape) {
   misses.sort((a, b) => a - b);
   const shapeFit = misses.length ? misses[0] : Infinity;
   return { wins, rate: (wins / total) * 100, byT0, winners, minTurn, medTurn, shapeFit,
-    cheapAssist, cheapDirect };
+    cheapAssist, cheapDirect, cheapLoop, cheapStraight, loopWins };
 }
 
 // Gravity-assist timing sensitivity: how much of the leg's wins concentrate
@@ -334,6 +352,7 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
   let dist2 = 0, minWins = Infinity, conc = 0;
   let evalMinTurn = Infinity, evalMedTurn = Infinity, shapeFit = 0;
   let evalAssist = 0, evalDirect = Infinity;
+  let evalLoop = 0, evalStraight = Infinity, evalLoopWins = Infinity;
   // `req` is the hard bar this slot must clear. Everything below it also feeds
   // the soft score, which still ranks the survivors — but a candidate that
   // misses the bar is rejected outright rather than ranked. Summing everything
@@ -376,6 +395,9 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
     evalMinTurn = evalMinTurn === Infinity ? r.minTurn : evalMinTurn + r.minTurn;
     evalAssist = Math.max(evalAssist, r.cheapAssist);   // slowest leg sets the cap floor
     evalDirect = Math.min(evalDirect, r.cheapDirect);   // fastest direct win sets the ceiling
+    evalLoop = Math.max(evalLoop, r.cheapLoop);         // and the same on the looping axis
+    evalLoopWins = Math.min(evalLoopWins, r.loopWins);
+    evalStraight = Math.min(evalStraight, r.cheapStraight);
     evalMedTurn = Math.min(evalMedTurn, r.medTurn);
     if (r.rate < low) dist2 += low - r.rate;
     else if (r.rate > high) dist2 += r.rate - high;
@@ -447,7 +469,8 @@ function evaluate(set, needsTiming, level, bestDist = Infinity, shape = null, re
   return { minWins, rates, dist: dist2, hard, conc, legs, winners, interest, interestMin, wellsMin,
     wrapMin, wrapAny,
     shapeFit, minTurn: evalMinTurn, medTurn: evalMedTurn,
-    cheapAssist: evalAssist, cheapDirect: evalDirect };
+    cheapAssist: evalAssist, cheapDirect: evalDirect,
+    cheapLoop: evalLoop, cheapStraight: evalStraight, loopWins: evalLoopWins };
 }
 
 // ---------------------------------------------------------------------------
@@ -548,7 +571,7 @@ function no(reason) {
 }
 function whyReport() {
   if (!WHY || !whyTally.size) return '';
-  const rows = [...whyTally].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const rows = [...whyTally].sort((a, b) => b[1] - a[1]).slice(0, 16);
   whyTally.clear();
   return '\n    rejected: ' + rows.map(([r, n]) => `${r} x${n}`).join(', ');
 }
@@ -1615,6 +1638,10 @@ const REQ_RUNGS = [
 const IN_BAND_CAP = +(process.env.GEN_INBAND_CAP || 40);
 
 const MIN_WINS = 3;       // per-leg coarse floor so `solve.js --fast` always passes
+// What counts as "coming round something". Four radians is 230 degrees: past
+// a bend, into a route that has to give up its heading and take a new one on
+// the far side of a world.
+const LOOP_TURN = 4;
 const ATTEMPTS = +(process.env.GEN_ATTEMPTS || 800);   // extreme-turn candidates are rare
 
 // `--sets=1,2` generates only those sets and skips writing levels.js — a
@@ -1688,6 +1715,15 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
       no('acceptable candidate');
       if (r.wrapAny > 0) no('  ...with a wrap available');
       if (r.wrapMin > 0) no('  ...with a wrap FORCED');
+      for (const t of [2, 3, 4, 5, 6]) if (r.minTurn >= t) no(`  ...laziest route bends >= ${t} rad`);
+      for (const t of [3, 4, 5, 6]) if (r.medTurn >= t) no(`  ...TYPICAL route bends >= ${t} rad`);
+      if (isFinite(r.cheapLoop)) no('  ...has a looping win at all');
+      const cappable = isFinite(r.cheapLoop) && r.cheapLoop < r.cheapStraight;
+      if (cappable) no('  ...LOOP IS THE SLOWER WAY (cappable)');
+      for (const n of [1, 3, 6, 12]) if (r.loopWins >= n) no(`  ...has >= ${n} looping wins`);
+      if (r.dist === 0) no('  ...IN BAND');
+      if (r.dist === 0 && cappable) no('  ...IN BAND *and* cappable');
+      for (const t of [2, 3, 4]) if (r.wellsMin >= t) no(`  ...laziest route passes >= ${t} worlds`);
     }
     // Among candidates that are in band and clear every soft floor, take the
     // HARDEST rather than the first one found. `dist === 0` says a level is
@@ -1731,6 +1767,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
     ` shape ${SHAPE_ORDER[(slot + s) % SHAPE_ORDER.length]}${r.shapeFit ? `(${r.shapeFit.toFixed(2)})` : ''}` +
     ` wells ${r.wellsMin != null ? r.wellsMin : '-'}` +
     ` wrap ${r.wrapMin || 0}/${r.wrapAny || 0}` +
+    ` loop ${r.loopWins || 0}w ${isFinite(r.cheapLoop) ? r.cheapLoop : '-'}/${isFinite(r.cheapStraight) ? r.cheapStraight : '-'}` +
     ` assist ${!isFinite(r.cheapDirect) ? 'forced' : !isFinite(r.cheapAssist) ? 'none' : (r.cheapDirect - r.cheapAssist).toFixed(0)}` +
     ` hard ${r.hard != null ? r.hard.toFixed(2) : '-'}` +
     `${r.interest != null ? ` interest ${r.interest.toFixed(2)}/${r.interestMin === Infinity ? '-' : r.interestMin.toFixed(2)}` : ''}` +
