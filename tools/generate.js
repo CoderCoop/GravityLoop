@@ -1653,7 +1653,7 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 //    5   0.53                      3 legs: 0.47-1.75
 const HARD = [
   { wells: 1, turn: 1.9, turnLeg: 0, shape: 1.6, assist: 3 },
-  { wells: 1, turn: 3.4, turnLeg: 0, shape: 1.6, assist: 4 },
+  { wells: 1, turn: 2.8, turnLeg: 0, shape: 1.6, assist: 4 },
   { wells: 1, turn: 2.0, turnLeg: 1.2, shape: 1.6, assist: 5 },
   { wells: 1, turn: 1.8, turnLeg: 0.6, shape: 1.6, assist: 6 },
   { wells: 1, turn: 1.2, turnLeg: 0.4, shape: 1.6, assist: 6 },
@@ -1679,7 +1679,15 @@ const REQ_RUNGS = [
   r => r,
   r => ({ ...r, turn: r.turn * 0.85, turnLeg: r.turnLeg * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
   r => ({ ...r, turn: r.turn * 0.7, turnLeg: r.turnLeg * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
-  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.5, turnLeg: r.turnLeg * 0.5, shape: 99, assist: r.assist * 0.25 }),
+  // Relax the FLOOR, not the rest of the bar. This rung used to drop wells to
+  // zero and the assist gap to a quarter, so a slot that could not meet its
+  // turn floor stopped being asked to pass any world or to need a gravity
+  // assist at all -- two of the things the campaign is actually for, traded
+  // away to chase turning it was never going to get. Measured: with set 2's
+  // floor set out of reach, all four of its early slots landed here, and the
+  // one that regressed against what shipped (1.87 radians against 2.38) did so
+  // while holding a bar that no longer asked for anything else either.
+  r => ({ ...r, turn: r.turn * 0.55, turnLeg: r.turnLeg * 0.55, shape: 99, assist: r.assist * 0.45 }),
   () => ({ wells: 0, turn: 0, turnLeg: 0, shape: 99, assist: 0 }),
 ];
 
