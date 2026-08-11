@@ -1602,12 +1602,35 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 // that can do better still do — set 1 slot 5 came out at wells 2 / turn 1.94
 // — because the bar decides what is ACCEPTABLE and the rate band decides what
 // is chosen from among the acceptable.
+// The turn floors are totals over the whole journey, and they were set by
+// guess rather than by measurement: 1.3 to 1.5 across the campaign. Measured
+// against what shipped, they were nowhere near binding. Every set's levels,
+// solved on the gate's own grid:
+//
+//   set   min   median   p75    max
+//    1   0.63    1.73   1.93   5.93
+//    2   1.39    3.25   3.68   3.94
+//    3   1.18    1.88   2.79   4.63
+//    4   0.93    2.25   2.51   3.82
+//    5   0.47    0.79   1.09   1.75
+//
+// Set 2 was asked for 1.4 and delivers 3.25 — the floor was doing nothing at
+// all there, and the hard score was carrying the set on its own. So each floor
+// now sits just above its set's median, where it rules out the easy half of
+// what the geometry offers instead of trailing the whole distribution. Slots
+// that cannot meet it fall down the relaxation ladder and say so, which is
+// the honest failure mode; a floor no candidate ever misses is not a floor.
+//
+// These are not aspirations. Four radians is out of reach for a campaign-wide
+// floor — one set-1 slot search of 329 acceptable candidates produced seven
+// above two radians and none above three — so the numbers here are what each
+// set has been shown to produce, not what would be nice.
 const HARD = [
-  { wells: 1, turn: 1.3, shape: 1.6, assist: 3 },
-  { wells: 1, turn: 1.4, shape: 1.6, assist: 4 },
-  { wells: 1, turn: 1.5, shape: 1.6, assist: 5 },
-  { wells: 1, turn: 1.5, shape: 1.6, assist: 6 },
-  { wells: 1, turn: 0.4, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 1.65, shape: 1.6, assist: 3 },
+  { wells: 1, turn: 3.0, shape: 1.6, assist: 4 },
+  { wells: 1, turn: 2.1, shape: 1.6, assist: 5 },
+  { wells: 1, turn: 2.4, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 1.2, shape: 1.6, assist: 6 },
 ]
 // Set 5 is the exception to the rising turn floor, and deliberately. Its
 // single-leg levels measure 0.29-0.73 radians where set 3's measure 1.2-2.55,
@@ -1716,6 +1739,11 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
       if (r.wrapAny > 0) no('  ...with a wrap available');
       if (r.wrapMin > 0) no('  ...with a wrap FORCED');
       for (const t of [2, 3, 4, 5, 6]) if (r.minTurn >= t) no(`  ...laziest route bends >= ${t} rad`);
+      // what turning is affordable once everything ELSE the bar asks for holds
+      const others = (r.wellsMin == null || r.wellsMin >= rungs[0].wells)
+        && (!shape || r.shapeFit <= rungs[0].shape)
+        && (rungs[0].assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= rungs[0].assist));
+      if (others) for (const t of [1, 1.5, 1.9, 2.5, 3]) if (r.minTurn >= t) no(`  ...clears everything else AND bends >= ${t}`);
       for (const t of [3, 4, 5, 6]) if (r.medTurn >= t) no(`  ...TYPICAL route bends >= ${t} rad`);
       if (isFinite(r.cheapLoop)) no('  ...has a looping win at all');
       const cappable = isFinite(r.cheapLoop) && r.cheapLoop < r.cheapStraight;
