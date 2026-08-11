@@ -1625,12 +1625,38 @@ SETS.forEach(s => { s.band = [+(s.band[0] * 0.5).toFixed(3), s.band[1]]; });
 // floor — one set-1 slot search of 329 acceptable candidates produced seven
 // above two radians and none above three — so the numbers here are what each
 // set has been shown to produce, not what would be nice.
+// `turn` is what a ONE-LEG journey must bend; `turnLeg` is what each stop
+// after the first adds to that. A flat per-set floor cannot work, because the
+// floor is a total over the whole route while a set mixes one-leg levels with
+// three-leg ones. Set 4 shipped its single-leg slots at 1.36, 1.80 and 0.93
+// and its three-leg slots at 2.2 to 3.8; a flat 2.4 asked the first three for
+// something their geometry has never once produced, and they came out relaxed
+// by two rungs -- which also halves the assist gap and all but drops the shape
+// requirement, so the floor gave away two things it cared about and bought no
+// turning at all.
+//
+// The floors below are set near the most turning each shape of level has been
+// SEEN to manage, not near the middle of it, because a floor that binds is
+// worth more than one that is met. Measured on set 4's first slot: a floor of
+// 2.4 relaxed twice and landed on 1.76 radians, while a floor of 1.5 was clear
+// at once and landed on 1.32 -- once the floor stops binding, ranking passes
+// back to the hard score, where turning is one term among several. An
+// unreachable floor still leaves a relaxed floor doing work, so ambition costs
+// little and caution costs turning. Per set, by leg count, from the shipped
+// campaign:
+//
+//   set    one leg                 more legs
+//    1   0.63-5.93 (all one leg)   --
+//    2   1.39-3.94 (all one leg)   --
+//    3   1.18-1.88                 2 legs: 1.21-4.63, median 2.77
+//    4   0.93-1.80                 3 legs: 1.66-3.82, median 2.49
+//    5   0.53                      3 legs: 0.47-1.75
 const HARD = [
-  { wells: 1, turn: 1.65, shape: 1.6, assist: 3 },
-  { wells: 1, turn: 3.0, shape: 1.6, assist: 4 },
-  { wells: 1, turn: 2.1, shape: 1.6, assist: 5 },
-  { wells: 1, turn: 2.4, shape: 1.6, assist: 6 },
-  { wells: 1, turn: 1.2, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 1.9, turnLeg: 0, shape: 1.6, assist: 3 },
+  { wells: 1, turn: 3.4, turnLeg: 0, shape: 1.6, assist: 4 },
+  { wells: 1, turn: 2.0, turnLeg: 1.2, shape: 1.6, assist: 5 },
+  { wells: 1, turn: 1.8, turnLeg: 0.6, shape: 1.6, assist: 6 },
+  { wells: 1, turn: 1.2, turnLeg: 0.4, shape: 1.6, assist: 6 },
 ]
 // Set 5 is the exception to the rising turn floor, and deliberately. Its
 // single-leg levels measure 0.29-0.73 radians where set 3's measure 1.2-2.55,
@@ -1651,10 +1677,10 @@ const HARD = [
 // bar of 2 rung 3 was *stricter* than rung 2. Wells now falls once, at rung 3.
 const REQ_RUNGS = [
   r => r,
-  r => ({ ...r, turn: r.turn * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
-  r => ({ ...r, turn: r.turn * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
-  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.5, shape: 99, assist: r.assist * 0.25 }),
-  () => ({ wells: 0, turn: 0, shape: 99, assist: 0 }),
+  r => ({ ...r, turn: r.turn * 0.85, turnLeg: r.turnLeg * 0.85, shape: r.shape + 0.4, assist: r.assist * 0.7 }),
+  r => ({ ...r, turn: r.turn * 0.7, turnLeg: r.turnLeg * 0.7, shape: r.shape + 0.9, assist: r.assist * 0.45 }),
+  r => ({ ...r, wells: r.wells - 1, turn: r.turn * 0.5, turnLeg: r.turnLeg * 0.5, shape: 99, assist: r.assist * 0.25 }),
+  () => ({ wells: 0, turn: 0, turnLeg: 0, shape: 99, assist: 0 }),
 ];
 
 // How many acceptable candidates to weigh before settling on the hardest.
@@ -1714,8 +1740,11 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
   // minTurn is now summed over the route's legs rather than minimised across
   // them, so no per-leg scaling is needed here — a journey is judged on the
   // whole journey, the same way its wells are.
+  // The floor is a total over the whole route, so a journey with stops is
+  // asked for more of it than a single hop -- see HARD.
+  const turnBar = (r, q) => q.turn + (q.turnLeg || 0) * Math.max(0, (r.legs || 1) - 1);
   const clears = (r, q) =>
-    r.minTurn >= q.turn
+    r.minTurn >= turnBar(r, q)
     && (r.wellsMin == null || r.wellsMin >= q.wells)
     && (!shape || r.shapeFit <= q.shape)
     && (q.assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= q.assist));
@@ -1744,6 +1773,7 @@ function genSlot(s, slot, shardK = 0, shardN = 1) {
         && (!shape || r.shapeFit <= rungs[0].shape)
         && (rungs[0].assist <= 0 || (isFinite(r.cheapAssist) && r.cheapDirect - r.cheapAssist >= rungs[0].assist));
       if (others) for (const t of [1, 1.5, 1.9, 2.5, 3]) if (r.minTurn >= t) no(`  ...clears everything else AND bends >= ${t}`);
+      if (others && r.minTurn >= turnBar(r, rungs[0])) no('  ...clears the whole unrelaxed bar');
       for (const t of [3, 4, 5, 6]) if (r.medTurn >= t) no(`  ...TYPICAL route bends >= ${t} rad`);
       if (isFinite(r.cheapLoop)) no('  ...has a looping win at all');
       const cappable = isFinite(r.cheapLoop) && r.cheapLoop < r.cheapStraight;
